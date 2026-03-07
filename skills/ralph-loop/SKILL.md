@@ -129,23 +129,28 @@ Execute this loop until a halt condition is met:
 
 ```
 for iteration in 1..max_iterations:
-    1. BUILD the child agent prompt (see Prompt Template below)
-    2. SPAWN the child agent:
+    1. RECORD iteration start time (ISO 8601 timestamp)
+    2. BUILD the child agent prompt (see Prompt Template below)
+    3. SPAWN the child agent:
        copilot -p "<prompt>" --yolo
-    3. WAIT for the child to complete
-    4. READ RALPH_TASK.md and count checkboxes:
+    4. WAIT for the child to complete
+    5. RECORD iteration end time (ISO 8601 timestamp)
+    6. READ RALPH_TASK.md and count checkboxes:
        - total = count of "- [ ]" + "- [x]"
        - done  = count of "- [x]"
-    5. APPEND to .ralph/activity.log:
-       [<ISO timestamp>] Iteration <N>: <done>/<total> criteria complete
-    6. UPDATE .ralph/progress.md with current status
-    7. CHECK halt conditions:
+    7. APPEND to .ralph/activity.log:
+       [<ISO timestamp>] Iteration <N>: <done>/<total> criteria complete (started: <start>, ended: <end>, duration: <duration>)
+    8. UPDATE .ralph/progress.md with current status
+    9. CHECK halt conditions:
        a. done == total → HALT with success ✅
        b. iteration == max_iterations → HALT with max-iterations 🛑
        c. Stuck detection (see below) → inject adjustment into next prompt
-    8. REPORT iteration status to user:
+   10. REPORT iteration status to user (including start/end timestamps and duration):
        ## Iteration <N>/<max> complete
        ✅ Progress: <done>/<total> criteria
+       🕐 Started: <start timestamp>
+       🕑 Ended: <end timestamp>
+       ⏱️  Duration: <duration>
        🔄 Starting iteration <N+1>...
 ```
 
@@ -355,7 +360,10 @@ Between iterations, display:
 ## Iteration <N>/<max> complete
 ✅ Progress: <done>/<total> criteria
 📝 Last: "<latest commit message>"
-⏱️  Elapsed: <total elapsed time>
+🕐 Started: <iteration start timestamp>
+🕑 Ended: <iteration end timestamp>
+⏱️  Iteration duration: <duration of this iteration>
+⏱️  Total elapsed: <total elapsed time since loop start>
 🔄 Starting iteration <N+1>...
 ─────────────────────────────────────
 ```
