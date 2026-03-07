@@ -1,4 +1,4 @@
-# slevert-skills
+# skills
 
 Personal skills marketplace for coding agent workflows.
 
