@@ -35,7 +35,8 @@ and [local preview](#install-from-a-local-checkout) below.
 | [new-spec](skills/new-spec/SKILL.md) | Create or update a project-native behavioral contract. | Git and `gh`; persisted work uses an isolated worktree and draft PR. |
 | [implement](skills/implement/SKILL.md) | Deliver a scoped change through validation and a draft PR. | Git, `gh`, and the target project's tools; no automatic merge. |
 | [note-taker](skills/note-taker/SKILL.md) | Capture structured meetings, one-on-ones, and action items. | File access; GitHub access when filing linked action items. |
-| [paper-strategist](skills/paper-strategist/SKILL.md) | Develop a strategy paper through an interview and revision process. | File access; no external service required by the skill itself. |
+| [paper-strategist](skills/paper-strategist/SKILL.md) | Write decision-ready papers and matching content-first HTML. | Offline template, light/dark mode, floating TOC, read time, SVG-only visuals; no build dependencies. |
+| [research-brief](skills/research-brief/SKILL.md) | Produce source-grounded market, competitive, customer or technical research. | Uses authorized available sources; facts, claims, inference and unknowns remain distinct. |
 | [md-to-word](skills/md-to-word/SKILL.md) | Convert Markdown into a Word document. | .NET and the `SpecWorks.MarkMyWord.CLI` tool (`markmyword`), installed separately. |
 | [oof](skills/oof/SKILL.md) | Prepare an out-of-office catch-up from workplace activity. | An authorized WorkIQ connection and access to the relevant M365 data. |
 | [plugin-generator](skills/plugin-generator/SKILL.md) | Scaffold plugin projects and reusable skills. | Check generated metadata against your host's current format; legacy examples target Copilot/Claude. |
@@ -77,6 +78,31 @@ problem or desired outcome, not only a skill name.
 - `new-spec` follows the project's existing contract and document conventions;
   it does not invent a spec for every small fix.
 - `implement` executes the authorized task rather than returning a launch command.
+
+### Research and rich papers
+
+`research-brief` starts from the decision or question, verifies original sources,
+compares options fairly, and makes evidence gaps explicit. It answers in chat
+unless an artifact is requested; it does not publish or implement automatically.
+
+`paper-strategist` turns that evidence into a clear thesis, alternatives, a
+mechanism, proof/signals and a decision ask. It asks only material missing
+questions rather than imposing a fixed interview.
+
+The [HTML template](skills/paper-strategist/assets/paper.html) opens directly in a
+browser. It is neutral, modern and content-first, with:
+
+- System-aware light/dark mode and a manual override.
+- A compact floating/collapsible TOC generated from actual headings.
+- Estimated reading time, prose word count, and a thin progress indicator.
+- Responsive layout, keyboard access, reduced motion and clean print styling.
+- Inline SVG-only visuals; no raster assets, fonts, CDNs, tracking or build step.
+
+Markdown remains the editable source. The skill replaces template preview content
+with matching paper content; it is not a general Markdown renderer. Theme storage
+is best-effort, and the narrative/native links remain readable without JavaScript.
+See the [HTML visual contract](skills/paper-strategist/references/html-style.md).
+Generation does not authorize uploading or sharing the paper.
 
 ### Worktrees and draft PRs
 
@@ -297,7 +323,7 @@ skill directories. No symlink privileges are required for marketplace metadata.
 
    ```text
    node scripts/validate-marketplace.mjs
-   node --test tests/marketplace.test.mjs
+   node --test
    git diff --check
    ```
 

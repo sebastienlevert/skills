@@ -17,4 +17,4 @@ jobs:
         with:
           node-version: 22
       - run: node scripts/validate-marketplace.mjs
-      - run: node --test tests/marketplace.test.mjs
+      - run: node --test
