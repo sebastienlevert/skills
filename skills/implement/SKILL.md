@@ -3,8 +3,9 @@ name: implement
 description: >
   Deliver an authorized issue, feature, or bug fix end to end in any repository:
   refresh the actual base, use a dedicated sibling worktree and branch, implement
-  the smallest complete change, validate and review it, then push and open a draft
-  PR. Reuse the same worktree and PR for follow-ups. Use for "implement this",
+  the smallest complete change, use a brief test plan and lightweight readiness
+  check, then push and open a draft PR. Reuse the same worktree and PR for
+  follow-ups. Use for "implement this",
   "implement issue", or an explicitly requested implementation task. Never merge,
   ready a draft, overwrite unrelated work, or substitute a plan for delivery.
 ---
@@ -76,6 +77,11 @@ change for a bug fix that restores agreed behavior.
 
 ## 3. Implement the smallest complete change
 
+- Before editing, derive a brief test plan from acceptance and the affected path:
+  the main behavior, relevant error/edge cases, and the most likely regression.
+  Use the [test-plan method](../test-plan/SKILL.md) when available. The essentials
+  are this bullet plus mapping cases to existing focused checks; no separate
+  session, committed plan, agent cast or minimum case count is required.
 - Inspect the relevant execution path and dependent consumers before editing.
   Preserve intended behavior and established APIs, CLI defaults, environment
   resolution, stored data, schemas, statuses, and exit codes.
@@ -93,11 +99,14 @@ change for a bug fix that restores agreed behavior.
   Do not introduce secrets, expand permissions, perform unrequested live writes,
   or use a different tool to bypass a denied resource.
 
-## 4. Validate and review the exact result
+## 4. Validate and check readiness once
 
 1. Run the smallest relevant tests and the project's required formatter, linter,
    type/schema/build checks for this change. Follow mandatory project-wide gates;
    do not impose another repository's tooling or numeric coverage threshold.
+   Map results to the brief test plan and reuse checks already valid for the
+   current tree, relevant inputs and environment. Do not repeat them just because
+   a second workflow step starts.
 2. Reproduce the original issue or otherwise verify the acceptance criteria,
    including preserved behavior. A build or static document check alone does not
    prove live/runtime correctness.
@@ -109,6 +118,12 @@ change for a bug fix that restores agreed behavior.
 5. Before publishing, fetch again and inspect base/head movement. Integrate safely
    where needed and rerun checks affected by the new tree. A passed check from an
    earlier revision is not validation of the latest commit.
+6. Apply the [prepare-pr method](../prepare-pr/SKILL.md) as a lightweight final
+   pass: scope/compatibility, validation evidence, unresolved review/docs issues,
+   and delivery metadata. These four checks are the fallback when the sibling
+   skill is unavailable. Reuse collected evidence; do not launch another full
+   review or repeat passing checks without a changed input, new risk or project
+   requirement. This assessment never marks the PR ready.
 
 If a required check is blocked by infrastructure or a pre-existing problem,
 separate that evidence from your changes. Do not claim completion. A draft can be
@@ -146,4 +161,6 @@ and report exactly what remains; never silently present it as validated delivery
 - Follow-up fixes reuse the same worktree/PR rather than creating duplicate work.
 - Custom base branches, alternate remote names and different stacks work.
 - Required tests validate the changed revision; red or blocked checks remain visible.
+- Test planning and readiness reuse existing evidence without mandatory extra
+  artifacts, model calls, review casts or duplicate test runs.
 - Delivery is a verified draft PR, not local-only commits or a launch command.
