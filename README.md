@@ -42,19 +42,18 @@ and [local preview](#install-from-a-local-checkout) below.
 | [triage](skills/triage/SKILL.md) | Decide which review concerns to fix, clarify, defer, or reject with evidence. | Advisory by default; corrections and GitHub side effects require authorization. |
 | [address-pr-feedback](skills/address-pr-feedback/SKILL.md) | Resolve conflicts and finish authorized review fixes through code, evidence replies, and thread resolution. | Push and verify fixes first; close only fully addressed native threads, never the PR itself. |
 | [prepare-pr](skills/prepare-pr/SKILL.md) | Assess review readiness without repeating a full pipeline. | Reuses current validation; assessment changes no code or PR state. |
-| [note-taker](skills/note-taker/SKILL.md) | Capture structured meetings, one-on-ones, and action items. | File access; GitHub access when filing linked action items. |
 | [paper-strategist](skills/paper-strategist/SKILL.md) | Write decision-ready papers and matching content-first HTML. | Offline template, light/dark mode, floating TOC, read time, SVG-only visuals; no build dependencies. |
 | [research-brief](skills/research-brief/SKILL.md) | Produce source-grounded market, competitive, customer or technical research. | Uses authorized available sources; facts, claims, inference and unknowns remain distinct. |
-| [md-to-word](skills/md-to-word/SKILL.md) | Convert Markdown into a Word document. | .NET and the `SpecWorks.MarkMyWord.CLI` tool (`markmyword`), installed separately. |
-| [oof](skills/oof/SKILL.md) | Prepare an out-of-office catch-up from workplace activity. | An authorized WorkIQ connection and access to the relevant M365 data. |
-| [plugin-generator](skills/plugin-generator/SKILL.md) | Scaffold plugin projects and reusable skills. | Check generated metadata against your host's current format; legacy examples target Copilot/Claude. |
 | [auto-review](skills/auto-review/SKILL.md) | Review PRs, local changes, and follow-up fixes across stacks. | Read-only by default; posting and recurring sweeps require an explicit request. |
-| [ralph-loop](skills/ralph-loop/SKILL.md) | Run an iterative development loop with persisted progress. | Requires Copilot CLI and Git, even when invoked from Claude or Codex; review its autonomous execution behavior first. |
 
 Marketplace compatibility means the host can install and discover the toolkit.
 It does not make a host-specific tool or external integration available everywhere.
-Some legacy skills describe particular tool names; use only equivalent,
-authorized capabilities actually provided by your host.
+Use only authorized capabilities actually provided by your host.
+
+Version 2 removes the legacy `ralph-loop`, `oof`, `md-to-word`, `note-taker`, and
+`plugin-generator` skills. The upgraded `paper-strategist` remains included.
+Older versions remain available in Git history, but updates no longer bundle
+those five workflows.
 
 ## Use the skills
 
@@ -209,8 +208,8 @@ manufactured by changing accounts. Worktree cleanup remains separate.
 - Install Git for repository workflows and GitHub CLI (`gh`) for the new
   issue/epic/spec/implementation workflows. Verify access with `gh auth status`.
 - Install the target project's own tools only as that project requires.
-- Configure optional dependencies only for skills you use, such as WorkIQ or
-  `markmyword`. The toolkit does not bundle credentials, MCP servers, or services.
+- Configure any research sources separately when needed. The toolkit does not
+  bundle credentials, MCP servers, or services.
 - Review a skill before using it. Instructions do not bypass native permission
   prompts, tenant restrictions, or repository policy.
 
@@ -370,7 +369,7 @@ selected snapshot. Restart sessions after updates. Local marketplace changes may
 require reinstalling the plugin; a catalog refresh alone is not proof that a
 running session has reloaded its instructions.
 
-Removing the toolkit does not uninstall Git, `gh`, .NET tools, or WorkIQ. Removing
+Removing the toolkit does not uninstall Git, `gh`, or other external tools. Removing
 a marketplace can affect every plugin installed from it; this catalog currently
 contains one plugin.
 
@@ -439,7 +438,6 @@ PRs, email actions, or autonomous loops just to test marketplace discovery.
 | Old content remains after an update | Refresh the catalog, update/reinstall the cached plugin, then restart. Verify which checkout or ref supplies the content. |
 | Duplicate skills appear | Inspect standalone/custom registrations as well as installed plugins; remove only the redundant installation you selected. |
 | A skill cannot access GitHub or M365 | Authenticate/configure its external tools. Marketplace installation does not supply service permissions. |
-| A Markdown or Word workflow fails | Check the skill's optional tools and file-access requirements; not every workflow is dependency-free. |
 | Windows checkout lacks symlink privileges | Marketplace metadata uses real files; no symlink setup is needed for these catalogs. |
 
 ## Format references
