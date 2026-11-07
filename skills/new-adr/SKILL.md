@@ -71,6 +71,8 @@ For persisted work:
 - Use a dedicated sibling worktree/branch from the fresh remote base. Preserve
   dirty/shared/diverged checkouts; disclose when the base could not safely be
   pulled. Reuse the same task worktree/PR for follow-ups, without force-pushing.
+  For a bare container, task worktrees are siblings of main/default inside the
+  container; never nest them inside a source checkout.
 - Change only the decision and directly affected navigation/references. Run the
   project's relevant document/link checks and review consistency; do not run
   unrelated application builds or add a documentation gate to ordinary tasks.

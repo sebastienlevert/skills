@@ -58,8 +58,11 @@ change for a bug fix that restores agreed behavior.
    check out over dirty work, or repair someone else's diverged branch. If the
    base checkout cannot safely be pulled, leave it alone, use the just-fetched
    remote base, and disclose this distinction.
-4. For new work, create a unique branch and **sibling worktree beside the core
-   repository**, from the refreshed remote base:
+4. For new work, create a unique branch and task worktree from the refreshed
+   remote base. Follow the registered layout: for a `.bare` container, place it
+   **beside the main/default checkout inside the container**; for an ordinary
+   checkout, use a sibling beside that checkout. Never nest it inside a source
+   worktree:
 
    ```text
    git worktree add -b <task-branch> <sibling-path> <remote>/<base>
@@ -82,6 +85,7 @@ change for a bug fix that restores agreed behavior.
   Use the [test-plan method](../test-plan/SKILL.md) when available. The essentials
   are this bullet plus mapping cases to existing focused checks; no separate
   session, committed plan, agent cast or minimum case count is required.
+  Reuse a supplied current plan instead of generating it again when this phase starts.
 - Inspect the relevant execution path and dependent consumers before editing.
   Preserve intended behavior and established APIs, CLI defaults, environment
   resolution, stored data, schemas, statuses, and exit codes.

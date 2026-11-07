@@ -2,7 +2,7 @@
   "name": "skills",
   "metadata": {
     "description": "Personal skills marketplace for coding agent workflows",
-    "version": "1.3.0"
+    "version": "1.4.0"
   },
   "owner": {
     "name": "Sebastien Levert",
@@ -13,7 +13,7 @@
       "name": "personal-toolkit",
       "source": "./",
       "description": "Skills for evidence-backed planning, implementation, review, writing, and personal productivity.",
-      "version": "1.3.0",
+      "version": "1.4.0",
       "author": {
         "name": "Sebastien Levert",
         "email": "sebastienlevert@users.noreply.github.com"

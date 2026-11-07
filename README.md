@@ -31,6 +31,8 @@ and [local preview](#install-from-a-local-checkout) below.
 | Skill | Purpose | Important prerequisites or boundaries |
 |---|---|---|
 | [new-issue](skills/new-issue/SKILL.md) | Research, deduplicate, draft, or file an actionable issue. | Authenticated `gh`; creates only the authorized issue, not implementation. |
+| [setup-repo](skills/setup-repo/SKILL.md) | Set up a bare Git container with main/default and sibling task worktrees inside it. | Existing-repo conversion is explicit and preserves local work and configured paths. |
+| [factory](skills/factory/SKILL.md) | Select an eligible issue and run a bounded delivery/review/feedback loop. | Modes draft/ready/merge; merge requires high evidence-backed confidence and normal repository enforcement. |
 | [new-epic](skills/new-epic/SKILL.md) | Define outcomes, priorities, scope boundaries, and approved child issues. | Authenticated `gh`; no speculative bulk creation or silent reparenting. |
 | [new-spec](skills/new-spec/SKILL.md) | Create or update a project-native behavioral contract. | Git and `gh`; persisted work uses an isolated worktree and draft PR. |
 | [new-adr](skills/new-adr/SKILL.md) | Record architectural alternatives, decisions, and consequences. | Project-native conventions; proposed decisions are not automatically accepted or implemented. |
@@ -38,6 +40,7 @@ and [local preview](#install-from-a-local-checkout) below.
 | [test-plan](skills/test-plan/SKILL.md) | Derive focused verification from a task or actual diff. | Standalone use runs no tests; included as a brief step in implementation. |
 | [implement](skills/implement/SKILL.md) | Deliver a scoped change through validation and a draft PR. | Git, `gh`, and the target project's tools; no automatic merge. |
 | [triage](skills/triage/SKILL.md) | Decide which review concerns to fix, clarify, defer, or reject with evidence. | Advisory by default; corrections and GitHub side effects require authorization. |
+| [address-pr-feedback](skills/address-pr-feedback/SKILL.md) | Resolve conflicts and finish authorized review fixes through code, evidence replies, and thread resolution. | Push and verify fixes first; close only fully addressed native threads, never the PR itself. |
 | [prepare-pr](skills/prepare-pr/SKILL.md) | Assess review readiness without repeating a full pipeline. | Reuses current validation; assessment changes no code or PR state. |
 | [note-taker](skills/note-taker/SKILL.md) | Capture structured meetings, one-on-ones, and action items. | File access; GitHub access when filing linked action items. |
 | [paper-strategist](skills/paper-strategist/SKILL.md) | Write decision-ready papers and matching content-first HTML. | Offline template, light/dark mode, floating TOC, read time, SVG-only visuals; no build dependencies. |
@@ -67,12 +70,16 @@ Examples of requests:
 
 ```text
 Use new-issue to draft an issue describing this bug. Do not publish it yet.
+Use setup-repo to clone owner/repo into my project directory with .bare and main/task checkouts.
+Use factory for owner/repo --mode draft to deliver the next eligible issue.
+Use factory for owner/repo#123 --mode merge to close the loop only when the required evidence, checks, and reviews permit it.
 Use new-epic to propose a small preview and a prioritized requirements table.
 Use new-spec to persist a focused spec in this repository and open a draft PR.
 Use investigate to understand this failure without changing code.
 Use new-adr to record this decision and its alternatives as Proposed.
 Use implement to fix owner/repo#123, preserving existing behavior.
 Use triage to assess these review comments before we change anything.
+Use address-pr-feedback to fix the feedback on owner/repo#123, push verified changes, reply with evidence, and resolve addressed threads.
 Use prepare-pr to assess this draft without marking it ready.
 ```
 
@@ -133,6 +140,14 @@ the user requests fixes or readying. In implementation, readiness remains
 advisory and the PR stays a draft. `triage` preserves the disposition of each
 finding instead of blindly applying or dismissing feedback.
 
+For an authorized end-to-end correction, `address-pr-feedback` goes further:
+it safely integrates the base when needed, fixes and validates code, pushes to
+the same PR branch, replies to each concern with actual commit/test evidence, then
+resolves only fully addressed native review threads. A posted reply alone is not
+a fix. Partial, disputed or blocked concerns stay open; ordinary PR comments have
+no native thread-resolution state. Conflict-only requests do not trigger unrelated
+feedback replies or resolutions.
+
 ### Worktrees and draft PRs
 
 Persisted spec, ADR, and implementation workflows:
@@ -146,6 +161,47 @@ Persisted spec, ADR, and implementation workflows:
 
 A default branch name, framework, account, model, or numeric coverage threshold
 is not hardcoded. These workflows never merge or mark a draft ready.
+
+### Bare container layout
+
+`setup-repo` uses one container per repository:
+
+```text
+<project-parent>/<repo-name>/
+  .bare/
+  .git
+  main/
+  <task-worktree>/
+```
+
+The branch folder follows the actual default branch when it is not main.
+Task worktrees are siblings of that checkout **within the container**, never
+nested inside the source checkout. The container is not a build directory.
+Existing checkout conversion requires an explicit migration request, recovery
+checkpoints, native Git repair/move operations and verification of local work and
+registered source paths.
+
+### Factory modes
+
+`factory` is a thin router that invokes the owning skills for one issue and up
+to two correction cycles by default. `triage` owns backlog selection;
+`implement`, `auto-review`, `address-pr-feedback` and `prepare-pr` own delivery,
+review, corrections and readiness. It does not duplicate their logic.
+Investigation, specs and ADRs remain conditional; test planning is reused from
+implementation rather than repeated. A missing required skill is a visible
+dependency, not a silent fallback pipeline.
+
+| Mode | Final authority |
+|---|---|
+| `draft` | Implement, validate, review and address scoped feedback; create a draft and preserve an existing PR's state. |
+| `ready` | Also mark ready when the project's conditions pass. No approval or merge. |
+| `merge` | Also approve when eligible and merge normally only with high evidence-backed confidence and required checks/reviews satisfied. |
+
+Implementation still initially produces a draft. Only the explicit factory mode
+permits later state changes. No mode bypasses protection, self-approves, invents
+confidence percentages, or treats queue admission as a completed merge. Own PRs
+follow the actual independent-approval requirements; an approval cannot be
+manufactured by changing accounts. Worktree cleanup remains separate.
 
 ## Prerequisites and authorization
 
