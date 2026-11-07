@@ -39,6 +39,7 @@ and [local preview](#install-from-a-local-checkout) below.
 | [md-to-word](skills/md-to-word/SKILL.md) | Convert Markdown into a Word document. | .NET and the `SpecWorks.MarkMyWord.CLI` tool (`markmyword`), installed separately. |
 | [oof](skills/oof/SKILL.md) | Prepare an out-of-office catch-up from workplace activity. | An authorized WorkIQ connection and access to the relevant M365 data. |
 | [plugin-generator](skills/plugin-generator/SKILL.md) | Scaffold plugin projects and reusable skills. | Check generated metadata against your host's current format; legacy examples target Copilot/Claude. |
+| [auto-review](skills/auto-review/SKILL.md) | Review PRs, local changes, and follow-up fixes across stacks. | Read-only by default; posting and recurring sweeps require an explicit request. |
 | [ralph-loop](skills/ralph-loop/SKILL.md) | Run an iterative development loop with persisted progress. | Requires Copilot CLI and Git, even when invoked from Claude or Codex; review its autonomous execution behavior first. |
 
 Marketplace compatibility means the host can install and discover the toolkit.
@@ -130,6 +131,27 @@ Claude versions that do not provide `claude plugin list`. In Codex, check `/skil
 If installed by marketplace and also registered individually, the same skill may
 appear more than once. Choose one installation method per host; do not remove a
 personal registration until you know which directory it points to.
+
+### Auto-review
+
+Use `auto-review` to review a PR, local changes, or fixes to previous findings.
+It checks compatibility and proportionate complexity, applies change-specific
+lenses, and returns consolidated findings. Posting and recurring sweeps require
+an explicit request; the skill never merges PRs.
+
+To make only this skill available personally in Copilot CLI, register its
+directory from a persistent checkout:
+
+```text
+copilot skill add <checkout>/skills/auto-review
+copilot skill list
+```
+
+Restart or run `/skills reload` in an existing session after installation.
+The [skill](skills/auto-review/SKILL.md) includes the workflow and a
+[re-review reference](skills/auto-review/references/re-review.md) with behavioral
+acceptance scenarios. There are no language-specific tool dependencies; GitHub
+reviews use the authenticated `gh` CLI.
 
 ## Install from a local checkout
 
