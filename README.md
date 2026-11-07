@@ -33,7 +33,12 @@ and [local preview](#install-from-a-local-checkout) below.
 | [new-issue](skills/new-issue/SKILL.md) | Research, deduplicate, draft, or file an actionable issue. | Authenticated `gh`; creates only the authorized issue, not implementation. |
 | [new-epic](skills/new-epic/SKILL.md) | Define outcomes, priorities, scope boundaries, and approved child issues. | Authenticated `gh`; no speculative bulk creation or silent reparenting. |
 | [new-spec](skills/new-spec/SKILL.md) | Create or update a project-native behavioral contract. | Git and `gh`; persisted work uses an isolated worktree and draft PR. |
+| [new-adr](skills/new-adr/SKILL.md) | Record architectural alternatives, decisions, and consequences. | Project-native conventions; proposed decisions are not automatically accepted or implemented. |
+| [investigate](skills/investigate/SKILL.md) | Establish root cause and a bounded correction plan. | Advisory by default; no source fixes, dependency installs or automatic posting. |
+| [test-plan](skills/test-plan/SKILL.md) | Derive focused verification from a task or actual diff. | Standalone use runs no tests; included as a brief step in implementation. |
 | [implement](skills/implement/SKILL.md) | Deliver a scoped change through validation and a draft PR. | Git, `gh`, and the target project's tools; no automatic merge. |
+| [triage](skills/triage/SKILL.md) | Decide which review concerns to fix, clarify, defer, or reject with evidence. | Advisory by default; corrections and GitHub side effects require authorization. |
+| [prepare-pr](skills/prepare-pr/SKILL.md) | Assess review readiness without repeating a full pipeline. | Reuses current validation; assessment changes no code or PR state. |
 | [note-taker](skills/note-taker/SKILL.md) | Capture structured meetings, one-on-ones, and action items. | File access; GitHub access when filing linked action items. |
 | [paper-strategist](skills/paper-strategist/SKILL.md) | Develop a strategy paper through an interview and revision process. | File access; no external service required by the skill itself. |
 | [md-to-word](skills/md-to-word/SKILL.md) | Convert Markdown into a Word document. | .NET and the `SpecWorks.MarkMyWord.CLI` tool (`markmyword`), installed separately. |
@@ -63,7 +68,11 @@ Examples of requests:
 Use new-issue to draft an issue describing this bug. Do not publish it yet.
 Use new-epic to propose a small preview and a prioritized requirements table.
 Use new-spec to persist a focused spec in this repository and open a draft PR.
+Use investigate to understand this failure without changing code.
+Use new-adr to record this decision and its alternatives as Proposed.
 Use implement to fix owner/repo#123, preserving existing behavior.
+Use triage to assess these review comments before we change anything.
+Use prepare-pr to assess this draft without marking it ready.
 ```
 
 Specify the repository when it is not the current project. Supply the actual
@@ -78,9 +87,29 @@ problem or desired outcome, not only a skill name.
   it does not invent a spec for every small fix.
 - `implement` executes the authorized task rather than returning a launch command.
 
+### A lightweight development lifecycle
+
+```text
+new-issue -> investigate (when needed) -> new-spec / new-adr (when warranted)
+          -> implement [brief test-plan -> change -> validate -> prepare-pr]
+          -> draft PR -> auto-review / triage (when requested)
+```
+
+The arrows describe useful combinations, not mandatory stages for every task.
+An obvious fix does not need an investigation, spec, ADR, or a separate review
+session. `implement` includes a brief test plan and a final readiness pass; it
+reuses evidence and does not run two pipelines just because both skills exist.
+Rerun checks when relevant code, inputs or integration change, or project policy
+requires it.
+
+Standalone `test-plan` only plans. Standalone `prepare-pr` only assesses unless
+the user requests fixes or readying. In implementation, readiness remains
+advisory and the PR stays a draft. `triage` preserves the disposition of each
+finding instead of blindly applying or dismissing feedback.
+
 ### Worktrees and draft PRs
 
-Persisted spec and implementation workflows:
+Persisted spec, ADR, and implementation workflows:
 
 1. Fetch latest remote state and safely fast-forward the clean base checkout.
 2. Create a dedicated branch and sibling worktree from the refreshed base.
