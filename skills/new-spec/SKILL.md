@@ -43,9 +43,10 @@ For a persisted spec, use a dedicated branch and worktree:
   overwrite, or move it. Use the freshly fetched remote base for the new worktree
   and disclose that the base checkout itself was not pulled. If fetch fails, stop
   rather than claim the work starts from latest.
-- Create a uniquely named sibling worktree beside the core repository, with a
-  dedicated branch from that refreshed base. Respect user-selected drive/location
-  rules; do not nest it inside another checkout or use an unrelated scratch drive.
+- Create a uniquely named task worktree with a dedicated branch from that
+  refreshed base. In a bare container it belongs beside the main/default checkout
+  inside the container; in an ordinary layout use a sibling beside the checkout.
+  Respect user-selected drive/location rules; never nest inside a source worktree.
 - Reuse the same task's existing worktree/PR for follow-ups. Inspect remote changes
   first and integrate them only without overwriting local work; never create a
   second PR for the same task or force-push by default.

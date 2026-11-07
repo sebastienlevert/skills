@@ -1,0 +1,276 @@
+<!doctype html>
+<html lang="en" data-theme="system">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <title>Strategy paper - reader template</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --canvas: #f6f7f9; --surface: #ffffff; --ink: #172033; --muted: #526078;
+      --line: #dce2eb; --accent: #2459c4; --tint: #edf3ff; --shadow: 0 8px 36px #1523420c;
+      font: 112.5%/1.75 ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      scroll-behavior: smooth; scroll-padding-top: 3rem;
+    }
+    :root[data-theme="dark"] {
+      color-scheme: dark;
+      --canvas: #10141c; --surface: #171d28; --ink: #edf1f8; --muted: #b0bdd2;
+      --line: #354156; --accent: #9cbeff; --tint: #202e47; --shadow: 0 8px 36px #00000020;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-theme="light"]) {
+        color-scheme: dark;
+        --canvas: #10141c; --surface: #171d28; --ink: #edf1f8; --muted: #b0bdd2;
+        --line: #354156; --accent: #9cbeff; --tint: #202e47; --shadow: 0 8px 36px #00000020;
+      }
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; background: var(--canvas); color: var(--ink); }
+    [hidden] { display: none !important; }
+    a { color: var(--accent); text-underline-offset: .2em; }
+    :focus-visible { outline: 3px solid var(--accent); outline-offset: 4px; }
+    .skip { position: fixed; top: -5rem; left: 1rem; z-index: 5; padding: .5rem 1rem; background: var(--surface); }
+    .skip:focus { top: 1rem; }
+    .reader-bar { max-width: 76rem; margin: auto; padding: 1.1rem 1.5rem; display: flex; justify-content: space-between; align-items: center; gap: 1rem; font-size: .8rem; color: var(--muted); }
+    .reader-bar label { display: flex; gap: .5rem; align-items: center; }
+    select { font: inherit; color: var(--ink); background: var(--surface); border: 1px solid var(--line); border-radius: .5rem; padding: .3rem .5rem; }
+    .paper { width: min(100% - 3rem, 72ch); margin: 2rem auto 7rem; }
+    .paper-header { margin-bottom: 2.5rem; }
+    .eyebrow, .metadata { color: var(--muted); font-size: .8rem; }
+    .eyebrow { letter-spacing: .08em; text-transform: uppercase; }
+    h1 { font-size: clamp(2.1rem, 5vw, 3.3rem); line-height: 1.12; letter-spacing: -.045em; margin: .6rem 0 1.2rem; text-wrap: balance; }
+    .standfirst { font-size: 1.15rem; line-height: 1.6; color: var(--muted); }
+    .metadata { display: flex; flex-wrap: wrap; gap: .35rem 1.1rem; margin-top: 1.4rem; }
+    h2 { font-size: 1.5rem; line-height: 1.3; letter-spacing: -.02em; margin: 3rem 0 1rem; }
+    h3 { font-size: 1.1rem; line-height: 1.4; margin: 1.8rem 0 .6rem; }
+    p { margin: 0 0 1.15rem; }
+    li { margin-bottom: .45rem; }
+    .decision { background: var(--tint); border-left: 3px solid var(--accent); padding: 1.25rem 1.4rem; border-radius: 0 .65rem .65rem 0; }
+    .decision h2 { font-size: 1rem; margin: 0 0 .65rem; }
+    .decision p:last-child { margin-bottom: 0; }
+    blockquote { margin: 1.5rem 0; padding-left: 1.2rem; border-left: 2px solid var(--line); color: var(--muted); }
+    .table-wrap { overflow-x: auto; margin: 1.5rem 0; }
+    table { border-collapse: collapse; width: 100%; font-size: .9rem; }
+    th, td { padding: .7rem .8rem; border-bottom: 1px solid var(--line); vertical-align: top; text-align: left; }
+    th { font-weight: 650; }
+    pre { overflow-x: auto; padding: 1rem; background: var(--surface); border: 1px solid var(--line); border-radius: .5rem; }
+    code { font-size: .88em; }
+    figure { margin: 1.8rem 0; }
+    figure svg { display: block; width: 100%; height: auto; }
+    .diagram-box { fill: var(--surface); stroke: var(--line); }
+    .diagram-arrow { stroke: var(--accent); fill: none; }
+    .diagram-label { fill: var(--ink); font: 18px ui-sans-serif, system-ui, sans-serif; }
+    figcaption { margin-top: .65rem; color: var(--muted); font-size: .8rem; }
+    .floating-toc { position: fixed; right: 1rem; bottom: 1rem; z-index: 3; width: min(17rem, 100vw - 2rem); background: var(--surface); border: 1px solid var(--line); border-radius: .8rem; box-shadow: var(--shadow); font-size: .8rem; }
+    .floating-toc summary { cursor: pointer; padding: .7rem 1rem; font-weight: 600; }
+    .floating-toc nav { display: grid; max-height: min(55vh, 30rem); overflow-y: auto; padding: 0 .55rem .65rem; }
+    .floating-toc a { padding: .4rem .6rem; color: var(--muted); border-left: 2px solid transparent; text-decoration: none; border-radius: .2rem; }
+    .floating-toc a[data-level="3"] { padding-left: 1.2rem; }
+    .floating-toc a:hover, .floating-toc a[aria-current] { color: var(--accent); background: var(--tint); border-left-color: var(--accent); }
+    .progress { position: fixed; inset: 0 0 auto; z-index: 4; width: 100%; height: 3px; border: 0; appearance: none; background: transparent; }
+    .progress::-webkit-progress-bar { background: transparent; }
+    .progress::-webkit-progress-value { background: var(--accent); }
+    .progress::-moz-progress-bar { background: var(--accent); }
+    .sources { font-size: .85rem; color: var(--muted); border-top: 1px solid var(--line); padding-top: 1rem; }
+    @media (min-width: 1280px) {
+      .floating-toc { top: 7rem; bottom: auto; width: 14rem; }
+      .paper { transform: translateX(-3rem); }
+    }
+    @media (max-width: 600px) {
+      :root { font-size: 100%; }
+      .reader-bar { padding: 1rem; }
+      .paper { width: calc(100% - 2rem); margin-top: 1rem; }
+      .decision { padding: 1rem; }
+      .diagram-label { font-size: 32px; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      :root { scroll-behavior: auto; }
+    }
+    @media print {
+      :root, :root[data-theme] { color-scheme: light; --canvas: #fff; --surface: #fff; --ink: #111827; --muted: #374151; --line: #cbd5e1; --accent: #1e40af; --tint: #f1f5f9; font-size: 11pt; }
+      .reader-bar, .floating-toc, .progress, .skip { display: none !important; }
+      .paper { width: auto; margin: 0; transform: none; }
+      h2, h3 { break-after: avoid; }
+      figure, tr, .decision { break-inside: avoid; }
+      .table-wrap { overflow: visible; }
+      a { color: inherit; }
+    }
+  </style>
+</head>
+<body>
+  <a class="skip" href="#paper">Skip to paper</a>
+  <progress id="reading-progress" class="progress" max="100" value="0" aria-label="Reading progress" hidden></progress>
+  <header class="reader-bar">
+    <span>Strategy paper <span aria-hidden="true">&middot;</span> Template preview</span>
+    <label id="theme-control" hidden>Theme
+      <select id="theme-select" aria-label="Color theme">
+        <option value="system">System</option><option value="light">Light</option><option value="dark">Dark</option>
+      </select>
+    </label>
+  </header>
+  <aside class="floating-toc" aria-label="On this page">
+    <details id="toc">
+      <summary>On this page</summary>
+      <nav id="toc-links" aria-label="Paper sections">
+        <a href="#decision">Executive decision brief</a>
+        <a href="#context">Context</a><a href="#problem">Problem</a><a href="#insight">Insight</a>
+        <a href="#proposal">Proposal</a><a href="#operating-model">Operating model</a>
+        <a href="#proof">Proof and signals</a><a href="#risks">Risks and open decisions</a>
+        <a href="#next">Next steps</a>
+      </nav>
+    </details>
+  </aside>
+  <main>
+    <article id="paper" class="paper" tabindex="-1">
+      <header class="paper-header">
+        <div class="eyebrow">Decision paper / Draft</div>
+        <h1>A clear case for the next decision</h1>
+        <p class="standfirst">A content-first reader for a precise recommendation, its evidence, and the choice that needs to be made.</p>
+        <div class="metadata">
+          <span>Illustrative template, not an actual proposal</span>
+          <span id="reading-metrics" hidden><span id="read-time"></span> <span aria-hidden="true">&middot;</span> <span id="word-count"></span></span>
+        </div>
+      </header>
+      <div id="paper-body">
+        <section class="decision" aria-labelledby="decision">
+          <h2 id="decision">Executive decision brief</h2>
+          <p><strong>Recommendation:</strong> State the proposed choice and the outcome it enables.</p>
+          <p><strong>Why now:</strong> Name the change or evidence making this timely.</p>
+          <p><strong>Decision requested:</strong> Ask for a specific choice, not a vague endorsement.</p>
+        </section>
+        <section aria-labelledby="context">
+          <h2 id="context">1. Context</h2>
+          <p>Orient the reader with the audience, relevant change, constraints, and explicit boundaries. Provide only the background necessary to understand the decision.</p>
+        </section>
+        <section aria-labelledby="problem">
+          <h2 id="problem">2. Problem</h2>
+          <p>Describe observable pain and the current baseline. Separate original evidence from an assumption or an incomplete signal. Avoid presenting a polished narrative as proof.</p>
+        </section>
+        <section aria-labelledby="insight">
+          <h2 id="insight">3. Insight</h2>
+          <p>Explain what changes the way the problem should be approached. Make the causal argument explicit rather than jumping from a list of problems to a preferred solution.</p>
+        </section>
+        <section aria-labelledby="proposal">
+          <h2 id="proposal">4. Proposal</h2>
+          <p>Describe the mechanism, responsibility boundaries, and alternatives. A diagram should explain a relationship the prose alone leaves difficult to understand.</p>
+          <figure>
+            <svg viewBox="0 0 660 112" role="img" aria-labelledby="flow-title flow-description">
+              <title id="flow-title">From context to a decision supported by evidence</title>
+              <desc id="flow-description">Three conceptual steps: context informs a proposed decision, which is tested against evidence.</desc>
+              <rect class="diagram-box" x="1" y="24" width="180" height="64" rx="10"></rect>
+              <rect class="diagram-box" x="240" y="24" width="180" height="64" rx="10"></rect>
+              <rect class="diagram-box" x="479" y="24" width="180" height="64" rx="10"></rect>
+              <path class="diagram-arrow" d="M190 56h38m-7-6 7 6-7 6M429 56h38m-7-6 7 6-7 6" stroke-width="2"></path>
+              <text class="diagram-label" x="91" y="62" text-anchor="middle">Context</text>
+              <text class="diagram-label" x="330" y="62" text-anchor="middle">Decision</text>
+              <text class="diagram-label" x="569" y="62" text-anchor="middle">Evidence</text>
+            </svg>
+            <figcaption>Conceptual example only. Replace it with a relevant SVG or remove the figure.</figcaption>
+          </figure>
+          <div class="table-wrap" role="region" aria-label="Alternative comparison" tabindex="0">
+            <table>
+              <thead><tr><th>Option</th><th>Benefit</th><th>Tradeoff</th></tr></thead>
+              <tbody><tr><td>Keep the current approach</td><td>Explain what remains useful.</td><td>Explain the unresolved cost.</td></tr><tr><td>Proposed change</td><td>State the expected improvement.</td><td>State the new constraint.</td></tr></tbody>
+            </table>
+          </div>
+        </section>
+        <section aria-labelledby="operating-model">
+          <h2 id="operating-model">5. Operating model</h2>
+          <p>Describe the smallest credible path to execution, its responsibilities and dependencies. Include owners or dates only when they are established.</p>
+        </section>
+        <section aria-labelledby="proof">
+          <h2 id="proof">6. Proof and signals</h2>
+          <p>Define what would demonstrate the proposal works, what remains unproven, and which signals would trigger a stop or pivot. Do not invent a metric to make the section appear complete.</p>
+        </section>
+        <section aria-labelledby="risks">
+          <h2 id="risks">7. Risks and open decisions</h2>
+          <p>State the failure modes, mitigations, and assumptions that could overturn the thesis. Keep an unresolved decision visibly different from an accepted commitment.</p>
+        </section>
+        <section aria-labelledby="next">
+          <h2 id="next">8. Next steps</h2>
+          <p>Finish with concrete actions and the decision needed from the reader. Remove preview content and verify the paper's facts before sharing it.</p>
+        </section>
+        <footer class="sources"><strong>Sources:</strong> Replace this note with verified original references appropriate for the intended audience.</footer>
+      </div>
+    </article>
+  </main>
+  <script type="module" id="reader-script">
+    export function countWords(text) {
+      return (String(text).match(/[\p{L}\p{N}]+(?:['-][\p{L}\p{N}]+)*/gu) || []).length;
+    }
+    export function readingMinutes(words) {
+      return Math.max(1, Math.ceil(Math.max(0, Number(words) || 0) / 230));
+    }
+    export function headingId(text) {
+      return String(text).normalize('NFKD').replace(/\p{M}/gu, '').toLowerCase()
+        .replace(/[^\p{L}\p{N}]+/gu, '-').replace(/^-|-$/g, '') || 'section';
+    }
+    function initializeReader() {
+      const article = document.getElementById('paper');
+      const body = document.getElementById('paper-body');
+      const theme = document.getElementById('theme-select');
+      const modes = ['system', 'light', 'dark'];
+      let saved = 'system';
+      try { saved = localStorage.getItem('paper.theme') || 'system'; } catch {}
+      theme.value = modes.includes(saved) ? saved : 'system';
+      document.documentElement.dataset.theme = theme.value;
+      theme.addEventListener('change', () => {
+        document.documentElement.dataset.theme = theme.value;
+        try { localStorage.setItem('paper.theme', theme.value); } catch {}
+      });
+      document.getElementById('theme-control').hidden = false;
+      const prose = body.cloneNode(true);
+      prose.querySelectorAll('svg, pre, code, [data-reader-ignore]').forEach((node) => node.remove());
+      const words = countWords(prose.textContent);
+      document.getElementById('read-time').textContent = `About ${readingMinutes(words)} min read`;
+      document.getElementById('word-count').textContent = `${words.toLocaleString()} words`;
+      document.getElementById('reading-metrics').hidden = false;
+      const headings = [...body.querySelectorAll('h2, h3')];
+      const used = new Set([...document.querySelectorAll('[id]')].filter((node) => !headings.includes(node)).map((node) => node.id));
+      const nav = document.getElementById('toc-links');
+      nav.replaceChildren();
+      headings.forEach((heading) => {
+        const base = heading.id || headingId(heading.textContent);
+        let id = base;
+        for (let suffix = 2; used.has(id); suffix++) id = `${base}-${suffix}`;
+        used.add(id);
+        heading.id = id;
+        const link = document.createElement('a');
+        link.href = `#${encodeURIComponent(id)}`;
+        link.textContent = heading.textContent;
+        link.dataset.level = heading.tagName.slice(1);
+        nav.append(link);
+      });
+      document.querySelector('.floating-toc').hidden = !headings.length;
+      const wide = matchMedia('(min-width: 1280px)');
+      const toc = document.getElementById('toc');
+      const setToc = () => { toc.open = wide.matches; };
+      setToc();
+      wide.addEventListener('change', setToc);
+      const progress = document.getElementById('reading-progress');
+      progress.hidden = false;
+      let queued = false;
+      const update = () => {
+        queued = false;
+        const start = article.getBoundingClientRect().top + scrollY;
+        const distance = Math.max(1, article.scrollHeight - innerHeight);
+        progress.value = Math.max(0, Math.min(100, (scrollY - start) / distance * 100));
+        let active = headings[0];
+        headings.forEach((heading) => {
+          if (heading.getBoundingClientRect().top <= innerHeight * .3) active = heading;
+        });
+        [...nav.children].forEach((link, index) => {
+          if (headings[index] === active) link.setAttribute('aria-current', 'location');
+          else link.removeAttribute('aria-current');
+        });
+      };
+      const schedule = () => { if (!queued) { queued = true; requestAnimationFrame(update); } };
+      addEventListener('scroll', schedule, { passive: true });
+      addEventListener('resize', schedule);
+      update();
+    }
+    if (typeof document !== 'undefined') initializeReader();
+  </script>
+</body>
+</html>
