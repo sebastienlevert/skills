@@ -2,7 +2,7 @@
   "name": "skills",
   "metadata": {
     "description": "Personal skills marketplace for coding agent workflows",
-    "version": "1.0.0"
+    "version": "1.1.0"
   },
   "owner": {
     "name": "Sebastien Levert",
@@ -12,20 +12,13 @@
     {
       "name": "personal-toolkit",
       "source": "./",
-      "description": "Personal productivity toolkit: note-taking, autonomous dev loops, document conversion, strategy writing, OOF catch-up, and plugin scaffolding.",
-      "version": "1.0.0",
+      "description": "Skills for evidence-backed planning, implementation, review, writing, and personal productivity.",
+      "version": "1.1.0",
       "author": {
         "name": "Sebastien Levert",
         "email": "sebastienlevert@users.noreply.github.com"
       },
-      "keywords": [
-        "personal",
-        "productivity",
-        "notes",
-        "strategy",
-        "plugins",
-        "automation"
-      ],
+      "keywords": ["skills", "productivity", "planning", "development", "review"],
       "category": "productivity"
     }
   ]

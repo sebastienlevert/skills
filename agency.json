@@ -1,4 +1,4 @@
 {
-  "engines": ["copilot", "claude"],
+  "engines": ["copilot", "claude", "codex"],
   "category": "productivity"
 }
