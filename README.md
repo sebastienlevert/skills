@@ -45,6 +45,7 @@ and [local preview](#install-from-a-local-checkout) below.
 | [paper-strategist](skills/paper-strategist/SKILL.md) | Write decision-ready papers and matching content-first HTML. | Offline template, light/dark mode, floating TOC, read time, SVG-only visuals; no build dependencies. |
 | [research-brief](skills/research-brief/SKILL.md) | Produce source-grounded market, competitive, customer or technical research. | Uses authorized available sources; facts, claims, inference and unknowns remain distinct. |
 | [auto-review](skills/auto-review/SKILL.md) | Review PRs, local changes, and follow-up fixes across stacks. | Read-only by default; posting and recurring sweeps require an explicit request. |
+| [post-pr-comments](skills/post-pr-comments/SKILL.md) | Publish reviewed findings inline at their exact PR diff locations. | Authenticated `gh`; explicit posting, current-head verification, deduplication and verified delivery; no implicit approval or resolution. |
 
 Marketplace compatibility means the host can install and discover the toolkit.
 It does not make a host-specific tool or external integration available everywhere.
@@ -80,6 +81,7 @@ Use implement to fix owner/repo#123, preserving existing behavior.
 Use triage to assess these review comments before we change anything.
 Use address-pr-feedback to fix the feedback on owner/repo#123, push verified changes, reply with evidence, and resolve addressed threads.
 Use prepare-pr to assess this draft without marking it ready.
+Use post-pr-comments to publish the reviewed findings inline on owner/repo#123.
 ```
 
 Specify the repository when it is not the current project. Supply the actual
@@ -139,6 +141,12 @@ the user requests fixes or readying. In implementation, readiness remains
 advisory and the PR stays a draft. `triage` preserves the disposition of each
 finding instead of blindly applying or dismissing feedback.
 
+`post-pr-comments` publishes findings only when requested. It maps each concern
+to the relevant changed lines, rechecks the PR revision, avoids duplicate threads
+and reads the posted comments back from GitHub. A summary with file links isn't
+an inline review; approval, request-changes and thread resolution are separate
+permissions.
+
 For an authorized end-to-end correction, `address-pr-feedback` goes further:
 it safely integrates the base when needed, fixes and validates code, pushes to
 the same PR branch, replies to each concern with actual commit/test evidence, then
@@ -179,6 +187,12 @@ nested inside the source checkout. The container is not a build directory.
 Existing checkout conversion requires an explicit migration request, recovery
 checkpoints, native Git repair/move operations and verification of local work and
 registered source paths.
+
+An owner-grouped Windows example is `E:\owner\repo\.bare`, with
+`E:\owner\repo\main` and `E:\owner\repo\pr-123` beside it. A new setup doesn't use
+`E:\owner\repo.git` with repository-prefixed worktrees at the owner level.
+Conflicting local layout rules must be resolved before writing; changing a rule
+doesn't authorize migrating existing repositories.
 
 ### Factory modes
 

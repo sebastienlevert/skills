@@ -170,8 +170,10 @@ Keep suggestions and missing evidence distinct from confirmed defects.
    approval. Never approve your own PR or approve with unresolved P0/P1 findings.
 3. Include the reviewed head, finding IDs, evidence and material check limitations.
    Clearly identify automated review where applicable. Use file links pinned to
-   the reviewed commit. Prefer one summary over scattered inline comments unless
-   the user requests inline comments.
+   the reviewed commit. Follow [post-pr-comments](../post-pr-comments/SKILL.md)
+   when available: put each finding at its specific relevant diff lines within
+   one `COMMENT` review, rather than only linking files in a summary. Keep the
+   review body concise; use summary-only publication when explicitly requested.
 4. For a review use `gh api` with the exact `commit_id`, intended `event`, and body;
    pass text as data, never interpolated executable code. For an edit, change only
    the identified comment/review the user authorized.
