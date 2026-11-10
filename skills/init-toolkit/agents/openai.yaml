@@ -1,0 +1,5 @@
+interface:
+  display_name: "Initialize personal-toolkit"
+  short_description: "Explicitly initialize a folder or drive workspace"
+policy:
+  allow_implicit_invocation: false

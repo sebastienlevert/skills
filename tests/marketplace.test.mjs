@@ -107,3 +107,15 @@ test('rejects missing skill entrypoints and undocumented bundled skills', (t) =>
   writeFileSync(readme, readFileSync(readme, 'utf8').replaceAll('skills/new-issue/SKILL.md', 'removed'));
   assert.throws(() => validateMarketplace(directory), /README must link/);
 });
+
+test('rejects workspace initialization that permits implicit invocation', (t) => {
+  for (const [path, from, to, expected] of [
+    ['skills/init-toolkit/SKILL.md', 'disable-model-invocation: true', 'disable-model-invocation: false', /disable implicit invocation/],
+    ['skills/init-toolkit/agents/openai.yaml', 'allow_implicit_invocation: false', 'allow_implicit_invocation: true', /disable Codex implicit invocation/],
+  ]) {
+    const directory = fixture(t);
+    const file = join(directory, path);
+    writeFileSync(file, readFileSync(file, 'utf8').replace(from, to));
+    assert.throws(() => validateMarketplace(directory), expected);
+  }
+});
