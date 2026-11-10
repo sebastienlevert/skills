@@ -32,6 +32,11 @@ function skillName(root, directory) {
     }
   }
   assert(description.replace(/['"]/g, '').trim(), `${directory}: empty description`);
+  if (directory === 'init-toolkit') {
+    assert.match(match[1], /^disable-model-invocation:\s*true\s*$/m, 'init-toolkit must disable implicit invocation');
+    const policy = readFileSync(join(root, 'skills', directory, 'agents', 'openai.yaml'), 'utf8');
+    assert.match(policy, /^policy:\r?\n  allow_implicit_invocation: false\s*$/m, 'init-toolkit must disable Codex implicit invocation');
+  }
   return name[2];
 }
 

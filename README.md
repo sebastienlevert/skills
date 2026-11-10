@@ -26,10 +26,35 @@ presented as Codex support.
 Restart an existing agent session after installing. See [verification](#verify-installation)
 and [local preview](#install-from-a-local-checkout) below.
 
+### Initialize a folder or drive
+
+Explicitly invoke [init-toolkit](skills/init-toolkit/SKILL.md) with the directory
+you want to use as a toolkit workspace, for example:
+
+```text
+Use init-toolkit to initialize E:\Projects.
+Use init-toolkit to initialize the entire E:\ drive.
+```
+
+The bundled [AGENTS.md template](skills/init-toolkit/assets/AGENTS.md) routes
+common intents to the toolkit's skills rather than copying their procedures.
+The initializer creates or refreshes one managed block in the selected folder's
+`AGENTS.md`, preserving existing instructions, local overrides and registry data.
+It supports dry runs and repeated initialization; it doesn't traverse child
+repositories, install plugins, change trust/settings, or run downstream skills.
+The template can also be copied manually when no `AGENTS.md` exists.
+
+`init-toolkit` is explicit-only: Copilot/Claude model invocation is disabled in
+its frontmatter, and Codex implicit invocation is disabled in its skill policy.
+Initialization isn't a side effect of setup, implementation, or plugin installation.
+Hosts differ in how they load parent instructions across repository boundaries;
+an entry point at a drive root isn't a global host configuration change.
+
 ## What's included
 
 | Skill | Purpose | Important prerequisites or boundaries |
 |---|---|---|
+| [init-toolkit](skills/init-toolkit/SKILL.md) | Explicitly initialize a folder or drive with the toolkit's AGENTS.md entry point. | Node.js 22+ and an existing absolute target; managed-block updates preserve local content; never implicitly invoked. |
 | [new-issue](skills/new-issue/SKILL.md) | Research, deduplicate, draft, or file an actionable issue. | Authenticated `gh`; creates only the authorized issue, not implementation. |
 | [setup-repo](skills/setup-repo/SKILL.md) | Set up a bare Git container with main/default and sibling task worktrees inside it. | Existing-repo conversion is explicit and preserves local work and configured paths. |
 | [factory](skills/factory/SKILL.md) | Select an eligible issue and run a bounded delivery/review/feedback loop. | Modes draft/ready/merge; merge requires high evidence-backed confidence and normal repository enforcement. |
