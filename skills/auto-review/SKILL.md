@@ -188,3 +188,19 @@ someone else's findings resolved as part of this skill.
 
 Read [the re-review and sweep procedure](references/re-review.md) only for those
 modes. Do not schedule recurring work as a side effect of a single-PR review.
+
+### Ship review tick
+
+When [ship](../ship/SKILL.md) invokes this owner, follow its
+[watch contract](../ship/references/watch-contract.md) before writes and after
+publication. Review exactly its recorded PR in one bounded pass; never create
+child schedules or run a repository sweep. The explicit ship start authorizes
+advisory review of that self-authored/draft PR and `COMMENT` publication only,
+not native approval, fixes, readying or merge. Standalone permissions are unchanged.
+
+Recover head/base/scope, stable findings and verified review links from the run
+record. Skip unchanged, equivalently reviewed evidence without reposting; use
+re-review for a changed revision and reassess affected base/check/feedback inputs.
+Record the actual reviewed head/base, finding dispositions, result, evidence
+limits and verified publication URL. A concurrent push leaves that result stale;
+never mark a newer revision reviewed. The separate approve-pr tick owns approval.

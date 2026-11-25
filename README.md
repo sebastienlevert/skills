@@ -58,6 +58,10 @@ an entry point at a drive root isn't a global host configuration change.
 | [new-issue](skills/new-issue/SKILL.md) | Research, deduplicate, draft, or file an actionable issue. | Authenticated `gh`; creates only the authorized issue, not implementation. |
 | [setup-repo](skills/setup-repo/SKILL.md) | Set up a bare Git container with main/default and sibling task worktrees inside it. | Existing-repo conversion is explicit and preserves local work and configured paths. |
 | [factory](skills/factory/SKILL.md) | Select an eligible issue and run a bounded delivery/review/feedback loop. | Modes draft/ready/merge; merge requires high evidence-backed confidence and normal repository enforcement. |
+| [ship](skills/ship/SKILL.md) | Ship a finished change through publication, review, babysitting and policy-based approval. | GitHub Copilot CLI native `/every`; three session-scoped prompts, one PR, explicit start, no automatic merge. |
+| [publish-pr](skills/publish-pr/SKILL.md) | Validate and send a finished change upstream, creating or reusing its PR. | Authenticated Git/`gh`; new PRs default to draft; preserves task worktree and existing PR state. |
+| [babysit-pr](skills/babysit-pr/SKILL.md) | Observe and repair PR feedback, conflicts and failed CI. | Reuses `address-pr-feedback`; bounded passes and verified evidence replies; no approval or merge. |
+| [approve-pr](skills/approve-pr/SKILL.md) | Submit an eligible exact-commit approval under root `APPROVALS.md`. | Trusted actual-base policy plus repository rules/current review; never self-approve, bypass protection or merge. |
 | [new-epic](skills/new-epic/SKILL.md) | Define outcomes, priorities, scope boundaries, and approved child issues. | Authenticated `gh`; no speculative bulk creation or silent reparenting. |
 | [new-spec](skills/new-spec/SKILL.md) | Create or update a project-native behavioral contract. | Git and `gh`; persisted work uses an isolated worktree and draft PR. |
 | [new-adr](skills/new-adr/SKILL.md) | Record architectural alternatives, decisions, and consequences. | Project-native conventions; proposed decisions are not automatically accepted or implemented. |
@@ -107,6 +111,9 @@ Use triage to assess these review comments before we change anything.
 Use address-pr-feedback to fix the feedback on owner/repo#123, push verified changes, reply with evidence, and resolve addressed threads.
 Use prepare-pr to assess this draft without marking it ready.
 Use post-pr-comments to publish the reviewed findings inline on owner/repo#123.
+Use ship for this finished change, with a scheduled Copilot PR watch.
+Use babysit-pr for owner/repo#123 for one feedback/conflict/CI repair pass.
+Use approve-pr for owner/repo#123 under its root APPROVALS.md.
 ```
 
 Specify the repository when it is not the current project. Supply the actual
@@ -240,6 +247,64 @@ permits later state changes. No mode bypasses protection, self-approves, invents
 confidence percentages, or treats queue admission as a completed merge. Own PRs
 follow the actual independent-approval requirements; an approval cannot be
 manufactured by changing accounts. Worktree cleanup remains separate.
+
+### Ship with GitHub Copilot CLI
+
+`ship` is a **Copilot-native equivalent** of Claude Code's local
+[`/ship` and `/steward`](https://code.claude.com/docs/en/ship-command): publish a
+finished change, review it and watch feedback/conflicts/CI. It adds a separate
+repository-policy approval step, **not automatic merge**. It does not depend on
+Claude commands, Claude permission modes or Claude's watcher/platform limits.
+
+| Step | Independent skill | Schedule |
+|---|---|---|
+| Prepare PR and send upstream | `publish-pr` (uses `prepare-pr` for readiness) | Once at start; reuses the same task PR. |
+| Code review | `auto-review` | Initial `COMMENT` review, then `/every 15m` for changed evidence. |
+| Babysit feedback, conflicts and CI | `babysit-pr` (routes corrections to `address-pr-feedback`) | Initial pass, then `/every 5m`. |
+| Approve under repository rules | `approve-pr` | `/every 15m`; only when current evidence and identity are eligible. |
+
+```text
+/ship
+/ship owner/repo#123 --ready --watch-for 8h
+/ship owner/repo#123 --approval off --review-every 10m
+/ship status owner/repo#123
+/ship stop owner/repo#123
+```
+
+Find the installed skill with `/skills list`; use its actual registered command
+or ask by name if the host presents a qualified name. Options above are skill
+requests, not new shell commands. Defaults are a **24h** watch, 15m review/approval
+and 5m babysitting. `/every` requires experimental support on builds that mark
+it experimental. Ship uses the native scheduler and records verified schedule
+IDs; it never enables settings/permissions, starts another CLI, or substitutes
+a shell loop. Installing the toolkit creates no schedules.
+
+Each prompt binds one session-local run record and exact PR. Repeated starts
+reuse matching watchers, unchanged ticks avoid duplicate posts, and a new head
+invalidates old review/approval evidence. Stop/expiry/closed/merged PRs cancel the
+owned jobs. Approval alone keeps the watch active for later pushes. Native jobs
+are **session-scoped**, not a durable service; the session must remain available,
+and resumed work requires recovered receipts and current authority.
+
+The watch is delta-first and token-conscious: shared compact metadata, quiet idle
+ticks, owner loading only for actionable changes, authored-delta re-review and
+reuse of exact-tree checks. Full relevant diffs, logs and threads are read only
+when needed; permanent unchanged blockers aren't retried/reported each tick.
+Missing evidence never becomes a passing gate just to save tokens.
+
+New PRs default to draft; existing PR state is preserved. `--ready` explicitly
+authorizes a current `prepare-pr` readiness transition. Without it, draft approval
+waits for the owner to mark ready. Approval reads the target repository's root
+`APPROVALS.md` from the **actual PR base commit**, so a PR cannot weaken its own
+policy. Missing/ambiguous policy or inaccessible rules block approval only.
+The [opt-in example](skills/approve-pr/assets/APPROVALS.md) is not installed into
+target repositories automatically. Native eligibility, CODEOWNERS and protection
+remain authoritative; the PR author cannot approve their own PR, and an eligible
+approval is not proof that all merge requirements have been satisfied.
+
+Use the component skills independently for a single step. `ship` is for finished
+changes/PRs, while `factory` begins with issue selection/implementation and keeps
+its existing mode-bound closure. Neither silently starts the other's lifecycle.
 
 ## Prerequisites and authorization
 
