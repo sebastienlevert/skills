@@ -1,14 +1,14 @@
 ---
-name: babysit-pr
+name: watch
 description: >
-  Babysit one GitHub PR: assess new feedback, reply with evidence, resolve only
+  Watch one GitHub PR: assess new feedback, reply with evidence, resolve only
   addressed threads, manage merge conflicts and diagnose/fix failing CI on the
   same task branch. Reuses address-pr-feedback and current verification. One
   bounded pass standalone; recurring watch only when explicitly requested through
   Copilot /every or ship. Never approve, merge, ready a draft or change permissions.
 ---
 
-# Babysit a PR
+# Watch a PR
 
 Own **observation, CI diagnosis and routing**, not a second feedback-repair engine.
 Use [address-pr-feedback](../address-pr-feedback/SKILL.md) for correction,
@@ -18,7 +18,7 @@ owner or report that dependency; do not spawn another CLI or schedule child jobs
 ## Target and authority
 
 Resolve one exact PR, authenticated `gh` identity, its actual head repository/ref,
-base, writable task branch/worktree and user constraints. A request to babysit
+base, writable task branch/worktree and user constraints. A request to watch
 authorizes scoped feedback/conflict/CI repairs, validation and push, evidence
 replies, eligible resolutions and one justified transient CI rerun; it does not
 authorize unrelated features, approval, merge, auto-merge, readying, protection
@@ -27,7 +27,7 @@ changes, reviewer assignments or account switching. Plan-only is read-only.
 Standalone invocation makes **one pass**. An explicit recurring request uses
 Copilot's native scheduler and the [ship watch contract](../ship/references/watch-contract.md),
 with known scope, cadence, lifetime, authority and verified IDs. Ship already
-owns its three schedules: a babysit tick must not create another watcher. Missing
+owns its lifecycle schedules: a watch tick must not create another watcher. Missing
 scheduling capability is a blocker, never permission for a shell loop or daemon.
 
 ## Observe only what needs work

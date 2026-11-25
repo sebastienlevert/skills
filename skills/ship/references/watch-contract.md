@@ -21,7 +21,7 @@ Record these fields and persist after every meaningful transition:
 | Target | Head repository/branch, actual base branch, verified task worktree and push remote. |
 | Authority | Exact allowed effects, publication mode `COMMENT`, approval on/off, merge off by default/explicit on, explicit ready authority and user constraints. |
 | Lifetime | Start/expiry timestamps, starting/active/stopped/blocked/expired/closed/merged run status, stop reason; separate step states/blockers. |
-| Schedules | Review/babysit/approval and opted-in merge intervals, each native schedule ID and verified receipt/state. |
+| Schedules | Review/watch/approval and opted-in merge intervals, each native schedule ID and verified receipt/state. |
 | Policy | Base Markdown and YAML blob SHAs, source commit/links, validated sidecar fingerprint, complete deterministic result/fact fingerprint and expiry, eligibility constraints/gaps; no policy from PR head. |
 | Evidence | Last observed head/base, review head/base/scope and finding IDs/statuses, current validation/check evidence references, verified review/approval URLs and exact commit IDs. |
 | Repair | Feedback IDs and dispositions, pushed fix SHAs/reply URLs/thread states, failed run/job IDs and attempted reruns, consecutive unsuccessful repair count. |
@@ -113,7 +113,7 @@ review URLs for re-review, but never reuse an old verdict as current approval.
 The review tick explicitly allows advisory self-authored/draft review for this
 one run; this exception does not make it independent/native approval.
 
-Babysitting makes one scoped batch per tick, never a nested polling loop. After
+Watching makes one scoped batch per tick, never a nested polling loop. After
 **three consecutive unsuccessful repair attempts for the same root cause**,
 pause repair with evidence and ask for the material decision/access needed;
 don't reset the budget just because a retry created another commit or CI run.
@@ -153,7 +153,7 @@ Exercise with synthetic/read-only evidence, not live test posts or schedules:
 | Repeated `/ship` for the same active PR | Recover the run and native IDs; no duplicate schedules or initial review. |
 | A create/post times out after delivery | Reconcile matching scheduler/review records before retrying. |
 | Review and repair on an unchanged PR | No equivalent comments, commits, approvals or repeated CI reruns. |
-| Babysit pushes after review | New SHA cannot be approved using the old review; next review tick re-reviews. |
+| Watch pushes after review | New SHA cannot be approved using the old review; next review tick re-reviews. |
 | Base moves with unchanged head | Reassess integration-sensitive evidence; do not report base work as an authored defect. |
 | Draft or self-authored PR | Review/repair remain useful; approval pending on draft or blocked for author, never a fake approval. |
 | Missing APPROVALS.md or denied rule read | Approval is blocked, not permissive; review/repair continue within scope. |

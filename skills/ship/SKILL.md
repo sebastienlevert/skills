@@ -2,10 +2,10 @@
 name: ship
 description: >
   Ship a finished change with GitHub Copilot CLI: publish its PR, review it,
-  babysit feedback/conflicts/CI, and submit an eligible approval under the target
+  watch feedback/conflicts/CI, and submit an eligible approval under the target
   repository's root APPROVALS.md. Use for "/ship" or "ship this PR". Orchestrates
-  publish-pr, auto-review, babysit-pr and approve-pr with three native /every
-  schedules; explicit --merge adds risk-aware merge-pr closure and its schedule.
+  pr, review, watch and approve with three native /every
+  schedules; explicit --merge adds risk-aware merge closure and its schedule.
   One exact PR per run; no default merge, self-approval, permission changes or
   schedules from installation. Supports status and stop.
 ---
@@ -17,15 +17,18 @@ implementation or review engine. Invoke the four owning skills in this session:
 
 | Step | Owner | Result |
 |---|---|---|
-| 1. Prepare and send upstream | [publish-pr](../publish-pr/SKILL.md) | Verified pushed head and canonical PR; reuse a finished change, not a new implementation. |
-| 2. Code review | [auto-review](../auto-review/SKILL.md) | Revision-bound findings and a published `COMMENT` review; never approval in this step. |
-| 3. Babysit | [babysit-pr](../babysit-pr/SKILL.md) | Scoped feedback, conflict and CI repairs on the same branch, with verified replies. |
-| 4. Approval | [approve-pr](../approve-pr/SKILL.md) | Eligible native `APPROVE` under trusted `APPROVALS.md`, or an exact pending/blocked reason. |
-| Optional closure, only with `--merge` | [merge-pr](../merge-pr/SKILL.md) | Risk/confidence and all merge rules satisfied -> guarded normal merge/queue, or pending/blocked. |
+| 1. Prepare and send upstream | [pr](../pr/SKILL.md) | Verified pushed head and canonical PR; reuse a finished change, not a new implementation. |
+| 2. Code review | [review](../review/SKILL.md) | Revision-bound findings and a published `COMMENT` review; never approval in this step. |
+| 3. Watch | [watch](../watch/SKILL.md) | Scoped feedback, conflict and CI repairs on the same branch, with verified replies. |
+| 4. Approval | [approve](../approve/SKILL.md) | Eligible native `APPROVE` under trusted `APPROVALS.md`, or an exact pending/blocked reason. |
+| Optional closure, only with `--merge` | [merge](../merge/SKILL.md) | Risk/confidence and all merge rules satisfied -> guarded normal merge/queue, or pending/blocked. |
 
 Load the actual host skill names, reusing already loaded skills. A missing owner
 blocks its step; do not copy its procedure or launch another CLI, agent fleet,
 dynamic workflow, shell polling loop, cron job, or GitHub Actions watcher.
+These owners are the **personal-toolkit skills**, not Copilot's native `/pr` or
+`/review` commands. Select the toolkit entry by source/registered identifier;
+never substitute a host command merely because its short name matches.
 
 ## Invocation and authority
 
@@ -34,6 +37,7 @@ dynamic workflow, shell polling loop, cron job, or GitHub Actions watcher.
 /ship owner/repo#123
 /ship owner/repo#123 --ready --watch-for 8h
 /ship owner/repo#123 --ready --merge --merge-every 15m
+/ship owner/repo#123 --watch-every 5m
 /ship owner/repo#123 --approval off --review-every 10m
 /ship status owner/repo#123
 /ship stop owner/repo#123
@@ -68,7 +72,7 @@ marks it ready. Approval cannot be manufactured for the PR author's identity.
    state and preserve unrelated work. Use `gh`, never GitHub MCP. First recover
    an existing matching run: if it is active with verified receipts and unchanged
    scope/options, return status without repeating publication/kickoff work.
-2. Invoke `publish-pr` once; stop if upstream delivery cannot be verified. For an
+2. Invoke `pr` once; stop if upstream delivery cannot be verified. For an
    existing open PR it verifies/reuses the PR rather than opening another.
 3. Create/reuse the session-local run record from the
    [watch contract](references/watch-contract.md). Recover an existing run and
@@ -77,21 +81,21 @@ marks it ready. Approval cannot be manufactured for the PR author's identity.
    authorized replacement. Initialize step-specific dirty flags: approval and
    opted-in merge are due after kickoff even without changed remote metadata.
    Bind trusted APPROVALS.md plus APPROVALS.yml/.yaml blobs from the actual PR
-   base, not its head. Use approve-pr's deterministic evaluator for sidecar rules
+   base, not its head. Use approve's deterministic evaluator for sidecar rules
    and cache its complete fact-bound result/expiry, not repeated model parsing.
-   Missing/ambiguous policy blocks approval/merge only, not review or babysitting.
-4. Invoke `auto-review` on the pushed revision with explicit `COMMENT` publication
+   Missing/ambiguous policy blocks approval/merge only, not review or watching.
+4. Invoke `review` on the pushed revision with explicit `COMMENT` publication
    authority, including advisory review of this exact self-authored/draft PR.
    Save head/base, finding IDs, result and review URL. No approval in review.
-5. Invoke `babysit-pr` once with those findings. A fix invalidates the previous
+5. Invoke `watch` once with those findings. A fix invalidates the previous
    revision's review/approval evidence; let the review schedule assess the new
    revision rather than pretending it was reviewed. Apply an authorized ready
    transition only with current readiness evidence.
 6. Create the three native recurring prompts below, or just two with approval
-   disabled. Add a fourth **only with `--merge`**, using merge-pr; it may use
+   disabled. Add a fourth **only with `--merge`**, using merge; it may use
    valid independent approvals even when this account cannot self-approve.
    Verify actual schedule IDs/receipts and save them. Initial review
-   and babysitting do not substitute for creating the recurring schedules.
+   and watching do not substitute for creating the recurring schedules.
    Activate the run only after confirmed creation; failed setup remains blocked
    with confirmed jobs cancelled. Component blockers stay in step state, not a
    falsely terminal global state that would cancel the healthy steps.
@@ -100,7 +104,7 @@ marks it ready. Approval cannot be manufactured for the PR author's identity.
 
 ## Native `/every` prompts
 
-Defaults: review **15m**, babysit **5m**, approval **15m**, watch duration **24h**.
+Defaults: review **15m**, watch **5m**, approval **15m**, watch duration **24h**.
 Opted-in merge defaults to **15m** (`--merge-every`); no merge job otherwise.
 Honor explicit positive cadences/duration; reject invalid options before writes.
 Use Copilot's documented `/every` scheduler, backed by `manage_schedule` when
@@ -112,15 +116,15 @@ Instantiate each prompt with the **absolute state path**, unique run ID, exact
 host/repository/PR and step. Do not schedule the bare `/ship` orchestrator:
 
 ```text
-/every 15m For ship run <run-id> at <absolute-state-path>, preflight and delta-probe <host>/<owner>/<repo>#<number> using the watch contract. If review inputs are unchanged, return quietly; otherwise run one auto-review tick with COMMENT-only publication, recording exact head/base, findings and verified review URL. No approval, fixes, or child schedules.
-/every 5m For ship run <run-id> at <absolute-state-path>, preflight and delta-probe <host>/<owner>/<repo>#<number> using the watch contract. If no actionable feedback/conflict/CI change, return quietly; otherwise run one babysit-pr tick in the recorded worktree, push validated fixes before replies/resolution and invalidate changed-revision evidence. No approval, merge, or child schedules.
-/every 15m For ship run <run-id> at <absolute-state-path>, preflight and delta-probe <host>/<owner>/<repo>#<number> using the watch contract. If approval inputs are unchanged or a recorded eligibility blocker remains, return quietly; otherwise run one approve-pr tick under recorded authority and trusted base APPROVALS.md, with current review, eligible identity and exact-commit verification. No fixes, readying, merge, or child schedules.
+/every 15m For ship run <run-id> at <absolute-state-path>, preflight and delta-probe <host>/<owner>/<repo>#<number> using the watch contract. If review inputs are unchanged, return quietly; otherwise load the recorded toolkit review skill and run one COMMENT-only tick, recording exact head/base, findings and verified review URL. No approval, fixes, native-command substitution, or child schedules.
+/every 5m For ship run <run-id> at <absolute-state-path>, preflight and delta-probe <host>/<owner>/<repo>#<number> using the watch contract. If no actionable feedback/conflict/CI change, return quietly; otherwise load the recorded toolkit watch skill and run one tick in the recorded worktree, push validated fixes before replies/resolution and invalidate changed-revision evidence. No approval, merge, or child schedules.
+/every 15m For ship run <run-id> at <absolute-state-path>, preflight and delta-probe <host>/<owner>/<repo>#<number> using the watch contract. If approval inputs are unchanged or a recorded eligibility blocker remains, return quietly; otherwise load the recorded toolkit approve skill and run one tick under recorded authority and trusted base APPROVALS.md, with current review, eligible identity and exact-commit verification. No fixes, readying, merge, or child schedules.
 ```
 
 Only for explicit `--merge`, also instantiate:
 
 ```text
-/every 15m For ship run <run-id> at <absolute-state-path>, preflight and delta-probe <host>/<owner>/<repo>#<number> using the watch contract. Require recorded merge authority. If merge inputs are unchanged or a risk/evidence blocker remains, return quietly; otherwise run one merge-pr tick under trusted base APPROVALS.md risk/confidence rules and all native checks/independent approvals. Use guarded normal merge or required native queue, verify actual outcome and clean up owned jobs on merge. No fixes, self-approval, auto-merge, bypass, or child schedules.
+/every 15m For ship run <run-id> at <absolute-state-path>, preflight and delta-probe <host>/<owner>/<repo>#<number> using the watch contract. Require recorded merge authority. If merge inputs are unchanged or a risk/evidence blocker remains, return quietly; otherwise load the recorded toolkit merge skill and run one tick under trusted base APPROVALS.md risk/confidence rules and all native checks/independent approvals. Use guarded normal merge or required native queue, verify actual outcome and clean up owned jobs on merge. No fixes, self-approval, auto-merge, bypass, or child schedules.
 ```
 
 With `manage_schedule`, call `create` with the cadence as `interval` and the

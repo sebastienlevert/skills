@@ -1,5 +1,5 @@
 ---
-name: approve-pr
+name: approve
 description: >
   Submit an eligible GitHub PR approval only under the target repository's trusted
   root APPROVALS.md plus deterministic APPROVALS.yml and actual branch rules, with a current evidence-backed code
@@ -70,7 +70,7 @@ submission prerequisites are demonstrably satisfied:
   reviewer requirements. Reuse its cached complete decision only while both
   blobs, facts/classifier evidence, revisions and expiry match.
 
-- A current completed [auto-review](../auto-review/SKILL.md) covers this exact
+- A current completed [review](../review/SKILL.md) covers this exact
   head/base and relevant scope, including prior findings and integration risk.
   Reuse trustworthy current evidence; if missing, invoke an advisory review once,
   not a fixed independent-agent cast or duplicate whole pipeline. In ship, leave

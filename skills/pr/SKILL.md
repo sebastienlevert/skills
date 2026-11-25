@@ -1,5 +1,5 @@
 ---
-name: publish-pr
+name: pr
 description: >
   Prepare a finished change, validate and self-review its actual revision, commit
   owned files, push the task branch and create or reuse its GitHub PR. Use for

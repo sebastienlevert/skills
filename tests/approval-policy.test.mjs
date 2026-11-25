@@ -5,7 +5,7 @@ import { join } from 'node:path';
 import { spawnSync } from 'node:child_process';
 import { test } from 'node:test';
 import { fileURLToPath } from 'node:url';
-import { evaluatePolicy, parsePolicy } from '../skills/approve-pr/scripts/approval-policy.mjs';
+import { evaluatePolicy, parsePolicy } from '../skills/approve/scripts/approval-policy.mjs';
 
 const headSha = 'a'.repeat(40);
 const baseSha = 'b'.repeat(40);
@@ -177,7 +177,7 @@ test('refuses malformed schema/YAML, unknown facts, partial evidence and unsafe 
 });
 
 test('bundled sidecar previews safely and protects policy files from its documentation fast path', () => {
-  const text = readFileSync(new URL('../skills/approve-pr/assets/APPROVALS.yml', import.meta.url), 'utf8');
+  const text = readFileSync(new URL('../skills/approve/assets/APPROVALS.yml', import.meta.url), 'utf8');
   const observe = parsePolicy(text);
   assert.equal(evaluatePolicy(observe, snapshot(['README.md'])).automationApprovalAllowed, false);
   const enforce = parsePolicy(text.replace('mode: observe', 'mode: enforce'));
@@ -190,7 +190,7 @@ test('CLI evaluates all rules while returning bounded details and fails closed f
   t.after(() => rmSync(directory, { recursive: true, force: true }));
   const policyFile = join(directory, 'APPROVALS.yml');
   const snapshotFile = join(directory, 'snapshot.json');
-  const script = fileURLToPath(new URL('../skills/approve-pr/scripts/approval-policy.mjs', import.meta.url));
+  const script = fileURLToPath(new URL('../skills/approve/scripts/approval-policy.mjs', import.meta.url));
   writeFileSync(policyFile, `version: 1\nrules:\n${rule(['**'], { copilot: 'approves', seats: 0 }).repeat(20)}`);
   writeFileSync(snapshotFile, JSON.stringify(snapshot(['docs/a.md'])));
   const result = spawnSync(process.execPath, [script, policyFile, snapshotFile], { encoding: 'utf8' });

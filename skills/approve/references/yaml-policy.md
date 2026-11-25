@@ -70,7 +70,7 @@ Run the bundled [evaluator](../scripts/approval-policy.mjs) on base-pinned sidec
 and a complete, verified, revision-bound session snapshot:
 
 ```text
-node <toolkit>\skills\approve-pr\scripts\approval-policy.mjs <session>\APPROVALS.yml <session>\pr-snapshot.json
+node <toolkit>\skills\approve\scripts\approval-policy.mjs <session>\APPROVALS.yml <session>\pr-snapshot.json
 ```
 
 It requires Node.js 22+ and the toolkit's locked `yaml`/`picomatch` dependencies.
@@ -104,7 +104,7 @@ requirements; a `comments` verdict can allow merge after required real approvals
 but never submits an automated approving review. Observe never authorizes either.
 
 Provider classifier identifiers are retained in this Copilot namespace:
-`copilot/code_review` consumes current recorded auto-review evidence;
+`copilot/code_review` consumes current recorded review evidence;
 `copilot/diff` describes a verified authored delta; `repo/name`, `.output`,
 `.severity` and `(input=value)` address custom results. Supply only sourced,
 head/base-bound results with `status`, `value` and `source`. Custom string outputs

@@ -1,9 +1,9 @@
 ---
-name: merge-pr
+name: merge
 description: >
   Merge one GitHub PR when its assessed risk and evidence-backed confidence meet
   the trusted root APPROVALS.md and deterministic APPROVALS.yml rules and all native repository checks and
-  reviews are satisfied. Use for "merge this PR", "merge-pr", or an explicitly
+  reviews are satisfied. Use for "merge this PR", "merge", or an explicitly
   authorized ship --merge tick. Exact-head normal merge or required native queue;
   no admin bypass, invented confidence percentage, self-approval or rule changes.
 ---
@@ -21,16 +21,16 @@ Plain ship, review, approval and APPROVALS.md alone grant no merge authority.
 1. Resolve the exact host/repository/PR and existing `gh` identity. Verify open,
    non-draft state, head repository/ref/SHA, actual base/SHA and merge access.
    Never switch accounts, ready a draft, approve, repair code or change rules.
-2. Use [approve-pr's trusted-policy method](../approve-pr/SKILL.md) for policy/rule
+2. Use [approve's trusted-policy method](../approve/SKILL.md) for policy/rule
    reads, not its reviewer-specific eligibility gate: root
    `APPROVALS.md` and its `APPROVALS.yml`/`.yaml` sidecar from the **actual base
    commit**, both blobs/sources, effective
    native branch protection/rulesets and complete current reviews/check evidence.
    Reuse already collected policy evidence, not another pipeline. Interpret its
    **merge** conditions separately from approval-submission conditions; do not
-   invoke approve-pr to manufacture a missing review. Missing/ambiguous merge
+   invoke approve to manufacture a missing review. Missing/ambiguous merge
    criteria, inaccessible rules, or a changed pinned policy blocks this step.
-   Follow the [deterministic sidecar contract](../approve-pr/references/yaml-policy.md)
+   Follow the [deterministic sidecar contract](../approve/references/yaml-policy.md)
    and require a complete current evaluator result with `policySatisfied=true`.
    `comments` can permit merge with actual required approvals; automated review
    permission is separate. Observe/missing/invalid/expired YAML never passes.
@@ -38,13 +38,13 @@ Plain ship, review, approval and APPROVALS.md alone grant no merge authority.
    consequential likelihood/impact, blast radius, compatibility, sensitive paths,
    data/schema/permission changes, reversibility/recovery and evidence gaps.
    Use repository criteria, not an invented score or blanket "docs are safe" rule.
-   [The opt-in example](../approve-pr/assets/APPROVALS.md) illustrates a risk matrix;
+   [The opt-in example](../approve/assets/APPROVALS.md) illustrates a risk matrix;
    it is not authority or a universal risk appetite. Unknown risk stays unknown.
 4. Evaluate confidence **against the evidence required for that risk**: current
    substantive code review, resolved consequential findings, focused acceptance
    and regression verification, affected integration behavior, required sign-offs
    and any recovery evidence the policy asks for. Reuse exact-head/base
-   [auto-review](../auto-review/SKILL.md) and
+   [review](../review/SKILL.md) and
    [prepare-pr](../prepare-pr/SKILL.md) evidence. In ship, missing/stale review is
    pending for its owner; standalone may obtain an advisory review/readiness pass.
    Green CI, metadata checkboxes or agreement between models is not sufficient
@@ -58,7 +58,7 @@ Plain ship, review, approval and APPROVALS.md alone grant no merge authority.
    skipped/neutral counts only if actual rules allow it. Human-only risk needs
    the specific owner decision; don't waive it because other gates are green.
    The PR author may merge when eligible, but cannot self-approve: use the actual
-   valid independent reviews, not whether this account's approve-pr tick succeeded.
+   valid independent reviews, not whether this account's approve tick succeeded.
    `--approval off` never removes native/policy approval requirements.
    For a required queue, satisfy all **PR-side admission** prerequisites; merge-
    group checks/order/fresh-base enforcement run natively after admission. Don't

@@ -17,7 +17,7 @@ is not an inline review. Use GitHub CLI (`gh`), never a GitHub MCP server.
 
 This skill publishes an existing review; it doesn't manufacture findings or
 perform another full review. Reuse the current findings and their supporting
-evidence. If there are no reviewed findings, request them or use `auto-review`
+evidence. If there are no reviewed findings, request them or use `review`
 when a review is authorized. A request to review alone doesn't authorize posting.
 
 ## 1. Resolve scope and authority
