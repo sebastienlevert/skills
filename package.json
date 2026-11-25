@@ -1,0 +1,14 @@
+{
+  "name": "personal-toolkit-validation",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node --test",
+    "validate": "node scripts/validate-marketplace.mjs"
+  },
+  "engines": { "node": ">=22" },
+  "dependencies": {
+    "picomatch": "^4.0.3",
+    "yaml": "^2.8.1"
+  }
+}

@@ -41,7 +41,7 @@ test('all native catalogs resolve the same toolkit and discover bundled skills',
 
 test('ship and its independent PR owners are discoverable with complete local contracts', () => {
   const result = validateMarketplace(root);
-  for (const name of ['ship', 'publish-pr', 'auto-review', 'babysit-pr', 'approve-pr']) {
+  for (const name of ['ship', 'publish-pr', 'auto-review', 'babysit-pr', 'approve-pr', 'merge-pr']) {
     assert(result.skills.includes(name), `${name} must be discoverable`);
     const file = join(root, 'skills', name, 'SKILL.md');
     const text = readFileSync(file, 'utf8');

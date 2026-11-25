@@ -1,0 +1,22 @@
+# Copilot approvals v1, at the root sidecar location.
+# Observe first; change to enforce only after the owner adopts both policy files.
+version: 1
+mode: observe
+locals:
+  independent:
+    count: 1
+    from: [humans, "!pr/authors"]
+rules:
+  - purpose: "Documentation and text paths may receive an automated approval."
+    paths: ["docs/**", "**/*.md", "**/*.txt"]
+    verdict: { copilot: approves, seats: 0, max_age: 1h }
+  - purpose: "Other changes need an independent reviewer; a current review can permit automation."
+    paths: ["**", "!docs/**", "!**/*.md", "!**/*.txt"]
+    verdict: { copilot: comments, seats: ["@independent"], max_age: 1h }
+    override:
+      - if: "copilot/code_review = pass AND pr/diff_lines <= 100"
+        verdict: { copilot: approves }
+  - purpose: "Policy, workflow and instruction changes retain independent review and cannot auto-approve."
+    paths: ["APPROVALS.md", "APPROVALS.yml", "APPROVALS.yaml", ".github/**", "**/CODEOWNERS", "**/AGENTS.md"]
+    nested: inherit
+    verdict: { copilot: comments, seats: ["@independent"] }

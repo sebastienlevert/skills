@@ -2,7 +2,7 @@
 name: approve-pr
 description: >
   Submit an eligible GitHub PR approval only under the target repository's trusted
-  root APPROVALS.md and actual branch rules, with a current evidence-backed code
+  root APPROVALS.md plus deterministic APPROVALS.yml and actual branch rules, with a current evidence-backed code
   review and exact-commit publication. Use for "approve this PR" or ship's approval
   tick. Missing/ambiguous policy, draft, stale/red checks or ineligible identity
   remain pending/blocked. Never self-approve, switch accounts, merge, or bypass rules.
@@ -42,6 +42,12 @@ or approval-policy file is not itself a native approval or new user authority.
    an installed policy or permission grant. Missing/empty/inaccessible/ambiguous
    policy blocks approval. Do not create or relax a policy to approve this PR.
    The head's proposed policy changes cannot authorize their own approval.
+   Also read **APPROVALS.yml** from that same base (APPROVALS.yaml only when .yml
+   is absent), following the [deterministic policy contract](references/yaml-policy.md).
+   Pin both blobs; missing/invalid sidecar, observe mode or incomplete facts
+   cannot authorize approval. Use the bundled evaluator, not model-guessed glob
+   matches, counts or precedence. Require its `automationApprovalAllowed=true`
+   for this exact head/base, then intersect Markdown/user/native conditions.
 5. Read actual applicable branch protection/rulesets, required checks, reviewer
    eligibility, CODEOWNERS and review state using `gh`. Inspect branch protection
    and effective branch rules, not just a ruleset catalog; include inherited
@@ -50,7 +56,7 @@ or approval-policy file is not itself a native approval or new user authority.
    response is different from an access error. Record material evidence gaps.
 6. Intersect user authority, trusted policy and native repository enforcement.
    Policy may narrow, never bypass them. A ship run pins its initial policy blob;
-   a changed base-policy blob pauses approval pending explicit owner renewal,
+   either changed base-policy blob pauses approval pending explicit owner renewal,
    even if the new file is more permissive. Recheck live branch rules each pass.
 
 ## Evidence-backed gate
@@ -58,6 +64,11 @@ or approval-policy file is not itself a native approval or new user authority.
 Make a concise requirement/evidence verdict for each actual policy condition:
 **satisfied**, **pending**, **failed**, or **unknown**. Approve only when all
 submission prerequisites are demonstrably satisfied:
+
+- The deterministic sidecar authorizes an automated approving review. Its
+  author-filled YAML seats do not create GitHub approvals or waive independent
+  reviewer requirements. Reuse its cached complete decision only while both
+  blobs, facts/classifier evidence, revisions and expiry match.
 
 - A current completed [auto-review](../auto-review/SKILL.md) covers this exact
   head/base and relevant scope, including prior findings and integration risk.
