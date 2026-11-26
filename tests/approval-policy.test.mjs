@@ -185,6 +185,86 @@ test('bundled sidecar previews safely and protects policy files from its documen
   assert.equal(evaluatePolicy(enforce, snapshot(['APPROVALS.md'], { approvals: [reviewer] })).copilot, 'comments');
 });
 
+test('repository policy gates actual text, tooling and lifecycle changes on current evidence', async (t) => {
+  const policy = parsePolicy(readFileSync(new URL('../APPROVALS.yml', import.meta.url), 'utf8'));
+  const evidence = (value, values) => ({ headSha, baseSha, status: 'complete', source: 'synthetic-verified-decision', value, ...(values && { values }) });
+  const input = (files, risk = 'low', signoff = 'absent', extra = {}) => snapshot(files, {
+    classifiers: {
+      'copilot/code_review': evidence('pass'),
+      'repo/change_risk': evidence(risk, ['low', 'moderate', 'high', 'unknown']),
+      'repo/maintainer_signoff': evidence(signoff, ['pass', 'absent']),
+    },
+    ...extra,
+  });
+  const decide = (files, risk, signoff, extra) => evaluatePolicy(policy, input(files, risk, signoff, extra));
+
+  await t.test('bounded ordinary text permits automation without inventing a native approval', () => {
+    const result = decide(['README.md', 'docs/guide.md', 'skills/new-spec/references/wording.md']);
+    assert.equal(result.automationApprovalAllowed, true);
+    assert.equal(result.policySatisfied, true);
+    assert.equal(result.rules[0].seats[0].filled[0], author.login);
+  });
+
+  await t.test('protected and executable paths require moderate risk and explicit sign-off', () => {
+    for (const path of ['APPROVALS.md', 'APPROVALS.yml', '.github/workflows/check.yml', 'docs/AGENTS.md',
+      'skills/ship/SKILL.md', 'skills/merge/SKILL.md', 'skills/review/SKILL.md', 'skills/init-toolkit/assets/AGENTS.md',
+      'scripts/check.mjs', 'package-lock.json', 'plugin.json', 'docs/demo.js']) {
+      assert.equal(decide([path], 'low', 'pass').policySatisfied, false, path);
+      assert.equal(decide([path], 'moderate').policySatisfied, false, path);
+      const result = decide([path], 'moderate', 'pass');
+      assert.equal(result.policySatisfied, true, path);
+      assert.equal(result.copilot, 'comments', path);
+      assert.equal(result.automationApprovalAllowed, false, path);
+    }
+  });
+
+  await t.test('mixed changes, sensitive renames and oversized text cannot sneak into low risk', () => {
+    const changes = [
+      ['README.md', 'package.json'],
+      [file('docs/policy.md', { previousPath: 'APPROVALS.md', status: 'renamed' })],
+      [file('README.md', { additions: 300, deletions: 1 })],
+      Array.from({ length: 11 }, (_, index) => `docs/${index}.md`),
+    ];
+    for (const files of changes) {
+      assert.equal(decide(files).policySatisfied, false);
+      assert.equal(decide(files, 'moderate', 'pass').policySatisfied, true);
+    }
+    assert.equal(decide(['README.md'], 'low', 'pass', { base: 'release' }).policySatisfied, false);
+  });
+
+  await t.test('missing, stale, failed and high-risk evidence stays blocked despite a sign-off', () => {
+    for (const risk of ['high', 'unknown']) assert.equal(decide(['README.md'], risk, 'pass').policySatisfied, false);
+    const current = input(['skills/ship/SKILL.md'], 'moderate', 'pass');
+    for (const name of Object.keys(current.classifiers)) {
+      for (const patch of [null, { headSha: baseSha }, { baseSha: headSha }, { status: 'incomplete' }, { status: 'error' }, { value: 'unlisted' }]) {
+        const classifiers = { ...current.classifiers, [name]: patch && { ...current.classifiers[name], ...patch } };
+        assert.equal(evaluatePolicy(policy, { ...current, classifiers }).policySatisfied, false, `${name}: ${JSON.stringify(patch)}`);
+      }
+    }
+    assert.equal(decide(['README.md'], 'low', 'pass', { classifiers: {
+      ...input(['README.md']).classifiers, 'copilot/code_review': evidence('fail'),
+    } }).policySatisfied, false);
+    assert.equal(evaluatePolicy(policy, { ...current, evaluatedAt: '2026-11-26T00:00:00Z' }, { now: Date.parse('2026-11-26T01:01:00Z') }).policySatisfied, false);
+  });
+
+  await t.test('maintainer sign-off cannot waive unsupported file modes or hierarchical policies', () => {
+    for (const changed of [file('.gitattributes'), file('docs/link.md', { kind: 'symlink' }),
+      file('vendor/module', { kind: 'submodule' }), file('docs/guide.md', { previousKind: undefined })]) {
+      assert.equal(decide([changed], 'moderate', 'pass').policySatisfied, false);
+    }
+    assert.throws(() => decide(['README.md'], 'moderate', 'pass', { nestedPolicies: ['service'] }), /hierarchical/);
+  });
+
+  await t.test('human seats do not self-approve or waive missing write access and blocking reviews', () => {
+    assert.equal(decide(['README.md'], 'low', 'absent', { isFork: true }).policySatisfied, false);
+    assert.equal(decide(['README.md'], 'low', 'absent', { outsideContributor: true }).policySatisfied, false);
+    assert.equal(decide(['README.md'], 'low', 'absent', { authors: [{ ...author, writeAccess: false }] }).policySatisfied, false);
+    assert.equal(decide(['README.md'], 'low', 'absent', { authors: [{ ...author, kind: 'bot' }] }).policySatisfied, false);
+    assert.equal(decide(['README.md'], 'low', 'absent', { isFork: true, approvals: [reviewer] }).policySatisfied, true);
+    assert.equal(decide(['README.md'], 'low', 'absent', { approvals: [{ ...reviewer, state: 'CHANGES_REQUESTED' }] }).policySatisfied, false);
+  });
+});
+
 test('CLI evaluates all rules while returning bounded details and fails closed for invalid YAML', (t) => {
   const directory = mkdtempSync(join(tmpdir(), 'toolkit-policy-test-'));
   t.after(() => rmSync(directory, { recursive: true, force: true }));

@@ -1,0 +1,48 @@
+version: 1
+mode: enforce
+locals:
+  writer:
+    count: 1
+    from: [humans]
+rules:
+  - purpose: "Bounded low-risk text changes can use automation after current review."
+    paths: ["README.md", "docs/**/*.md", "docs/**/*.txt", "skills/**/*.md", "skills/**/*.txt"]
+    verdict: { copilot: blocks, max_age: 1h }
+    override:
+      - if: "pr/base = 'main' AND copilot/code_review = pass AND repo/change_risk = low AND pr/files_changed <= 10 AND pr/diff_lines <= 300"
+        verdict: { copilot: approves, seats: ["@writer"] }
+      - if: "pr/base = 'main' AND copilot/code_review = pass AND repo/change_risk = moderate AND repo/maintainer_signoff = pass"
+        verdict: { copilot: comments, seats: ["@writer"] }
+  - purpose: "Executable, catalog and other non-text changes need maintainer sign-off."
+    paths: ["**", "!README.md", "!docs/**/*.md", "!docs/**/*.txt", "!skills/**/*.md", "!skills/**/*.txt"]
+    verdict: { copilot: blocks, max_age: 1h }
+    override:
+      - if: "pr/base = 'main' AND copilot/code_review = pass AND repo/change_risk = moderate AND repo/maintainer_signoff = pass"
+        verdict: { copilot: comments, seats: ["@writer"] }
+  - purpose: "Policy and lifecycle-control paths cannot use the text fast path."
+    paths:
+      - "**/APPROVALS.md"
+      - "**/APPROVALS.yml"
+      - "**/APPROVALS.yaml"
+      - "**/AGENTS.md"
+      - "**/CODEOWNERS"
+      - "**/.git*"
+      - ".github/**"
+      - "skills/approve/**"
+      - "skills/merge/**"
+      - "skills/ship/**"
+      - "skills/review/**"
+      - "skills/watch/**"
+      - "skills/pr/**"
+      - "skills/prepare-pr/**"
+      - "skills/implement/**"
+      - "skills/factory/**"
+      - "skills/address-pr-feedback/**"
+      - "skills/setup-repo/**"
+      - "skills/init-toolkit/**"
+      - "skills/queue/**"
+      - "skills/session/**"
+    verdict: { copilot: blocks, max_age: 1h }
+    override:
+      - if: "pr/base = 'main' AND copilot/code_review = pass AND repo/change_risk = moderate AND repo/maintainer_signoff = pass"
+        verdict: { copilot: comments, seats: ["@writer"] }
