@@ -345,6 +345,16 @@ Use the component skills independently for a single step. `ship` is for finished
 changes/PRs, while `factory` begins with issue selection/implementation and keeps
 its existing mode-bound closure. Neither silently starts the other's lifecycle.
 
+### This repository's adopted policy
+
+Personal Toolkit's own [APPROVALS.md](APPROVALS.md) and
+[APPROVALS.yml](APPROVALS.yml) select maintainer-gated approval/merge: bounded
+low-risk text edits may use automation after current review and passing checks;
+consequential changes require explicit maintainer sign-off. The author may sign
+off, never self-approve. Native independent approvals still apply. This pair is
+not installed into other repositories, and its initial adoption needs a manual
+owner decision because a policy PR cannot authorize itself.
+
 ## Prerequisites and authorization
 
 - Install and authenticate the host you intend to use.
