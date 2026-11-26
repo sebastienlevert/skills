@@ -8,6 +8,13 @@ const unavailable = () => ['branch-protection', 'effective-rules'].map((api) => 
 const options = { host: 'github.com', repository: 'owner/repo', branch: 'release/v1' };
 const response = (httpStatus, body, separator = '\r\n') =>
   `HTTP/2.0 ${httpStatus}${separator}Content-Type: application/json${separator}${separator}${JSON.stringify(body)}`;
+const pullRequestRule = () => ({ type: 'pull_request', parameters: {
+  dismiss_stale_reviews_on_push: true, require_code_owner_review: false, require_last_push_approval: true,
+  required_approving_review_count: 2, required_review_thread_resolution: true,
+} });
+const protection = () => ({ url: 'https://api.github.com/repos/owner/repo/branches/main/protection',
+  required_status_checks: { strict: true, contexts: ['packaging'], checks: [{ context: 'packaging', app_id: null }] },
+  enforce_admins: { url: 'https://api.github.com/repos/owner/repo/branches/main/protection/enforce_admins', enabled: true } });
 
 test('verified private-plan capability limitations do not become paid merge prerequisites or absent rules', () => {
   const result = classifyNativeRuleAccess(context, unavailable());
@@ -24,6 +31,10 @@ test('authentication failures, other denials, ambiguous missing and malformed re
     { httpStatus: 404, body: { message: 'Not Found' } },
     { httpStatus: 200, body: null },
     { httpStatus: 200, body: {} },
+    { httpStatus: 200, body: { ...protection(), enforce_admins: {} } },
+    { httpStatus: 200, body: { ...protection(), required_status_checks: {} } },
+    { httpStatus: 200, body: { ...protection(), required_status_checks: { strict: 'yes', contexts: [], checks: [] } } },
+    { httpStatus: 200, body: { ...protection(), required_signatures: { enabled: true } } },
     { httpStatus: null, body: null },
     { httpStatus: 403, body: { message }, complete: false },
   ]) {
@@ -39,15 +50,30 @@ test('a capability message without verified private-repository identity/write ac
   ]) assert.equal(classifyNativeRuleAccess({ ...context, ...override }, unavailable()).status, 'blocked');
   assert.equal(classifyNativeRuleAccess(context, unavailable().slice(0, 1)).status, 'blocked');
   assert.equal(classifyNativeRuleAccess(context, [unavailable()[0], unavailable()[0]]).status, 'blocked');
+  for (const body of [[null], [{}], [{ type: 'unknown_rule' }], [{ type: 'pull_request' }],
+    [{ type: 'pull_request', parameters: { required_approving_review_count: 2 } }],
+    [{ ...pullRequestRule(), parameters: { ...pullRequestRule().parameters, require_last_push_approval: 'false' } }],
+    [{ type: 'required_status_checks', parameters: { strict_required_status_checks_policy: true,
+      required_status_checks: [{ context: 7 }] } }]]) {
+    const reads = unavailable();
+    reads[1] = { api: 'effective-rules', httpStatus: 200, body, complete: true };
+    assert.equal(classifyNativeRuleAccess(context, reads).status, 'blocked', JSON.stringify(body));
+  }
 });
 
 test('available rule data remains inspectable even when another API is a verified unavailable capability', () => {
   const reads = unavailable();
-  reads[1] = { api: 'effective-rules', httpStatus: 200, body: [{ type: 'pull_request', parameters: { required_approving_review_count: 2 } }], complete: true };
+  reads[1] = { api: 'effective-rules', httpStatus: 200, body: [pullRequestRule()], complete: true };
   const result = classifyNativeRuleAccess(context, reads);
   assert.equal(result.status, 'inspection-required');
   assert.equal(result.reads[1].data[0].parameters.required_approving_review_count, 2);
   reads[0] = { api: 'branch-protection', httpStatus: 404, body: { message: 'Branch not protected' }, complete: true };
+  assert.equal(classifyNativeRuleAccess(context, reads).status, 'inspection-required');
+  reads[0] = { api: 'branch-protection', httpStatus: 200, body: protection(), complete: true };
+  assert.equal(classifyNativeRuleAccess(context, reads).status, 'inspection-required');
+  reads[1].body = [{ type: 'required_signatures' }, { type: 'required_status_checks', parameters: {
+    strict_required_status_checks_policy: true, required_status_checks: [{ context: 'packaging', integration_id: 1 }],
+  } }];
   assert.equal(classifyNativeRuleAccess(context, reads).status, 'inspection-required');
 });
 
@@ -89,7 +115,8 @@ test('identity change, missing write access and unusable HTTP evidence fail clos
 
 test('invalid destination arguments never reach gh', () => {
   const execute = () => { assert.fail('Must not execute'); };
-  for (const override of [{ host: 'github.com\nbad' }, { repository: '../repo' }, { branch: 'main\nbad' }, { branch: '' }]) {
+  for (const override of [{ host: 'github.com\nbad' }, { host: '--hostname' }, { repository: '../repo' },
+    { branch: 'main\nbad' }, { branch: '' }]) {
     assert.throws(() => readNativeRuleAccess({ ...options, ...override }, execute), /actual GitHub host/);
   }
 });
