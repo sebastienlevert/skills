@@ -51,9 +51,14 @@ or approval-policy file is not itself a native approval or new user authority.
 5. Read actual applicable branch protection/rulesets, required checks, reviewer
    eligibility, CODEOWNERS and review state using `gh`. Inspect branch protection
    and effective branch rules, not just a ruleset catalog; include inherited
-   organization rules where applicable. A denied/unsupported read is unknown,
-   not proof there are no requirements. An authoritative unprotected/no-rule
-   response is different from an access error. Record material evidence gaps.
+   organization rules where applicable. Use the checked
+   [native-rule capability reader](references/native-rule-access.md).
+   GitHub.com's verified private-plan feature-unavailable response is an optional
+   inspection capability, not an approval/merge prerequisite or proof of absent
+   rules. A trusted base policy may permit normal GitHub enforcement for that
+   case while retaining every other gate. Authentication failures, other denials,
+   ambiguous 404s and incomplete/unknown responses remain blocked. An authoritative
+   unprotected/no-rule response is different from an access error.
 6. Intersect user authority, trusted policy and native repository enforcement.
    Policy may narrow, never bypass them. A ship run pins its initial policy blob;
    either changed base-policy blob pauses approval pending explicit owner renewal,
