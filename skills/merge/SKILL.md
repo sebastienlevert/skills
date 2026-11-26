@@ -13,7 +13,8 @@ description: >
 One bounded closure pass, not another review/repair pipeline. A standalone merge
 request authorizes this exact PR's normal merge/required queue submission when the
 gate passes; evaluate/plan-only posts nothing. Scheduled use requires ship's
-explicit **`--merge`** authority and [watch contract](../ship/references/watch-contract.md).
+recorded explicit merge authority (`--merge` or an exact-PR merge choice at
+handoff) and the [watch contract](../ship/references/watch-contract.md).
 Plain ship, review, approval and APPROVALS.md alone grant no merge authority.
 
 ## Gate: authority, policy, risk and current evidence

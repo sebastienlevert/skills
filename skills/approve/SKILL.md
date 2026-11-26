@@ -118,8 +118,9 @@ merge/queue requirements are fulfilled, and this skill never merges.
 4. Fetch the review and verify reviewer, `APPROVED` state, `commit_id` and canonical
    URL; then re-read PR head/base. A concurrent push leaves the recorded approval
    **stale**, even if GitHub has not dismissed it. Do not call it current or waive
-   the new revision's gate. Keep the watch active for re-review and eligible
-   reapproval; never auto-dismiss old reviews or enable auto-merge.
+   the new revision's gate. In ship, evaluate default handoff before retaining an
+   idle watch; explicit kept watches may continue for re-review/reapproval.
+   Never auto-dismiss old reviews or enable auto-merge.
 
 Return **approved**, **already approved**, **pending** or **blocked**, exact
 reviewed head/policy source, verified review URL when present, requirement gaps

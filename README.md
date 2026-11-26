@@ -58,7 +58,7 @@ an entry point at a drive root isn't a global host configuration change.
 | [new-issue](skills/new-issue/SKILL.md) | Research, deduplicate, draft, or file an actionable issue. | Authenticated `gh`; creates only the authorized issue, not implementation. |
 | [setup-repo](skills/setup-repo/SKILL.md) | Set up a bare Git container with main/default and sibling task worktrees inside it. | Existing-repo conversion is explicit and preserves local work and configured paths. |
 | [factory](skills/factory/SKILL.md) | Select an eligible issue and run a bounded delivery/review/feedback loop. | Modes draft/ready/merge; merge requires high evidence-backed confidence and normal repository enforcement. |
-| [ship](skills/ship/SKILL.md) | Ship a finished change through publication, review, watching and policy-based approval; optional risk-aware merge. | GitHub Copilot CLI native `/every`; three session-scoped prompts plus merge only with explicit `--merge`; one PR, no default merge. |
+| [ship](skills/ship/SKILL.md) | Ship a finished change, watch pending work, then stop for a human handoff; optional policy-gated merge. | Native `/every` only while needed or explicitly kept; one PR, no default merge/self-approval. |
 | [pr](skills/pr/SKILL.md) | Validate and send a finished change upstream, creating or reusing its PR. | Authenticated Git/`gh`; new PRs default to draft; preserves task worktree and existing PR state. |
 | [watch](skills/watch/SKILL.md) | Observe and repair PR feedback, conflicts and failed CI. | Reuses `address-pr-feedback`; bounded passes and verified evidence replies; no approval or merge. |
 | [approve](skills/approve/SKILL.md) | Submit an eligible exact-commit approval under root `APPROVALS.md` and deterministic `APPROVALS.yml`. | Trusted actual-base policy pair plus repository rules/current review; never self-approve, bypass protection or merge. |
@@ -263,21 +263,24 @@ manufactured by changing accounts. Worktree cleanup remains separate.
 `ship` is **Copilot-native**: publish a finished change, review it and watch
 feedback/conflicts/CI, followed by repository-policy approval and **opt-in
 risk-aware merge**. Plain ship never merges. It uses Copilot skills and native
-session scheduling, not another provider's commands or watcher.
+session scheduling, not another provider's commands or watcher. By default it
+**stops and asks for the next action** once current evidence is clean or progress
+needs a person. A healthy PR is not a reason for hours of repeated metadata reads.
 
 | Step | Independent skill | Schedule |
 |---|---|---|
 | Prepare PR and send upstream | `pr` (uses `prepare-pr` for readiness) | Once at start; reuses the same task PR. |
-| Code review | `review` | Initial `COMMENT` review, then `/every 15m` for changed evidence. |
-| Watch feedback, conflicts and CI | `watch` (routes corrections to `address-pr-feedback`) | Initial pass, then `/every 5m`. |
-| Approve under repository rules | `approve` | `/every 15m`; only when current evidence and identity are eligible. |
-| Optional merge closure | `merge` | `/every 15m` only with explicit `--merge`; policy-permitted risk/confidence and actual merge/queue rules. |
+| Code review | `review` | Initial `COMMENT` review; `/every 15m` only while watching is needed. |
+| Watch feedback, conflicts and CI | `watch` (routes corrections to `address-pr-feedback`) | Initial pass; `/every 5m` for genuine pending work. |
+| Approve under repository rules | `approve` | Eligibility pass; `/every 15m` while watching, never a self-approval. |
+| Optional merge closure | `merge` | Only with explicit `--merge` or a specific handoff choice, under current risk/policy/native gates. |
 
 ```text
 /ship
 /ship owner/repo#123 --ready --watch-for 8h
 /ship owner/repo#123 --ready --merge --merge-every 15m
 /ship owner/repo#123 --watch-every 5m
+/ship owner/repo#123 --keep-watching --watch-for 8h
 /ship owner/repo#123 --approval off --review-every 10m
 /ship status owner/repo#123
 /ship stop owner/repo#123
@@ -285,8 +288,11 @@ session scheduling, not another provider's commands or watcher.
 
 Find the installed skill with `/skills list`; use its actual registered command
 or ask by name if the host presents a qualified name. Options above are skill
-requests, not new shell commands. Defaults are a **24h** watch, 15m review/approval
-and 5m watching. `/every` requires experimental support on builds that mark
+requests, not new shell commands. Pending watches default to a **24h maximum**,
+15m review/approval and 5m feedback cadence; a clean or human-blocked handoff ends
+them earlier. Cadence/duration options do not suppress handoff. Explicit
+`--keep-watching` retains idle monitoring if that is what you want.
+`/every` requires experimental support on builds that mark
 it experimental. Ship uses the native scheduler and records verified schedule
 IDs; it never enables settings/permissions, starts another CLI, or substitutes
 a shell loop. Installing the toolkit creates no schedules.
@@ -294,7 +300,13 @@ a shell loop. Installing the toolkit creates no schedules.
 Each prompt binds one session-local run record and exact PR. Repeated starts
 reuse matching watchers, unchanged ticks avoid duplicate posts, and a new head
 invalidates old review/approval evidence. Stop/expiry/closed/merged PRs cancel the
-owned jobs. Approval alone keeps the watch active for later pushes. Native jobs
+owned jobs. Default handoff marks the run inactive and verifies cancellation
+**before asking** for policy-gated merge, manual review/merge, resolving a blocker
+or continued watching. It names the exact PR and any requested ready transition;
+the choice does not waive repository gates. Missing policy, self-author approval,
+draft state or unavailable evidence is stated as a blocker, not merge readiness.
+Declining/leaving the ask unanswered creates no timers or merge authority.
+Only `--keep-watching` retains an idle watch for later pushes. Native jobs
 are **session-scoped**, not a durable service; the session must remain available,
 and resumed work requires recovered receipts and current authority.
 
