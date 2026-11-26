@@ -68,7 +68,7 @@ const parameterRules = {
         type: oneOf('User', 'Team', 'IntegrationInstallation', 'RepositoryRole') })),
     }),
     required_reviewers: list((item) => fields(item, { file_patterns: list(text), minimum_approvals: integer(0),
-      reviewer: (person) => fields(person, { id: integer(1), type: oneOf('Team', 'User') }) })),
+      reviewer: (person) => fields(person, { id: integer(1), type: oneOf('Team') }) })),
   }),
   required_status_checks: (value) => fields(value, { required_status_checks: list(statusCheck),
     strict_required_status_checks_policy: boolean }, { do_not_enforce_on_create: boolean }),

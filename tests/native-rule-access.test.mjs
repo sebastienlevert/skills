@@ -53,6 +53,9 @@ test('a capability message without verified private-repository identity/write ac
   for (const body of [[null], [{}], [{ type: 'unknown_rule' }], [{ type: 'pull_request' }],
     [{ type: 'pull_request', parameters: { required_approving_review_count: 2 } }],
     [{ ...pullRequestRule(), parameters: { ...pullRequestRule().parameters, require_last_push_approval: 'false' } }],
+    [{ ...pullRequestRule(), parameters: { ...pullRequestRule().parameters, required_reviewers: [{
+      file_patterns: ['*'], minimum_approvals: 1, reviewer: { id: 1, type: 'User' },
+    }] } }],
     [{ type: 'required_status_checks', parameters: { strict_required_status_checks_policy: true,
       required_status_checks: [{ context: 7 }] } }]]) {
     const reads = unavailable();
@@ -67,6 +70,10 @@ test('available rule data remains inspectable even when another API is a verifie
   const result = classifyNativeRuleAccess(context, reads);
   assert.equal(result.status, 'inspection-required');
   assert.equal(result.reads[1].data[0].parameters.required_approving_review_count, 2);
+  reads[1].body[0].parameters.required_reviewers = [{
+    file_patterns: ['*'], minimum_approvals: 1, reviewer: { id: 1, type: 'Team' },
+  }];
+  assert.equal(classifyNativeRuleAccess(context, reads).status, 'inspection-required');
   reads[0] = { api: 'branch-protection', httpStatus: 404, body: { message: 'Branch not protected' }, complete: true };
   assert.equal(classifyNativeRuleAccess(context, reads).status, 'inspection-required');
   reads[0] = { api: 'branch-protection', httpStatus: 200, body: protection(), complete: true };
