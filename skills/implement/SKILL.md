@@ -122,12 +122,13 @@ change for a bug fix that restores agreed behavior.
 5. Before publishing, fetch again and inspect base/head movement. Integrate safely
    where needed and rerun checks affected by the new tree. A passed check from an
    earlier revision is not validation of the latest commit.
-6. Apply the [prepare-pr method](../prepare-pr/SKILL.md) as a lightweight final
+6. Apply [pr's assessment mode](../pr/SKILL.md) as a lightweight final
    pass: scope/compatibility, validation evidence, unresolved review/docs issues,
    and delivery metadata. These four checks are the fallback when the sibling
    skill is unavailable. Reuse collected evidence; do not launch another full
    review or repeat passing checks without a changed input, new risk or project
-   requirement. This assessment never marks the PR ready.
+   requirement. This assessment never publishes or marks the PR ready; implement
+   owns the following push/draft creation and must not recurse through pr.
 
 If a required check is blocked by infrastructure or a pre-existing problem,
 separate that evidence from your changes. Do not claim completion. A draft can be

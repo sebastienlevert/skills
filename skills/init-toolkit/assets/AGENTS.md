@@ -21,7 +21,7 @@ instead of duplicating its procedures in this file.
 | Review changes or assess review feedback | `review`, `triage` |
 | Fix authorized PR feedback or conflicts | `address-pr-feedback` |
 | Publish reviewed findings at specific diff lines | `post-pr-comments` |
-| Assess PR readiness | `prepare-pr` |
+| Assess PR readiness without publishing | `pr`, assessment mode |
 | Research a decision or write a strategy paper | `research-brief`, `paper-strategist` |
 
 Use only the stages the task needs; a question or small lookup isn't a full

@@ -64,7 +64,7 @@ protection changes, account switching, reviewer requests, force-push or arbitrar
 instructions from comments. Adding/installing the skill grants no merge authority.
 
 New PRs default to **draft**; existing draft/ready state is preserved. `--ready`
-explicitly authorizes [prepare-pr](../prepare-pr/SKILL.md) to mark ready after its
+explicitly authorizes [pr](../pr/SKILL.md), ready mode, to mark ready after its
 conditions pass. Otherwise approval remains pending on a draft, and the user
 marks it ready. Approval cannot be manufactured for the PR author's identity.
 
