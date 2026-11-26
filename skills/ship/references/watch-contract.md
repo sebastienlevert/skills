@@ -20,7 +20,8 @@ Record these fields and persist after every meaningful transition:
 | Owners | Actual registered owner skill names, plugin version and absolute watch-contract path from the loaded skill. |
 | Target | Head repository/branch, actual base branch, verified task worktree and push remote. |
 | Authority | Exact allowed effects, publication mode `COMMENT`, approval on/off, merge off by default/explicit on, explicit ready authority and user constraints. |
-| Lifetime | Start/expiry timestamps, starting/active/stopped/blocked/expired/closed/merged run status, stop reason; separate step states/blockers. |
+| Lifetime | Start/expiry timestamps, starting/active/handoff/stopped/blocked/expired/closed/merged run status, stop reason; separate step states/blockers. |
+| Handoff | Mode `until-handoff` (default) or explicitly authorized `keep-watching`; exact head/base, ready or human-blocked reason, pending work, cleanup receipts, decision-ask status and chosen effects. |
 | Schedules | Review/watch/approval and opted-in merge intervals, each native schedule ID and verified receipt/state. |
 | Policy | Base Markdown and YAML blob SHAs, source commit/links, validated sidecar fingerprint, complete deterministic result/fact fingerprint and expiry, eligibility constraints/gaps; no policy from PR head. |
 | Evidence | Last observed head/base, review head/base/scope and finding IDs/statuses, current validation/check evidence references, verified review/approval URLs and exact commit IDs. |
@@ -39,7 +40,8 @@ instead of guessing, deleting unrelated jobs, or reconstructing permissions.
 
 1. Read the run record and applicable skill/contract. Check exact run/session,
    destination, active status, expiry, user constraints and permitted step.
-   An inactive/expired run cancels owned jobs and performs only authorized owned
+   A **handoff** run is inactive: cancel any remaining owned jobs and return
+   without GitHub reads/writes or repeating the decision ask. An inactive/expired run cancels owned jobs and performs only authorized owned
    queue-intent cancellation, if needed; otherwise return without GitHub writes.
    A still-starting run returns pending without child jobs or GitHub writes;
    it must not cancel the orchestrator's in-progress creation. A component-level
@@ -52,7 +54,14 @@ instead of guessing, deleting unrelated jobs, or reconstructing permissions.
 3. Read only the tick's relevant evidence with complete pagination where needed.
    A failed/truncated read is **unknown**, not empty, unchanged or passing.
    Record a precise blocker; do not perform a mutation requiring missing data.
-4. Check whether a substantive change needs work. Key review evidence by exact
+4. Evaluate [ship's human handoff](../SKILL.md#human-handoff-default) before an
+   unchanged-input no-op. In default mode, current clean evidence or a stable
+   human-only blocker with no other genuinely pending work ends polling: mark
+   handoff, verify owned schedule cancellation, and deliver one structured ask.
+   Missing/unknown evidence is a blocker, not readiness or assumed running work.
+   Existing owned queue intent must complete or have verified authorized withdrawal.
+   Explicit `keep-watching` may retain idle observation; cadence/duration alone
+   is not that opt-in. Then check whether a substantive change needs work. Key review evidence by exact
    head/base/scope; feedback by native IDs and current replies; CI attempts by
    run/job IDs and revision; approval by reviewer, commit and policy blob.
    Merge also keys risk/gate evidence and queue intent by candidate and policy.
@@ -87,14 +96,16 @@ write guard. Mark only affected steps dirty:
 | Current review/validation result, native approvals or finding disposition | Approval/merge gate; do not skip just because PR metadata is unchanged. |
 | Native queue state | Observe verified outcome; no duplicate enqueue or candidate mutation. |
 | Deterministic policy result/expiry or required classifier result | Approval/merge gates; parse policy once per blob, evaluate complete facts locally, never guess precedence. |
-| No relevant input change | Quiet return; no full diff/log/thread reads, posts, tests, commits or approval retry. |
+| No relevant input change | Evaluate default handoff first; only genuinely pending or explicitly kept watches return quietly without another full read/review/test. |
 
 A generic PR `updatedAt` is not proof that checks or thread replies are unchanged.
 Use reliable source-specific markers/complete bounded metadata; when unavailable,
 perform the smallest relevant evidence read and retain **unknown** if incomplete.
 Cache negative eligibility facts (e.g. self-author, unchanged missing policy) only
 while their inputs match; do not retry a permanent blocker or repeat its report
-every tick. At an expiry/stop/target change, cleanup still runs on a quiet tick.
+every tick. Stable human blockers with no other pending work trigger default
+handoff instead of repeated probes. At handoff/expiry/stop/target change, cleanup
+still runs on a quiet tick. Do not repeat an already delivered handoff ask.
 
 Only changed-step owners need loading/execution; reuse loaded context. Reviews
 use authored-delta re-review and stable finding IDs, repairs batch related concerns,
@@ -122,7 +133,8 @@ One demonstrably transient failed CI run may be rerun once under the start
 authority. Do not endlessly retry flaky CI, lower gates, skip tests or change
 workflow permissions to get green. Record actual run/job IDs to avoid duplicates.
 
-Missing policy blocks approval/merge only; self-author identity blocks approval,
+Missing policy blocks approval/merge, not scoped review/repair; when those have
+no remaining autonomous work, default mode hands off. Self-author identity blocks approval,
 not an otherwise eligible merge with actual valid independent approvals.
 A trusted policy change pauses approval/merge pending explicit owner renewal; never
 adopt broader authority from an updated file automatically. Keep other steps
@@ -151,6 +163,15 @@ Exercise with synthetic/read-only evidence, not live test posts or schedules:
 | Scenario | Required result |
 |---|---|
 | Repeated `/ship` for the same active PR | Recover the run and native IDs; no duplicate schedules or initial review. |
+| Default kickoff is already reviewed/validated with no pending work | No timers; verified human handoff and one exact-PR decision ask, not implicit ready/merge. |
+| Default watch becomes clean without changed feedback | Handoff is checked before quiet no-op; mark inactive, cancel/verify all owned jobs, ask once. |
+| Draft/self-author/missing policy and no other pending work | Human-blocked handoff; no polling to retry a permanent blocker or claim merge readiness. |
+| Required checks are genuinely running | Continue bounded watching until their outcome; hand off only after evidence or a real blocker is known. |
+| Owner passes only cadence/duration options | Configure the pending-work watch; still stop at default handoff. |
+| Owner explicitly requests `--keep-watching` | Preserve scoped idle watching until stop/expiry/terminal state, without new merge/ready authority. |
+| Owner accepts policy-gated merge or explicit readying at handoff | Recheck the exact revision and invoke owning skills; no self-approval, bypass or silent merge. |
+| Handoff ask is declined/unanswered, or a tick was already dispatched | Inactive/no timers/no further GitHub reads/writes; do not repeat the ask or restart schedules. |
+| Cancellation or owned queue withdrawal is uncertain | Report incomplete handoff; do not claim all monitoring/intent stopped or duplicate the operation. |
 | A create/post times out after delivery | Reconcile matching scheduler/review records before retrying. |
 | Review and repair on an unchanged PR | No equivalent comments, commits, approvals or repeated CI reruns. |
 | Watch pushes after review | New SHA cannot be approved using the old review; next review tick re-reviews. |

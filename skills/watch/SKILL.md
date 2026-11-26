@@ -90,5 +90,6 @@ tick or create endless fix commits for the same unresolved root cause.
 Return **no change**, **repaired**, **pending** or **blocked**, with PR/head,
 diagnosis, pushed commits, verified reply/resolution outcomes, relevant check/run
 links and remaining concerns. A pending check remains pending. Approval and
-readiness belong to their separate owners; stop owned jobs on terminal watch
-conditions, not just because this pass had no new work.
+readiness belong to their separate owners. In ship, evaluate default handoff when
+no autonomous work remains; stop/verify its owned jobs before the decision ask.
+An explicitly kept watch does not end merely because this pass had no new work.
