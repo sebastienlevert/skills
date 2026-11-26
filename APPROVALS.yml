@@ -34,7 +34,6 @@ rules:
       - "skills/review/**"
       - "skills/watch/**"
       - "skills/pr/**"
-      - "skills/prepare-pr/**"
       - "skills/implement/**"
       - "skills/factory/**"
       - "skills/address-pr-feedback/**"

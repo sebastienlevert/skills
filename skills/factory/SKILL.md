@@ -33,7 +33,7 @@ expand to an account-wide queue.
 | Mode | Authority |
 |---|---|
 | `draft` | Author and push, review, address scoped feedback; create a draft and preserve an existing PR's state. No readying, approval or merge. |
-| `ready` | Also authorize `prepare-pr` to mark ready when its conditions pass. No approval or merge. |
+| `ready` | Also authorize `pr`, ready mode, to mark ready when its conditions pass. No approval or merge. |
 | `merge` | Also authorize eligible approval through `review` and normal merge/queue submission after the closure gate. |
 
 An explicit mode grants only those scoped effects. "Factory" alone never means
@@ -58,7 +58,7 @@ affected phase; do not silently replace it with a duplicate workflow.
 | Review | [review](../review/SKILL.md) | Actual pushed head -> findings/recommendation and evidence limits. Advisory on the first pass. |
 | Feedback disposition | [triage](../triage/SKILL.md), review-feedback mode | Current findings/threads -> reasoned correction plan. |
 | Corrections/conflicts and communication | [address-pr-feedback](../address-pr-feedback/SKILL.md) | Authorized concerns -> pushed fixes, verified evidence replies, eligible thread resolutions. |
-| Final readiness | [prepare-pr](../prepare-pr/SKILL.md) | Current revision/evidence -> readiness or material blockers; readying only in ready/merge mode. |
+| Final readiness | [pr](../pr/SKILL.md), assessment/ready mode | Current revision/evidence -> readiness or material blockers; no republishing; readying only in ready/merge mode. |
 
 An obvious fix need not invoke investigation, a spec or an ADR. Use component
 outputs as the next input, not a parallel re-derivation. Do not impose a fixed
@@ -81,9 +81,9 @@ blockers rather than inventing tasks, waiving gates or looping indefinitely.
 ## Final closure is mode-bound
 
 For `draft`, return the verified PR without transitioning it. For `ready`, let
-`prepare-pr` own the authorized readying operation and verify its result.
+`pr` own the authorized readying operation and verify its result.
 
-For `merge`, require the **current** review and prepare-pr results to support
+For `merge`, require the **current** review and pr assessment results to support
 high confidence, with no unresolved consequential findings or material ambiguity
 and all actual repository/user-required checks and reviews satisfied. Confidence
 is evidence-backed, not an invented percentage or green CI alone.

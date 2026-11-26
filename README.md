@@ -59,7 +59,7 @@ an entry point at a drive root isn't a global host configuration change.
 | [setup-repo](skills/setup-repo/SKILL.md) | Set up a bare Git container with main/default and sibling task worktrees inside it. | Existing-repo conversion is explicit and preserves local work and configured paths. |
 | [factory](skills/factory/SKILL.md) | Select an eligible issue and run a bounded delivery/review/feedback loop. | Modes draft/ready/merge; merge requires high evidence-backed confidence and normal repository enforcement. |
 | [ship](skills/ship/SKILL.md) | Ship a finished change, watch pending work, then stop for a human handoff; optional policy-gated merge. | Native `/every` only while needed or explicitly kept; one PR, no default merge/self-approval. |
-| [pr](skills/pr/SKILL.md) | Validate and send a finished change upstream, creating or reusing its PR. | Authenticated Git/`gh`; new PRs default to draft; preserves task worktree and existing PR state. |
+| [pr](skills/pr/SKILL.md) | Assess readiness, publish a finished change or explicitly mark its PR ready. | Assessment is read-only; publishing requires that intent and defaults to draft; readying requires separate authority. |
 | [watch](skills/watch/SKILL.md) | Observe and repair PR feedback, conflicts and failed CI. | Reuses `address-pr-feedback`; bounded passes and verified evidence replies; no approval or merge. |
 | [approve](skills/approve/SKILL.md) | Submit an eligible exact-commit approval under root `APPROVALS.md` and deterministic `APPROVALS.yml`. | Trusted actual-base policy pair plus repository rules/current review; never self-approve, bypass protection or merge. |
 | [merge](skills/merge/SKILL.md) | Merge when risk-specific confidence, deterministic policy and all repository merge rules pass. | Explicit merge authority, trusted actual-base policy pair, guarded normal merge/required native queue; no bypass or deferred auto-merge. |
@@ -71,7 +71,6 @@ an entry point at a drive root isn't a global host configuration change.
 | [implement](skills/implement/SKILL.md) | Deliver a scoped change through validation and a draft PR. | Git, `gh`, and the target project's tools; no automatic merge. |
 | [triage](skills/triage/SKILL.md) | Decide which review concerns to fix, clarify, defer, or reject with evidence. | Advisory by default; corrections and GitHub side effects require authorization. |
 | [address-pr-feedback](skills/address-pr-feedback/SKILL.md) | Resolve conflicts and finish authorized review fixes through code, evidence replies, and thread resolution. | Push and verify fixes first; close only fully addressed native threads, never the PR itself. |
-| [prepare-pr](skills/prepare-pr/SKILL.md) | Assess review readiness without repeating a full pipeline. | Reuses current validation; assessment changes no code or PR state. |
 | [paper-strategist](skills/paper-strategist/SKILL.md) | Write decision-ready papers and matching content-first HTML. | Offline template, light/dark mode, floating TOC, read time, SVG-only visuals; no build dependencies. |
 | [research-brief](skills/research-brief/SKILL.md) | Produce source-grounded market, competitive, customer or technical research. | Uses authorized available sources; facts, claims, inference and unknowns remain distinct. |
 | [review](skills/review/SKILL.md) | Review PRs, local changes, and follow-up fixes across stacks. | Read-only by default; posting and recurring sweeps require an explicit request. |
@@ -116,7 +115,7 @@ Use new-adr to record this decision and its alternatives as Proposed.
 Use implement to fix owner/repo#123, preserving existing behavior.
 Use triage to assess these review comments before we change anything.
 Use address-pr-feedback to fix the feedback on owner/repo#123, push verified changes, reply with evidence, and resolve addressed threads.
-Use prepare-pr to assess this draft without marking it ready.
+Use the personal-toolkit pr skill to assess this draft without publishing or marking it ready.
 Use post-pr-comments to publish the reviewed findings inline on owner/repo#123.
 Use ship for this finished change, with a scheduled Copilot PR watch.
 Use the personal-toolkit pr skill to publish this finished change.
@@ -167,7 +166,7 @@ Generation does not authorize uploading or sharing the paper.
 
 ```text
 new-issue -> investigate (when needed) -> new-spec / new-adr (when warranted)
-          -> implement [brief test-plan -> change -> validate -> prepare-pr]
+          -> implement [brief test-plan -> change -> validate -> pr assessment]
           -> draft PR -> review / triage (when requested)
 ```
 
@@ -178,10 +177,12 @@ reuses evidence and does not run two pipelines just because both skills exist.
 Rerun checks when relevant code, inputs or integration change, or project policy
 requires it.
 
-Standalone `test-plan` only plans. Standalone `prepare-pr` only assesses unless
-the user requests fixes or readying. In implementation, readiness remains
-advisory and the PR stays a draft. `triage` preserves the disposition of each
-finding instead of blindly applying or dismissing feedback.
+Standalone `test-plan` only plans. `pr` owns both readiness and publication:
+readiness questions/assessment perform no writes, publishing needs that intent,
+and readying needs separate explicit authority. In implementation, pr's final
+assessment remains advisory; implement owns the push/draft creation without
+recursing into pr publication. `triage` preserves each finding's disposition
+instead of blindly applying or dismissing feedback.
 
 `post-pr-comments` publishes findings only when requested. It maps each concern
 to the relevant changed lines, rechecks the PR revision, avoids duplicate threads
@@ -240,7 +241,7 @@ doesn't authorize migrating existing repositories.
 
 `factory` is a thin router that invokes the owning skills for one issue and up
 to two correction cycles by default. `triage` owns backlog selection;
-`implement`, `review`, `address-pr-feedback` and `prepare-pr` own delivery,
+`implement`, `review`, `address-pr-feedback` and `pr` own delivery,
 review, corrections and readiness. It does not duplicate their logic.
 Investigation, specs and ADRs remain conditional; test planning is reused from
 implementation rather than repeated. A missing required skill is a visible
@@ -269,7 +270,7 @@ needs a person. A healthy PR is not a reason for hours of repeated metadata read
 
 | Step | Independent skill | Schedule |
 |---|---|---|
-| Prepare PR and send upstream | `pr` (uses `prepare-pr` for readiness) | Once at start; reuses the same task PR. |
+| Prepare PR and send upstream | `pr`, publication mode with integrated readiness | Once at start; reuses the same task PR. |
 | Code review | `review` | Initial `COMMENT` review; `/every 15m` only while watching is needed. |
 | Watch feedback, conflicts and CI | `watch` (routes corrections to `address-pr-feedback`) | Initial pass; `/every 5m` for genuine pending work. |
 | Approve under repository rules | `approve` | Eligibility pass; `/every 15m` while watching, never a self-approval. |
@@ -334,7 +335,7 @@ when needed; permanent unchanged blockers aren't retried/reported each tick.
 Missing evidence never becomes a passing gate just to save tokens.
 
 New PRs default to draft; existing PR state is preserved. `--ready` explicitly
-authorizes a current `prepare-pr` readiness transition. Without it, draft approval
+authorizes `pr` to perform a current readiness transition. Without it, draft approval
 waits for the owner to mark ready. Approval reads the target repository's root
 `APPROVALS.md` from the **actual PR base commit**, so a PR cannot weaken its own
 policy. Missing/ambiguous policy or inaccessible rules block approval/merge only.

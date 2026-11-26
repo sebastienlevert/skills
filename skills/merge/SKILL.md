@@ -52,7 +52,7 @@ Plain ship, review, approval and APPROVALS.md alone grant no merge authority.
    and regression verification, affected integration behavior, required sign-offs
    and any recovery evidence the policy asks for. Reuse exact-head/base
    [review](../review/SKILL.md) and
-   [prepare-pr](../prepare-pr/SKILL.md) evidence. In ship, missing/stale review is
+   [pr](../pr/SKILL.md) assessment evidence. In ship, missing/stale review is
    pending for its owner; standalone may obtain an advisory review/readiness pass.
    Green CI, metadata checkboxes or agreement between models is not sufficient
    confidence. Never fabricate a calibrated percentage. If the policy demands a
