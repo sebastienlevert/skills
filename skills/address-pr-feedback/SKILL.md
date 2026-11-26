@@ -30,6 +30,11 @@ mean merge, release, deploy, or prove that a reviewer has approved the change.
 - **Conflict-only** requests authorize base integration and validation, not replies
   or thread resolution. **Plan/dry-run/triage** requests authorize no mutations.
   A request merely to review a PR belongs to review, not this authoring workflow.
+- A scoped CI-repair request from [watch](../watch/SKILL.md) authorizes
+  the same correction/validation/push path for its diagnosed failure. A CI concern
+  need not have a reviewer comment or native thread; return commit/check evidence
+  without fabricating a reply/resolution surface. The watch owner handles CI
+  observation, justified reruns and watch lifecycle; this skill creates no jobs.
 - Verify canonical host/repository, authenticated user, PR state, head repository,
   head/base branches and SHAs, write permissions, and any supplied comment's
   association with that PR. Use `gh`, never GitHub MCP or account switching.

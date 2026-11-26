@@ -15,8 +15,10 @@ instead of duplicating its procedures in this file.
 | Write a specification or architecture decision | `new-spec`, `new-adr` |
 | Implement a scoped change through a draft PR | `implement` |
 | Explicitly orchestrate the delivery lifecycle | `factory`, with the requested mode |
+| Ship a finished change with Copilot's scheduled PR watch | `ship` |
+| Publish, watch, approve, or risk-gate merge one PR independently | `pr`, `watch`, `approve`, `merge` |
 | Plan focused verification | `test-plan` |
-| Review changes or assess review feedback | `auto-review`, `triage` |
+| Review changes or assess review feedback | `review`, `triage` |
 | Fix authorized PR feedback or conflicts | `address-pr-feedback` |
 | Publish reviewed findings at specific diff lines | `post-pr-comments` |
 | Assess PR readiness | `prepare-pr` |
@@ -38,6 +40,11 @@ dependency instead of inventing its behavior.
 - Installation and initialization don't authorize any downstream workflow.
   Run `init-toolkit` only when explicitly invoked by the user, never implicitly
   because this file is present or another skill needs a workspace.
+- `ship` starts only on explicit request. Its Copilot `/every` jobs stay scoped
+  to one PR; approval follows trusted root `APPROVALS.md` and GitHub eligibility,
+  never self-approves or merges by default. Explicit `--merge` routes risk-aware
+  closure through `merge`; its trusted policy and all native merge rules must
+  pass. Other skills don't silently start its watcher.
 
 Keep local overrides and machine-specific repository registry data outside this
 managed block. Refresh the block through `init-toolkit`, not by copying skill

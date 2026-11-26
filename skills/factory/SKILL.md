@@ -34,7 +34,7 @@ expand to an account-wide queue.
 |---|---|
 | `draft` | Author and push, review, address scoped feedback; create a draft and preserve an existing PR's state. No readying, approval or merge. |
 | `ready` | Also authorize `prepare-pr` to mark ready when its conditions pass. No approval or merge. |
-| `merge` | Also authorize eligible approval through `auto-review` and normal merge/queue submission after the closure gate. |
+| `merge` | Also authorize eligible approval through `review` and normal merge/queue submission after the closure gate. |
 
 An explicit mode grants only those scoped effects. "Factory" alone never means
 merge. Pass the original request, constraints and mode authority to every invoked
@@ -55,7 +55,7 @@ affected phase; do not silently replace it with a duplicate workflow.
 | Contract/decision work, only when warranted | [new-spec](../new-spec/SKILL.md), [new-adr](../new-adr/SKILL.md) | Required behavior/choice -> project-native contract, without invented approval. |
 | Verification plan | [test-plan](../test-plan/SKILL.md) | Acceptance/scope -> brief focused cases; reuse implement's integrated planning, not a second plan. |
 | Authoring and first draft | [implement](../implement/SKILL.md) | Selected issue/plan -> validated pushed revision and task worktree/PR. |
-| Review | [auto-review](../auto-review/SKILL.md) | Actual pushed head -> findings/recommendation and evidence limits. Advisory on the first pass. |
+| Review | [review](../review/SKILL.md) | Actual pushed head -> findings/recommendation and evidence limits. Advisory on the first pass. |
 | Feedback disposition | [triage](../triage/SKILL.md), review-feedback mode | Current findings/threads -> reasoned correction plan. |
 | Corrections/conflicts and communication | [address-pr-feedback](../address-pr-feedback/SKILL.md) | Authorized concerns -> pushed fixes, verified evidence replies, eligible thread resolutions. |
 | Final readiness | [prepare-pr](../prepare-pr/SKILL.md) | Current revision/evidence -> readiness or material blockers; readying only in ready/merge mode. |
@@ -83,13 +83,13 @@ blockers rather than inventing tasks, waiving gates or looping indefinitely.
 For `draft`, return the verified PR without transitioning it. For `ready`, let
 `prepare-pr` own the authorized readying operation and verify its result.
 
-For `merge`, require the **current** auto-review and prepare-pr results to support
+For `merge`, require the **current** review and prepare-pr results to support
 high confidence, with no unresolved consequential findings or material ambiguity
 and all actual repository/user-required checks and reviews satisfied. Confidence
 is evidence-backed, not an invented percentage or green CI alone.
 
 If native approval is appropriate and the current identity is eligible, let
-`auto-review` publish the supported approval for its verified head. GitHub does
+`review` publish the supported approval for its verified head. GitHub does
 not permit approving one's own PR: never switch identities or claim self-review
 is native approval. For own PRs, apply the actual independent-approval requirements;
 do not invent an extra requirement or bypass an existing one.

@@ -39,6 +39,19 @@ test('all native catalogs resolve the same toolkit and discover bundled skills',
   assert(result.skills.includes('new-issue'));
 });
 
+test('ship and its independent PR owners are discoverable with complete local contracts', () => {
+  const result = validateMarketplace(root);
+  for (const name of ['ship', 'pr', 'review', 'watch', 'approve', 'merge']) {
+    assert(result.skills.includes(name), `${name} must be discoverable`);
+    const file = join(root, 'skills', name, 'SKILL.md');
+    const text = readFileSync(file, 'utf8');
+    for (const [, target] of text.matchAll(/\]\(([^)#]+)(?:#[^)]*)?\)/g)) {
+      if (/^[a-z]+:/i.test(target)) continue;
+      assert(readFileSync(resolve(dirname(file), target), 'utf8').trim(), `${name}: broken local contract ${target}`);
+    }
+  }
+});
+
 test('rejects compatibility-manifest version drift', (t) => {
   const directory = fixture(t);
   editJson(directory, '.claude-plugin/plugin.json', (value) => {

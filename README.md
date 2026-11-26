@@ -58,6 +58,11 @@ an entry point at a drive root isn't a global host configuration change.
 | [new-issue](skills/new-issue/SKILL.md) | Research, deduplicate, draft, or file an actionable issue. | Authenticated `gh`; creates only the authorized issue, not implementation. |
 | [setup-repo](skills/setup-repo/SKILL.md) | Set up a bare Git container with main/default and sibling task worktrees inside it. | Existing-repo conversion is explicit and preserves local work and configured paths. |
 | [factory](skills/factory/SKILL.md) | Select an eligible issue and run a bounded delivery/review/feedback loop. | Modes draft/ready/merge; merge requires high evidence-backed confidence and normal repository enforcement. |
+| [ship](skills/ship/SKILL.md) | Ship a finished change through publication, review, watching and policy-based approval; optional risk-aware merge. | GitHub Copilot CLI native `/every`; three session-scoped prompts plus merge only with explicit `--merge`; one PR, no default merge. |
+| [pr](skills/pr/SKILL.md) | Validate and send a finished change upstream, creating or reusing its PR. | Authenticated Git/`gh`; new PRs default to draft; preserves task worktree and existing PR state. |
+| [watch](skills/watch/SKILL.md) | Observe and repair PR feedback, conflicts and failed CI. | Reuses `address-pr-feedback`; bounded passes and verified evidence replies; no approval or merge. |
+| [approve](skills/approve/SKILL.md) | Submit an eligible exact-commit approval under root `APPROVALS.md` and deterministic `APPROVALS.yml`. | Trusted actual-base policy pair plus repository rules/current review; never self-approve, bypass protection or merge. |
+| [merge](skills/merge/SKILL.md) | Merge when risk-specific confidence, deterministic policy and all repository merge rules pass. | Explicit merge authority, trusted actual-base policy pair, guarded normal merge/required native queue; no bypass or deferred auto-merge. |
 | [new-epic](skills/new-epic/SKILL.md) | Define outcomes, priorities, scope boundaries, and approved child issues. | Authenticated `gh`; no speculative bulk creation or silent reparenting. |
 | [new-spec](skills/new-spec/SKILL.md) | Create or update a project-native behavioral contract. | Git and `gh`; persisted work uses an isolated worktree and draft PR. |
 | [new-adr](skills/new-adr/SKILL.md) | Record architectural alternatives, decisions, and consequences. | Project-native conventions; proposed decisions are not automatically accepted or implemented. |
@@ -69,7 +74,7 @@ an entry point at a drive root isn't a global host configuration change.
 | [prepare-pr](skills/prepare-pr/SKILL.md) | Assess review readiness without repeating a full pipeline. | Reuses current validation; assessment changes no code or PR state. |
 | [paper-strategist](skills/paper-strategist/SKILL.md) | Write decision-ready papers and matching content-first HTML. | Offline template, light/dark mode, floating TOC, read time, SVG-only visuals; no build dependencies. |
 | [research-brief](skills/research-brief/SKILL.md) | Produce source-grounded market, competitive, customer or technical research. | Uses authorized available sources; facts, claims, inference and unknowns remain distinct. |
-| [auto-review](skills/auto-review/SKILL.md) | Review PRs, local changes, and follow-up fixes across stacks. | Read-only by default; posting and recurring sweeps require an explicit request. |
+| [review](skills/review/SKILL.md) | Review PRs, local changes, and follow-up fixes across stacks. | Read-only by default; posting and recurring sweeps require an explicit request. |
 | [post-pr-comments](skills/post-pr-comments/SKILL.md) | Publish reviewed findings inline at their exact PR diff locations. | Authenticated `gh`; explicit posting, current-head verification, deduplication and verified delivery; no implicit approval or resolution. |
 
 Marketplace compatibility means the host can install and discover the toolkit.
@@ -91,6 +96,12 @@ Explicit invocation differs by host:
 | Claude Code | Plugin skills are namespaced, for example `/personal-toolkit:new-issue`. |
 | Codex | Use `/skills` or mention `$new-issue` in your prompt. |
 
+The PR lifecycle skill names are **`pr`, `review`, `watch`, `approve`, `merge`**.
+Copilot also has native `/pr` and `/review` commands. To select these toolkit
+workflows unambiguously, choose the `personal-toolkit` entry in `/skills list`
+or ask, for example, "Use the personal-toolkit pr skill." These skills do not
+replace the host's built-ins; `ship` loads the registered toolkit owners.
+
 Examples of requests:
 
 ```text
@@ -107,6 +118,12 @@ Use triage to assess these review comments before we change anything.
 Use address-pr-feedback to fix the feedback on owner/repo#123, push verified changes, reply with evidence, and resolve addressed threads.
 Use prepare-pr to assess this draft without marking it ready.
 Use post-pr-comments to publish the reviewed findings inline on owner/repo#123.
+Use ship for this finished change, with a scheduled Copilot PR watch.
+Use the personal-toolkit pr skill to publish this finished change.
+Use the personal-toolkit review skill for owner/repo#123.
+Use watch for owner/repo#123 for one feedback/conflict/CI repair pass.
+Use approve for owner/repo#123 under its root APPROVALS.md.
+Use merge for owner/repo#123 when its risk/confidence and APPROVALS.md merge conditions pass.
 ```
 
 Specify the repository when it is not the current project. Supply the actual
@@ -151,7 +168,7 @@ Generation does not authorize uploading or sharing the paper.
 ```text
 new-issue -> investigate (when needed) -> new-spec / new-adr (when warranted)
           -> implement [brief test-plan -> change -> validate -> prepare-pr]
-          -> draft PR -> auto-review / triage (when requested)
+          -> draft PR -> review / triage (when requested)
 ```
 
 The arrows describe useful combinations, not mandatory stages for every task.
@@ -223,7 +240,7 @@ doesn't authorize migrating existing repositories.
 
 `factory` is a thin router that invokes the owning skills for one issue and up
 to two correction cycles by default. `triage` owns backlog selection;
-`implement`, `auto-review`, `address-pr-feedback` and `prepare-pr` own delivery,
+`implement`, `review`, `address-pr-feedback` and `prepare-pr` own delivery,
 review, corrections and readiness. It does not duplicate their logic.
 Investigation, specs and ADRs remain conditional; test planning is reused from
 implementation rather than repeated. A missing required skill is a visible
@@ -241,6 +258,93 @@ confidence percentages, or treats queue admission as a completed merge. Own PRs
 follow the actual independent-approval requirements; an approval cannot be
 manufactured by changing accounts. Worktree cleanup remains separate.
 
+### Ship with GitHub Copilot CLI
+
+`ship` is **Copilot-native**: publish a finished change, review it and watch
+feedback/conflicts/CI, followed by repository-policy approval and **opt-in
+risk-aware merge**. Plain ship never merges. It uses Copilot skills and native
+session scheduling, not another provider's commands or watcher.
+
+| Step | Independent skill | Schedule |
+|---|---|---|
+| Prepare PR and send upstream | `pr` (uses `prepare-pr` for readiness) | Once at start; reuses the same task PR. |
+| Code review | `review` | Initial `COMMENT` review, then `/every 15m` for changed evidence. |
+| Watch feedback, conflicts and CI | `watch` (routes corrections to `address-pr-feedback`) | Initial pass, then `/every 5m`. |
+| Approve under repository rules | `approve` | `/every 15m`; only when current evidence and identity are eligible. |
+| Optional merge closure | `merge` | `/every 15m` only with explicit `--merge`; policy-permitted risk/confidence and actual merge/queue rules. |
+
+```text
+/ship
+/ship owner/repo#123 --ready --watch-for 8h
+/ship owner/repo#123 --ready --merge --merge-every 15m
+/ship owner/repo#123 --watch-every 5m
+/ship owner/repo#123 --approval off --review-every 10m
+/ship status owner/repo#123
+/ship stop owner/repo#123
+```
+
+Find the installed skill with `/skills list`; use its actual registered command
+or ask by name if the host presents a qualified name. Options above are skill
+requests, not new shell commands. Defaults are a **24h** watch, 15m review/approval
+and 5m watching. `/every` requires experimental support on builds that mark
+it experimental. Ship uses the native scheduler and records verified schedule
+IDs; it never enables settings/permissions, starts another CLI, or substitutes
+a shell loop. Installing the toolkit creates no schedules.
+
+Each prompt binds one session-local run record and exact PR. Repeated starts
+reuse matching watchers, unchanged ticks avoid duplicate posts, and a new head
+invalidates old review/approval evidence. Stop/expiry/closed/merged PRs cancel the
+owned jobs. Approval alone keeps the watch active for later pushes. Native jobs
+are **session-scoped**, not a durable service; the session must remain available,
+and resumed work requires recovered receipts and current authority.
+
+`--merge` adds a separate schedule and authorizes normal merge/required native
+queue admission only when the trusted policy permits the assessed risk and the
+required current evidence gives sufficient confidence. It reuses review/readiness
+evidence and valid independent approvals; an author's inability to self-approve
+does not prevent an otherwise eligible merge. Missing merge criteria, unknown or
+human-only risk, stale evidence or unmet native rules leave it blocked/pending.
+There is no invented confidence percentage and no "green CI means safe" shortcut.
+`--approval off` never waives required approvals. `--merge` does not imply readying;
+use `--ready` or let the owner mark the draft ready.
+
+Submission is bound to the verified head, without admin bypass or deferred
+auto-merge. Native queue admission is **queued**, not merged; queue-group checks
+remain native prerequisites for final merge. Record its owned entry, pause
+candidate-mutating repairs and verify normal withdrawal on stop/new blockers
+before claiming cancellation or repairing it. Queue intent can outlive the
+session; stopping jobs or session shutdown does not by itself retract an entry.
+
+The watch is delta-first and token-conscious: shared compact metadata, quiet idle
+ticks, owner loading only for actionable changes, authored-delta re-review and
+reuse of exact-tree checks. Full relevant diffs, logs and threads are read only
+when needed; permanent unchanged blockers aren't retried/reported each tick.
+Missing evidence never becomes a passing gate just to save tokens.
+
+New PRs default to draft; existing PR state is preserved. `--ready` explicitly
+authorizes a current `prepare-pr` readiness transition. Without it, draft approval
+waits for the owner to mark ready. Approval reads the target repository's root
+`APPROVALS.md` from the **actual PR base commit**, so a PR cannot weaken its own
+policy. Missing/ambiguous policy or inaccessible rules block approval/merge only.
+The [opt-in example](skills/approve/assets/APPROVALS.md) is not installed into
+target repositories automatically. Native eligibility, CODEOWNERS and protection
+remain authoritative; the PR author cannot approve their own PR, and an eligible
+approval is not proof that all merge requirements have been satisfied.
+
+Pair root `APPROVALS.md` with **`APPROVALS.yml`** (`.yaml` fallback). The
+[sidecar example](skills/approve/assets/APPROVALS.yml) uses the portable v1
+rule structure with Copilot names (`verdict.copilot`, `copilot/code_review`,
+`copilot/diff`). Paths/extensions, exclusions, seats, conditions, first-match
+overrides and strictest-rule combination are evaluated by a local program, not
+model interpretation. Both blobs come from the PR base; observe/missing/invalid
+or stale evidence never authorizes approval/merge. See the
+[YAML contract](skills/approve/references/yaml-policy.md) for author-seat versus
+native-approval semantics, examples, supported features and dependency setup.
+
+Use the component skills independently for a single step. `ship` is for finished
+changes/PRs, while `factory` begins with issue selection/implementation and keeps
+its existing mode-bound closure. Neither silently starts the other's lifecycle.
+
 ## Prerequisites and authorization
 
 - Install and authenticate the host you intend to use.
@@ -252,9 +356,12 @@ manufactured by changing accounts. Worktree cleanup remains separate.
 - Review a skill before using it. Instructions do not bypass native permission
   prompts, tenant restrictions, or repository policy.
 
-The repository is a plugin distribution, not an npm package. You do not need
-`npm install`, Python, or .NET simply to install its instruction files. Particular
-skills can have additional requirements listed above.
+Installing the instruction files does not need `npm install`, Python, or .NET.
+The deterministic YAML evaluator additionally needs Node.js 22+ and the locked
+parser dependencies in the toolkit's private validation package; restore with
+`npm ci --ignore-scripts` when that required command fails for missing packages.
+This does not add dependencies or runtime configuration to the target repository.
+Particular skills can have additional requirements listed above.
 
 ## Verify installation
 
@@ -281,9 +388,9 @@ If installed by marketplace and also registered individually, the same skill may
 appear more than once. Choose one installation method per host; do not remove a
 personal registration until you know which directory it points to.
 
-### Auto-review
+### Review
 
-Use `auto-review` to review a PR, local changes, or fixes to previous findings.
+Use `review` to review a PR, local changes, or fixes to previous findings.
 It checks compatibility and proportionate complexity, applies change-specific
 lenses, and returns consolidated findings. Posting and recurring sweeps require
 an explicit request; the skill never merges PRs.
@@ -292,13 +399,13 @@ To make only this skill available personally in Copilot CLI, register its
 directory from a persistent checkout:
 
 ```text
-copilot skill add <checkout>/skills/auto-review
+copilot skill add <checkout>/skills/review
 copilot skill list
 ```
 
 Restart or run `/skills reload` in an existing session after installation.
-The [skill](skills/auto-review/SKILL.md) includes the workflow and a
-[re-review reference](skills/auto-review/references/re-review.md) with behavioral
+The [skill](skills/review/SKILL.md) includes the workflow and a
+[re-review reference](skills/review/references/re-review.md) with behavioral
 acceptance scenarios. There are no language-specific tool dependencies; GitHub
 reviews use the authenticated `gh` CLI.
 

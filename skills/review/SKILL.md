@@ -1,8 +1,8 @@
 ---
-name: auto-review
+name: review
 description: >
   Evidence-backed review of pull requests, local changes, and follow-up fixes in
-  any repository or technology stack. Use for "auto-review", "review this PR",
+  any repository or technology stack. Use for "review", "review this PR",
   "review my changes", "re-review", or an explicitly requested PR sweep. Applies
   architecture and implementation lenses plus change-specific checks, prioritizes
   compatibility and proportionate complexity, and consolidates actionable findings.
@@ -10,7 +10,7 @@ description: >
   request. Does not fix code or merge PRs.
 ---
 
-# Auto-review
+# Review
 
 Review the change the author actually made against the project's own contracts.
 Find consequential defects, not reasons to redesign working software. This skill
@@ -29,7 +29,7 @@ branch.
 | "Post the review" | Publish the reviewed findings after checking the current head and authorization. |
 | Explicit recurring review request | Use the host's supported scheduler only with a known repository, cadence, and publication scope. |
 
-A bare `auto-review` means local advisory when there are local changes; otherwise
+A bare `review` means local advisory when there are local changes; otherwise
 use a PR already identified in the conversation. If neither exists, request a
 target. It never means "start an hourly sweep" or "post automatically."
 
@@ -188,3 +188,19 @@ someone else's findings resolved as part of this skill.
 
 Read [the re-review and sweep procedure](references/re-review.md) only for those
 modes. Do not schedule recurring work as a side effect of a single-PR review.
+
+### Ship review tick
+
+When [ship](../ship/SKILL.md) invokes this owner, follow its
+[watch contract](../ship/references/watch-contract.md) before writes and after
+publication. Review exactly its recorded PR in one bounded pass; never create
+child schedules or run a repository sweep. The explicit ship start authorizes
+advisory review of that self-authored/draft PR and `COMMENT` publication only,
+not native approval, fixes, readying or merge. Standalone permissions are unchanged.
+
+Recover head/base/scope, stable findings and verified review links from the run
+record. Skip unchanged, equivalently reviewed evidence without reposting; use
+re-review for a changed revision and reassess affected base/check/feedback inputs.
+Record the actual reviewed head/base, finding dispositions, result, evidence
+limits and verified publication URL. A concurrent push leaves that result stale;
+never mark a newer revision reviewed. The separate approve tick owns approval.

@@ -67,7 +67,7 @@ a queue is not authorization to create a schedule.
    enumeration a complete sweep.
 6. Apply the main skill's publication rules to each PR. No authorization to post
    means chat/advisory output only. Scheduled posts need scope-matching explicit
-   permission; never infer approval authority from "auto-review."
+   permission; never infer approval authority from "review."
 7. Use only a scheduler actually supported by the host. Do not spawn another CLI
    or create a shell loop as a substitute. Retain the returned schedule ID and
    verify creation; explain the limitation if scheduling is unavailable.
