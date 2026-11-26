@@ -48,6 +48,14 @@ merge access and all native required independent/CODEOWNER approvals, checks,
 discussion and freshness/merge-queue requirements satisfied for the candidate.
 Being the PR author does not forbid eligible merging or waive independent reviews.
 
+Rules inspection is not a paid-plan prerequisite. The toolkit's checked reader
+may classify GitHub.com's exact private-repository plan-unavailable response as
+an unavailable capability only after verifying current identity and repository
+write access. This example permits normal expected-head-bound GitHub enforcement
+in that case, without asserting that rules are absent. All other evidence gates
+remain; authentication failures, other denials and unknown/incomplete reads block.
+Inspect available rules and never bypass a native rejection or required queue.
+
 | Risk of the actual change | Evidence needed for sufficient confidence | Automated merge permitted? |
 |---|---|---|
 | Low: small, bounded, reversible impact; no sensitive contract/data/access change | Current substantive review, relevant acceptance/regression verification, no consequential unresolved finding or material evidence gap, all native merge prerequisites | Yes, when every condition is demonstrated. |

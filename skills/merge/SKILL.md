@@ -30,7 +30,13 @@ Plain ship, review, approval and APPROVALS.md alone grant no merge authority.
    Reuse already collected policy evidence, not another pipeline. Interpret its
    **merge** conditions separately from approval-submission conditions; do not
    invoke approve to manufacture a missing review. Missing/ambiguous merge
-   criteria, inaccessible rules, or a changed pinned policy blocks this step.
+   criteria, denied/unknown rules evidence, or a changed pinned policy blocks this
+   step. Use the checked [native-rule capability reader](../approve/references/native-rule-access.md)
+   to distinguish GitHub.com's verified private-plan inspection limitation from
+   an authorization failure. When the trusted base policy permits that case,
+   retain all other evidence gates and use normal expected-head-bound GitHub
+   enforcement; do not require an unavailable paid feature, infer absent rules,
+   skip available rule inspection or turn other 403s into permission.
    Follow the [deterministic sidecar contract](../approve/references/yaml-policy.md)
    and require a complete current evaluator result with `policySatisfied=true`.
    `comments` can permit merge with actual required approvals; automated review
