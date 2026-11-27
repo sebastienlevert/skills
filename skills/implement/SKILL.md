@@ -4,7 +4,7 @@ description: >
   Deliver an authorized issue, feature, or bug fix end to end in any repository:
   refresh the actual base, use a dedicated sibling worktree and branch, implement
   the smallest complete change in scoped edit batches, run focused then functional
-  checks before a final full unit suite, then push and open a draft PR. Reuse the
+  checks before a final unit-validation gate, then push and open a draft PR. Reuse the
   same worktree and PR for follow-ups. Use for "implement this",
   "implement issue", or an explicitly requested implementation task. Never merge,
   ready a draft, overwrite unrelated work, or substitute a plan for delivery.
@@ -81,7 +81,7 @@ change for a bug fix that restores agreed behavior.
 ## Implementation loop
 
 **Scope -> one coherent edit batch -> focused checks -> functional checks ->
-stable-candidate review -> full unit suite -> delivery.**
+stable-candidate review -> complete required unit validation -> delivery.**
 Task-caused failures return to scope before another edit batch. Keep successful
 evidence whose inputs remain unchanged; do not restart every check mechanically.
 Mandatory repository gates take precedence over this default ordering.
@@ -96,8 +96,13 @@ Mandatory repository gates take precedence over this default ordering.
 2. Derive a brief [test plan](../test-plan/SKILL.md) from acceptance: primary
    behavior or bug reproduction, relevant edge/error paths and the most likely
    regression. Map cases to existing commands/selectors and expected outcomes.
-   Separate focused checks, functional verification and the final full unit
-   suite; identify required lint/type/schema/build gates and test prerequisites.
+   Separate focused checks, functional verification and the final unit gate;
+   identify required lint/type/schema/build gates and test prerequisites.
+   Discover the repository's existing affected-test selection, task-input/cache
+   support and remaining-tests mode from project instructions and manifests.
+   Prefer those verified tools over manually inferred per-test selectors. Use
+   the actual comparison base and include dependent consumers; if impact cannot
+   be established, use conservative existing coverage, not a guessed exclusion.
    A narrowly scoped pre-edit bug reproduction is useful when it resolves
    uncertainty; do not run a full baseline suite by default.
 3. Reuse a supplied current plan. Keep scope and evidence in-session, not in a
@@ -158,6 +163,11 @@ check address, and why is it the cheapest credible way to address it?**
 - Reuse results unless relevant inputs changed. A prose edit does not invalidate
   unrelated runtime/browser checks. Do not install unrelated test prerequisites,
   repeat a green check or broaden a suite simply to gain unspecified confidence.
+  Prefer the repository's configured input-aware cache. Its inputs must account
+  for relevant source, tests, configuration, dependencies, tools, environment,
+  fixtures and generated artifacts. A matching command or commit alone is not
+  proof of valid reuse. Do not invent cache hits or add an ad hoc cache; unknown
+  inputs, mutable external state or a required fresh check need revalidation.
 - Distinguish mandatory local checks from CI-only gates. A command appearing in
   CI is not itself a requirement to duplicate it locally. Use current CI evidence
   when policy permits; required pending/failing checks remain visible, not waived.
@@ -194,22 +204,26 @@ check address, and why is it the cheapest credible way to address it?**
    compatibility, unnecessary complexity, sensitive output and missed consumers,
    including new/generated files. Use available review tools only when warranted,
    not a mandatory agent cast. Fetch again and inspect base/head movement before
-   the final expensive run. Integrate safely only where needed. Any resulting
+   the final gate. Integrate safely only where needed. Any resulting
    change returns to scope and affected validation before proceeding.
-4. **Final full unit gate.** Once focused checks, functional verification and
-   self-review pass, run the repository's full unit suite once on this stable
-   candidate, locally or in CI as project policy permits, plus still-outstanding
-   mandatory gates. Reuse an already-valid full-suite result instead of rerunning
-   it to enforce phase ordering. A required CI-only gate may follow draft
-   publication; report the draft as awaiting validation until its result is known.
-   Do not call pending CI a pass or poll it automatically. Use the actual project
-   command; do not assume a generic test script contains only unit tests.
-   If there is no applicable unit suite or an explicit project exemption applies,
-   record that and the evidence used instead. Never invent an exemption to avoid
-   a required gate. Do not add a full baseline run or repeatedly rerun a green
-   suite. "Once" is per stable candidate, not once forever: a task-caused failure
-   returns to scope; after corrections and affected checks, rerun the full unit
-   gate on the new candidate.
+4. **Complete required unit validation.** Once focused checks, functional
+   verification and self-review pass, account for all unit validation and other
+   gates required by project policy on the stable candidate. Combine valid
+   executed results, input-matched cache hits and current applicable CI evidence;
+   run only missing or invalidated checks. Prefer a native remaining-tests mode
+   to running previously passed tests again. An affected-only pass is not a
+   full-suite pass, and omitted, failed, skipped or pending required checks are
+   not satisfied evidence.
+   If the runner cannot establish complete accounting, or policy requires a
+   fresh full run, run the full suite once on the stable candidate. Use the actual
+   project command; do not assume a generic test script contains only unit tests.
+   If no applicable suite exists or an explicit project exemption applies,
+   record that and the evidence used instead; never invent an exemption.
+   A required CI-only gate may follow draft publication; report awaiting
+   validation until its result is known. Do not call pending CI a pass or poll it
+   automatically. After corrections, update the accounting and repeat affected
+   checks; repeat the full suite only when required or necessary to close the
+   remaining evidence gap. Do not add a full baseline run.
 
 ### Failure routing and evidence reuse
 
@@ -234,6 +248,19 @@ check address, and why is it the cheapest credible way to address it?**
   check instead of starting another; await its result. Verify any necessary local
   test service is responsive and stop task-owned helpers when no longer needed.
 
+### Observe efficiency without another test loop
+
+Use existing tool/runner/CI results to record observed check durations, which
+results were executed versus reused, and why any check was repeated. Do not run
+extra checks to collect metrics or invent timings. Surface only meaningful
+latency or avoidable repetition in the delivery summary.
+
+When the workflow itself is being evaluated, compare task outcomes and regressions
+alongside validation elapsed time and redundant check invocations in available
+traces. Faster but incorrect is not improvement; passing after unnecessary loops
+is not efficient. This is not a mandatory benchmark, agent simulation or second
+review during each implementation.
+
 ## 6. Check readiness without a second pipeline
 
 Apply [pr's assessment mode](../pr/SKILL.md) as a lightweight final pass:
@@ -246,7 +273,7 @@ following push/draft creation and must not recurse through pr.
 
 If head/base moves after the final gate, inspect the movement and integrate only
 as needed under project policy. Changes to the candidate return to scope and
-affected validation; rerun the full unit gate if its inputs changed. Remote
+affected validation; update the final gate's evidence accounting. Remote
 movement alone does not invalidate evidence for an unchanged candidate tree.
 
 If a required check is blocked by infrastructure or a pre-existing problem,
@@ -287,8 +314,8 @@ and report exactly what remains; never silently present it as validated delivery
 - Required tests validate the changed revision; red or blocked checks remain visible.
 - Each iteration maps read/edit/test scope and dependent consumers before a
   coherent edit batch; newly discovered impact is scoped before further edits.
-- Focused and functional checks precede the final full unit run on a stable
-  candidate, except when mandatory project ordering requires otherwise.
+- Focused and functional checks precede final unit-validation accounting on a
+  stable candidate, except when mandatory project ordering requires otherwise.
 - Failures route to scoped correction or bounded infrastructure diagnosis;
   changed inputs invalidate affected evidence, while unchanged results are reused.
 - Shared-helper/configuration changes reach dependent tests; non-runtime work
@@ -301,6 +328,12 @@ and report exactly what remains; never silently present it as validated delivery
   selector precision. Green evidence ends validation unless inputs or gates change.
 - Documentation-only edits do not trigger unrelated runtime/browser reruns;
   required CI-only gates are reported honestly rather than duplicated locally.
+- Repository-native affected selection and input-aware caching are preferred;
+  unknown impact or cache inputs fall back to conservative required checks.
+- The final gate accounts for all required validation, running remaining checks
+  instead of duplicating valid results; incomplete accounting needs a full run.
+- Observed durations and repeated-check reasons come from existing results,
+  without mandatory instrumentation, invented metrics or another evaluation loop.
 - Test planning and readiness reuse existing evidence without mandatory extra
   artifacts, model calls, review casts or duplicate test runs.
 - Delivery is a verified draft PR, not local-only commits or a launch command.

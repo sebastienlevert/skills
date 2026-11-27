@@ -26,6 +26,10 @@ strategy document.
    - Existing behavior or data contracts most likely to regress.
 4. Map cases to existing test files/runners and required checks. Distinguish
    proposed tests from existing coverage, and manual verification from automation.
+   Prefer verified repository-native affected selection and input-aware caching.
+   Group cases covered by the same check; consider startup/setup cost rather than
+   maximizing selector precision. Plan relevant checks first and missing required
+   checks later, using a native remaining-tests mode when available.
 5. Prioritize material gaps. Do not propose tests of constants, trivial accessors
    or framework behavior, or add a new runner for a task the existing tools cover.
 
@@ -47,10 +51,14 @@ Usually a few cases suffice; a trivial change may need only one. Do not require
 a committed plan file, a separate skill session, delegated reviewers, or a fixed
 case count. Update the plan only when scope, evidence or risk changes.
 
-After implementation, map actual check results back to those cases. Reuse valid
-results for the same revision, inputs and environment. Rerun when affected code,
-configuration, dependencies or relevant base integration changes, or when the
-required project policy demands it.
+After implementation, map actual check results back to those cases. Account for
+executed, valid cached and applicable CI results without treating an affected-only
+pass as a full-suite pass. Reuse results whose relevant inputs and environment
+remain unchanged; a different commit alone does not invalidate them. Rerun missing
+or invalidated checks when affected code, tests, configuration, dependencies,
+tools, fixtures, environment or relevant base integration changes, or when project
+policy requires it. If complete required validation cannot be established, plan
+the full-suite fallback rather than guessing that omitted checks would pass.
 
 ## Boundaries
 
@@ -67,5 +75,7 @@ change identities, or bypass an access restriction.
 - Planning before a diff exists uses the task/contract, not invented changes.
 - A one-line fix receives a focused plan rather than an exhaustive template.
 - Existing coverage is reused when it verifies the actual requirement.
+- Cases sharing evidence are batched, native selection/cache support is reused,
+  and final validation covers remaining requirements rather than duplicate runs.
 - Standalone planning produces no test execution or source/GitHub mutations.
 - Integrated planning does not add a mandatory file, agent, or duplicate run.
