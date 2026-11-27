@@ -1,8 +1,11 @@
-# Personal Skills Marketplace
+# Workloom
 
 Reusable workflows for **GitHub Copilot CLI**, **Claude Code**, and **Codex**.
-Install the `personal-toolkit` plugin from the `skills` marketplace, or use
+Install the `workloom` plugin from the `skills` marketplace, or use
 individual skill directories when you want a smaller local setup.
+
+Workloom weaves focused skills into evidence-backed workflows for building,
+reviewing, researching and writing.
 
 The same [`skills/`](skills) content is packaged for all three hosts. Installation
 does not run a workflow, grant access, or start a schedule. Skills guide the host;
@@ -14,9 +17,9 @@ Run the commands for your host in a terminal:
 
 | Host | Register the marketplace | Install the toolkit |
 |---|---|---|
-| Copilot CLI | `copilot plugin marketplace add sebastienlevert/skills` | `copilot plugin install personal-toolkit@skills` |
-| Claude Code | `claude plugin marketplace add sebastienlevert/skills` | `claude plugin install personal-toolkit@skills` |
-| Codex | `codex plugin marketplace add sebastienlevert/skills` | `codex plugin add personal-toolkit@skills` |
+| Copilot CLI | `copilot plugin marketplace add sebastienlevert/skills` | `copilot plugin install workloom@skills` |
+| Claude Code | `claude plugin marketplace add sebastienlevert/skills` | `claude plugin install workloom@skills` |
+| Codex | `codex plugin marketplace add sebastienlevert/skills` | `codex plugin add workloom@skills` |
 
 Use a current host version with the commands above. Run `<host> plugin --help`
 if your installed version does not recognize them. Codex uses **`plugin add`**,
@@ -25,6 +28,35 @@ presented as Codex support.
 
 Restart an existing agent session after installing. See [verification](#verify-installation)
 and [local preview](#install-from-a-local-checkout) below.
+
+### Migrating from personal-toolkit
+
+Version 3 renames the plugin and namespace to **`workloom`**. The marketplace is
+still `skills`, and the repository remains `sebastienlevert/skills`; individual
+skill names and their authorization boundaries are unchanged. A catalog refresh
+does not rename an already installed plugin.
+
+For Copilot CLI, replace the old installation after this release is available:
+
+```text
+copilot plugin marketplace update skills
+copilot plugin uninstall personal-toolkit@skills
+copilot plugin install workloom@skills
+```
+
+Other hosts use their documented uninstall/remove and install/add commands below
+with the old and new plugin IDs respectively. Restart the session and verify the
+source before use. Update any explicit `personal-toolkit:` skill references,
+plugin/skill enable-disable keys to `workloom:`/the new
+installation ID; installation does not migrate these user settings automatically.
+Do not keep both plugins enabled or duplicate standalone registrations.
+
+`init-toolkit` retains its skill name. On explicit refresh, it upgrades one valid
+legacy `personal-toolkit` managed block in `AGENTS.md` to Workloom in place,
+preserving BOM, line endings, local overrides and registry data. Mixed/duplicate
+or malformed blocks remain untouched and require manual resolution. This release
+does not rewrite existing workspaces, settings, or scheduled runs automatically;
+finish or explicitly stop old runs before switching their plugin source.
 
 ### Initialize a folder or drive
 
@@ -92,13 +124,13 @@ Explicit invocation differs by host:
 | Host | Find and invoke a skill |
 |---|---|
 | Copilot CLI | Use `/skills list` and select the skill, or ask by name, such as "Use new-issue to draft an issue for this bug." |
-| Claude Code | Plugin skills are namespaced, for example `/personal-toolkit:new-issue`. |
+| Claude Code | Plugin skills are namespaced, for example `/workloom:new-issue`. |
 | Codex | Use `/skills` or mention `$new-issue` in your prompt. |
 
 The PR lifecycle skill names are **`pr`, `review`, `watch`, `approve`, `merge`**.
 Copilot also has native `/pr` and `/review` commands. To select these toolkit
-workflows unambiguously, choose the `personal-toolkit` entry in `/skills list`
-or ask, for example, "Use the personal-toolkit pr skill." These skills do not
+workflows unambiguously, choose the `workloom` entry in `/skills list`
+or ask, for example, "Use the workloom pr skill." These skills do not
 replace the host's built-ins; `ship` loads the registered toolkit owners.
 
 Examples of requests:
@@ -115,11 +147,11 @@ Use new-adr to record this decision and its alternatives as Proposed.
 Use implement to fix owner/repo#123, preserving existing behavior.
 Use triage to assess these review comments before we change anything.
 Use address-pr-feedback to fix the feedback on owner/repo#123, push verified changes, reply with evidence, and resolve addressed threads.
-Use the personal-toolkit pr skill to assess this draft without publishing or marking it ready.
+Use the workloom pr skill to assess this draft without publishing or marking it ready.
 Use post-pr-comments to publish the reviewed findings inline on owner/repo#123.
 Use ship for this finished change, with a scheduled Copilot PR watch.
-Use the personal-toolkit pr skill to publish this finished change.
-Use the personal-toolkit review skill for owner/repo#123.
+Use the workloom pr skill to publish this finished change.
+Use the workloom review skill for owner/repo#123.
 Use watch for owner/repo#123 for one feedback/conflict/CI repair pass.
 Use approve for owner/repo#123 under its root APPROVALS.md.
 Use merge for owner/repo#123 when its risk/confidence and APPROVALS.md merge conditions pass.
@@ -360,7 +392,7 @@ its existing mode-bound closure. Neither silently starts the other's lifecycle.
 
 ### This repository's adopted policy
 
-Personal Toolkit's own [APPROVALS.md](APPROVALS.md) and
+Workloom's own [APPROVALS.md](APPROVALS.md) and
 [APPROVALS.yml](APPROVALS.yml) select maintainer-gated approval/merge: bounded
 low-risk text edits may use automation after current review and passing checks;
 consequential changes require explicit maintainer sign-off. The author may sign
@@ -401,10 +433,10 @@ codex plugin marketplace list --json
 codex plugin list --json
 ```
 
-Look for `personal-toolkit@skills` and the toolkit's skills in the installed
+Look for `workloom@skills` and the toolkit's skills in the installed
 plugin inventory. Claude's marketplace list confirms catalog registration; open
 `/plugin` in a Claude session to inspect installed plugins, and use the command
-selector to find the `personal-toolkit` namespace. This also works with older
+selector to find the `workloom` namespace. This also works with older
 Claude versions that do not provide `claude plugin list`. In Codex, check `/skills`.
 
 If installed by marketplace and also registered individually, the same skill may
@@ -446,11 +478,11 @@ From inside that checkout:
 ```text
 # Copilot CLI
 copilot plugin marketplace add .
-copilot plugin install personal-toolkit@skills
+copilot plugin install workloom@skills
 
 # Codex
 codex plugin marketplace add .
-codex plugin add personal-toolkit@skills
+codex plugin add workloom@skills
 ```
 
 For Claude Code, local source parsing varies by version and operating system.
@@ -460,7 +492,7 @@ above, or preview a pushed branch (replace `your-branch`):
 
 ```text
 claude plugin marketplace add "https://github.com/sebastienlevert/skills.git#your-branch"
-claude plugin install personal-toolkit@skills
+claude plugin install workloom@skills
 ```
 
 On clients that accept local marketplace paths, pass the local root using the
@@ -506,10 +538,10 @@ Standalone skills are not automatically updated by marketplace commands.
 
 ```text
 copilot plugin marketplace update skills
-copilot plugin update personal-toolkit@skills
+copilot plugin update workloom@skills
 
 # Remove the plugin, then optionally its catalog.
-copilot plugin uninstall personal-toolkit@skills
+copilot plugin uninstall workloom@skills
 copilot plugin marketplace remove skills
 ```
 
@@ -517,9 +549,9 @@ copilot plugin marketplace remove skills
 
 ```text
 claude plugin marketplace update skills
-claude plugin update personal-toolkit@skills
+claude plugin update workloom@skills
 
-claude plugin uninstall personal-toolkit@skills
+claude plugin uninstall workloom@skills
 claude plugin marketplace remove skills
 ```
 
@@ -527,9 +559,9 @@ claude plugin marketplace remove skills
 
 ```text
 codex plugin marketplace upgrade skills
-codex plugin add personal-toolkit@skills
+codex plugin add workloom@skills
 
-codex plugin remove personal-toolkit@skills
+codex plugin remove workloom@skills
 codex plugin marketplace remove skills
 ```
 
@@ -557,8 +589,8 @@ scripts/validate-marketplace.mjs  Dependency-free packaging checks
 tests/marketplace.test.mjs         Packaging regression tests
 ```
 
-The marketplace is named `skills`; its one plugin is named `personal-toolkit`.
-Both names form the installation ID **`personal-toolkit@skills`**. Native catalog
+The marketplace is named `skills`; its one plugin is named `workloom`.
+Both names form the installation ID **`workloom@skills`**. Native catalog
 formats differ, but each points to the same repository-root plugin and shared
 skill directories. No symlink privileges are required for marketplace metadata.
 
@@ -600,7 +632,7 @@ PRs, email actions, or autonomous loops just to test marketplace discovery.
 | Symptom | Check |
 |---|---|
 | Marketplace cannot be found | Confirm the repository is accessible with the selected host's Git credentials; use a local checkout to test unpublished work. |
-| Plugin cannot be found | Register the catalog first and use `personal-toolkit@skills`, not the repository name as the plugin name. |
+| Plugin cannot be found | Register the catalog first and use `workloom@skills`, not the repository name as the plugin name. |
 | Codex rejects `plugin install` | Use `codex plugin add`; check `codex plugin --help` and update an older client if needed. |
 | Claude rejects a Windows local marketplace path | Use the GitHub source or a pushed branch; older local-source parsers do not recognize every native Windows path form. |
 | Skills do not appear | Verify the installed plugin and skill selector; restart the session and check disabled skills/plugins or organizational restrictions. |
