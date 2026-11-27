@@ -1,9 +1,11 @@
 ---
 name: merge
 description: >
-  Merge one GitHub PR when its assessed risk and evidence-backed confidence meet
-  the trusted root APPROVALS.md and deterministic APPROVALS.yml rules and all native repository checks and
-  reviews are satisfied. Use for "merge this PR", "merge", or an explicitly
+  Merge one GitHub PR with Simple approvals (explicit session consent and native
+  gates) or Advanced approvals (also enforce the trusted base Markdown/YAML
+  policy pair). No policy setup or GitHub self-approval is required for Simple
+  approvals; present policy remains binding.
+  Use for "merge this PR", "merge", or an explicitly
   authorized ship --merge tick. Exact-head normal merge or required native queue;
   no admin bypass, invented confidence percentage, self-approval or rule changes.
 ---
@@ -22,35 +24,32 @@ Plain ship, review, approval and APPROVALS.md alone grant no merge authority.
 1. Resolve the exact host/repository/PR and existing `gh` identity. Verify open,
    non-draft state, head repository/ref/SHA, actual base/SHA and merge access.
    Never switch accounts, ready a draft, approve, repair code or change rules.
-2. Use [approve's trusted-policy method](../approve/SKILL.md) for policy/rule
-   reads, not its reviewer-specific eligibility gate: root
-   `APPROVALS.md` and its `APPROVALS.yml`/`.yaml` sidecar from the **actual base
-   commit**, both blobs/sources, effective
-   native branch protection/rulesets and complete current reviews/check evidence.
-   Reuse already collected policy evidence, not another pipeline. Interpret its
-   **merge** conditions separately from approval-submission conditions; do not
-   invoke approve to manufacture a missing review. Missing/ambiguous merge
-   criteria, denied/unknown rules evidence, or a changed pinned policy blocks this
-   step. Use the checked [native-rule capability reader](../approve/references/native-rule-access.md)
-   to distinguish GitHub.com's verified private-plan inspection limitation from
-   an authorization failure. When the trusted base policy permits that case,
-   retain all other evidence gates and use normal expected-head-bound GitHub
-   enforcement; do not require an unavailable paid feature, infer absent rules,
-   skip available rule inspection or turn other 403s into permission.
-   Follow the [deterministic sidecar contract](../approve/references/yaml-policy.md)
-   and require a complete current evaluator result with `policySatisfied=true`.
-   `comments` can permit merge with actual required approvals; automated review
-   permission is separate. Observe/missing/invalid/expired YAML never passes.
-3. Classify this actual diff under the policy's risk categories. Consider
+2. Read policy and native rules using
+   [approve's trusted-policy method](../approve/SKILL.md), but apply the
+   [merge policy modes below](#policy-files-are-optional-for-explicit-merge),
+   not its approval-submission eligibility gate. Read root `APPROVALS.md` and
+   `APPROVALS.yml` (`.yaml` only when `.yml` is absent) from the **actual base
+   commit**. Pin present blobs and verified absence with source references.
+   Inspect effective branch protection/rulesets and complete current reviews/
+   checks. Reuse evidence; do not invoke approve to manufacture a missing review.
+   Use the checked [native-rule capability reader](../approve/references/native-rule-access.md)
+   to distinguish a verified private-plan inspection limitation from an access
+   error. Where permitted by present policy, or the explicit-authority fallback,
+   retain all other gates and normal expected-head-bound GitHub enforcement.
+   Never infer absent rules from a capability limitation, skip available reads,
+   or turn other denials into permission.
+3. Classify this actual diff under present policy's risk categories, or assess
+   the relevant risks directly when none are defined. Consider
    consequential likelihood/impact, blast radius, compatibility, sensitive paths,
    data/schema/permission changes, reversibility/recovery and evidence gaps.
-   Use repository criteria, not an invented score or blanket "docs are safe" rule.
+   Use available repository criteria, not an invented score or blanket
+   "docs are safe" rule.
    [The opt-in example](../approve/assets/APPROVALS.md) illustrates a risk matrix;
    it is not authority or a universal risk appetite. Unknown risk stays unknown.
 4. Evaluate confidence **against the evidence required for that risk**: current
    substantive code review, resolved consequential findings, focused acceptance
    and regression verification, affected integration behavior, required sign-offs
-   and any recovery evidence the policy asks for. Reuse exact-head/base
+   and any recovery evidence present policy asks for. Reuse exact-head/base
    [review](../review/SKILL.md) and
    [pr](../pr/SKILL.md) assessment evidence. In ship, missing/stale review is
    pending for its owner; standalone may obtain an advisory review/readiness pass.
@@ -76,12 +75,67 @@ Plain ship, review, approval and APPROVALS.md alone grant no merge authority.
    another confirmation only when existing scoped authority and every gate pass.
    A material missing decision stays blocked; don't widen scope to obtain green.
 
+## Policy files are optional for explicit merge
+
+Support two approval models without forcing policy setup:
+
+- **Simple approvals:** explicit user consent in this session authorizes the
+  exact PR's merge after current review/validation and native gates. No policy
+  installation, deterministic evaluator, invented seat or GitHub `APPROVE` review
+  is required merely to use this mode.
+- **Advanced approvals:** the actual base has the Markdown/YAML pair; enforce
+  its risk, evidence, seats and sign-off conditions as well as native gates.
+  Session consent may satisfy a policy-permitted maintainer sign-off or
+  author-eligible seat, with verified identity/access and exact head/base evidence.
+  Do not require a GitHub review when the policy permits a session decision.
+
+An exact-PR merge request, including recorded ship `--merge` authority, supplies
+merge authority in either model; do not ask again solely because policy files
+are absent or the authenticated author cannot self-approve. A separate policy-
+required sign-off still needs its specified decision and evidence. Record session
+consent as such, never as a native GitHub approving review. Do not switch accounts,
+post a fake approval, or force the user to create policy files for a personal repo.
+
+| Verified actual-base state | Merge gate |
+|---|---|
+| Markdown and sidecar present | Advanced approvals: honor Markdown merge conditions and require the complete current sidecar result `policySatisfied=true`. |
+| Markdown only | Simple session consent plus its explicit merge conditions; a missing sidecar alone is not a blocker unless the Markdown expressly requires it. |
+| Sidecar only | Simple session consent plus its complete current rules and `policySatisfied=true`; do not invent Markdown requirements. |
+| Neither present | Simple approvals: session consent, current risk/review/validation evidence and native requirements; no policy files or evaluator needed. |
+| Present policy is invalid, ambiguous, unreadable, unsupported, observing, or its required evidence is incomplete/expired | Block the affected gate; this is not absence and the fallback cannot bypass it. |
+
+Use the [deterministic contract](../approve/references/yaml-policy.md) for every
+present sidecar. A `comments` verdict can permit merge with actual required
+approvals; it never permits an automated approving review. Honor any applicable
+nested policy; an unsupported hierarchy is not a no-policy repository.
+
+Establish absence through a successful read of the exact base tree or a
+confirmed missing path after verifying repository/ref access. A denied read,
+ambiguous 404, empty malformed response or missing head copy proves nothing.
+Do not use a PR's deletion/change of policy to evade the existing base policy.
+Record authority, exact candidate, present policy blobs or absent paths, risk,
+evidence, native prerequisites and selected merge method. Recheck before writing;
+a changed candidate or newly added/removed/changed base policy needs affected
+reassessment, and changed policy requires explicit owner renewal.
+
+Without policy-defined risk thresholds, do not impose the bundled example or
+invent mandatory sign-offs. Material unknowns or consequential unresolved
+findings still block. User merge consent never substitutes for native independent
+approvals, required checks, discussion resolution, freshness, mergeability or
+queue admission. Missing policy may block `approve` while `merge` is eligible;
+do not require this account's approval when GitHub does not require it.
+
+Prefer the user's or present policy's merge method. With neither, use squash
+when enabled, otherwise the sole enabled method; ask only if the remaining
+choice is ambiguous. A required native queue always takes precedence.
+
 ## Guarded merge or queue, never deferred auto-merge
 
-Re-read active authority, identity, head/base, policy blob, effective rules,
+Re-read active authority, identity, head/base, policy presence/blobs, effective rules,
 checks/reviews/discussion and mergeability immediately before the write. A changed
-input returns to its affected gate. Select only a policy-permitted, repository-
-enabled merge method; ambiguity is a blocker. Normal enforcement remains in place.
+input returns to its affected gate. Select a repository-enabled merge method
+permitted by present policy or the Simple-mode rule above; ambiguity is a blocker.
+Normal enforcement remains in place.
 
 - **Direct merge:** use `gh api --method PUT` on
   `repos/<owner>/<repo>/pulls/<number>/merge`, with JSON passed as data containing
@@ -121,3 +175,19 @@ someone else's entry. Cancel owned schedules after verified merge; preserve the
 worktree/branch for follow-ups. Return **merged**, **queued**, **pending** or
 **blocked**, policy/risk/confidence verdict, exact candidate and verified outcome
 reference. No live test merges or queue submissions to validate this skill.
+
+## Acceptance scenarios
+
+- No policy files plus explicit exact-PR merge consent and satisfied native/
+  review/validation gates permits guarded merge without another policy ask.
+- Personal/self-authored PRs use session consent, not an attempted native
+  self-approval. Advanced policy may accept session sign-off/author seats when
+  explicitly permitted; actual required independent GitHub approvals still apply.
+- A single policy file is enforced; the missing companion alone does not block.
+  An explicit requirement for that companion is not silently waived.
+- Missing policy without merge authority never permits a write; ordinary ship,
+  installation, a policy template or a successful approval grants no merge consent.
+- Denied/ambiguous reads, invalid/observing/expired policy, unsupported nested
+  rules, pending checks and required independent approvals remain blocked.
+- Changed head/base/policy is re-gated; policy removal in the PR cannot authorize
+  itself, and queue admission remains queued rather than merged.
