@@ -137,6 +137,37 @@ Do not start a later stage while a prerequisite is failing or unresolved.
 Use existing runners and batch related selectors into the smallest useful
 command. Do not broaden coverage solely because another workflow phase starts.
 
+### Optimize time to useful evidence
+
+Minimize time to credible acceptance, not test count or selector precision.
+Before adding a check, ask: **what uncovered failure or required gate does this
+check address, and why is it the cheapest credible way to address it?**
+
+- Infer need from changed behavior, dependency impact, material risk and project
+  requirements. Prose-only changes need applicable document/contract checks, not
+  an unrelated browser setup; shared runtime changes need affected-consumer
+  coverage. Do not invent edge cases or new tests when existing coverage suffices.
+- Compare rough total cost, including runner startup, build, fixtures and browser
+  setup. Use durations already observed in this session or readily available CI
+  evidence; mark unknown cost as unknown. Do not run benchmarks, extra baselines
+  or a history investigation merely to estimate validation cost.
+- Prefer an existing test file or small suite over many brittle per-test filters
+  when it gives the needed evidence faster. Batch related cases into one runner.
+  One check may satisfy multiple cases or stages; do not add a separate command
+  for each case or test layer just to make the plan look thorough.
+- Reuse results unless relevant inputs changed. A prose edit does not invalidate
+  unrelated runtime/browser checks. Do not install unrelated test prerequisites,
+  repeat a green check or broaden a suite simply to gain unspecified confidence.
+- Distinguish mandatory local checks from CI-only gates. A command appearing in
+  CI is not itself a requirement to duplicate it locally. Use current CI evidence
+  when policy permits; required pending/failing checks remain visible, not waived.
+- State the validation choice briefly once, including any material cost or
+  omitted redundant check. Stop when acceptance and applicable required gates
+  have sufficient current evidence. Another run needs a named evidence gap,
+  changed relevant input or project requirement, not "more testing is safer."
+
+### Run the applicable stages
+
 1. **Focused checks.** Run tests of the changed behavior and materially affected
    consumers, not just tests beside edited files. Run applicable formatter, lint,
    type/schema/build checks at the smallest supported scope. Perform generation
@@ -167,7 +198,11 @@ command. Do not broaden coverage solely because another workflow phase starts.
    change returns to scope and affected validation before proceeding.
 4. **Final full unit gate.** Once focused checks, functional verification and
    self-review pass, run the repository's full unit suite once on this stable
-   candidate, plus still-outstanding mandatory gates. Use the actual project
+   candidate, locally or in CI as project policy permits, plus still-outstanding
+   mandatory gates. Reuse an already-valid full-suite result instead of rerunning
+   it to enforce phase ordering. A required CI-only gate may follow draft
+   publication; report the draft as awaiting validation until its result is known.
+   Do not call pending CI a pass or poll it automatically. Use the actual project
    command; do not assume a generic test script contains only unit tests.
    If there is no applicable unit suite or an explicit project exemption applies,
    record that and the evidence used instead. Never invent an exemption to avoid
@@ -262,6 +297,10 @@ and report exactly what remains; never silently present it as validated delivery
   and observable outcomes; an existing-runner fallback is explicit.
 - Validation uses bounded processes without overlapping suites or watch-mode
   leftovers; mandatory gates and blocked functional checks are not bypassed.
+- Check selection accounts for startup/setup cost and evidence gaps, not maximal
+  selector precision. Green evidence ends validation unless inputs or gates change.
+- Documentation-only edits do not trigger unrelated runtime/browser reruns;
+  required CI-only gates are reported honestly rather than duplicated locally.
 - Test planning and readiness reuse existing evidence without mandatory extra
   artifacts, model calls, review casts or duplicate test runs.
 - Delivery is a verified draft PR, not local-only commits or a launch command.
