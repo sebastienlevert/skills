@@ -168,7 +168,7 @@ h1,h2,h3,h4{font-family:var(--paper-heading-font)}
     css = css.replace("RAILS_METADATA", ",".join(selector + " > .metadata" for selector in rails))
     css = css.replace("RAILS", ",".join(rails))
     file = BASE / "assets" / "paper.html"
-    source = file.read_bytes().decode("utf-8")
+    source = file.read_text(encoding="utf-8")
     original = source
     source = source.replace(
         "Twelve palettes, each with light/dark appearance. Only paint tokens change; document order, geometry and controls remain the same.",
@@ -232,7 +232,7 @@ def scaffold(identifier, overrides=None, palette="azure"):
         raise ValueError(f"Unknown paper type: {identifier}")
     if palette not in PALETTES:
         raise ValueError(f"Unknown palette: {palette}")
-    source = (BASE / "assets" / "paper.html").read_bytes().decode("utf-8")
+    source = (BASE / "assets" / "paper.html").read_text(encoding="utf-8")
     contract = json_script(source, "paper-template-contract")
     kinds = {slot["key"]: slot["kind"] for slot in contract["slots"]}
     fields = {

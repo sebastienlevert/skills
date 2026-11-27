@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict';
-import { readFileSync, writeFileSync } from 'node:fs';
+import { cpSync, readFileSync, writeFileSync } from 'node:fs';
+import { spawnSync } from 'node:child_process';
 import { join } from 'node:path';
 import { test } from 'node:test';
 import { Script } from 'node:vm';
@@ -30,6 +31,24 @@ test('type starters regenerate from one atlas and preserve each outcome without 
   }
   const rules = JSON.parse(readFileSync(join(base, 'references', 'critical-content-rules.json'), 'utf8'));
   assert(!rules.evaluationServiceTopic);
+});
+
+test('template regeneration remains portable when Git checks out CRLF without attributes', (t) => {
+  const value = fixture(t);
+  const portable = join(value.directory, 'portable-skill');
+  cpSync(base, portable, { recursive: true });
+  for (const path of [
+    join(portable, 'assets', 'paper.html'),
+    ...types.map((selected) => join(portable, 'templates', `${selected.id}.html`)),
+  ]) {
+    writeFileSync(path, readFileSync(path, 'utf8').replace(/\r?\n/g, '\r\n'));
+  }
+  for (const command of ['themes', 'templates']) {
+    const result = spawnSync(process.platform === 'win32' ? 'python' : 'python3',
+      [join(portable, 'scripts', 'paper.py'), command, '--check'],
+      { encoding: 'utf8', env: { ...process.env, PYTHONDONTWRITEBYTECODE: '1' } });
+    assert.equal(result.status, 0, `${command}: ${result.stdout}${result.stderr}`);
+  }
 });
 
 test('atlas retains valid executable reader scripts and generic SVG-only examples', () => {
