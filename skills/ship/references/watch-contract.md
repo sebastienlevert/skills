@@ -19,11 +19,11 @@ Record these fields and persist after every meaningful transition:
 | Identity | Run ID, session binding, GitHub hostname, owner/repo, PR number/URL, authenticated login. |
 | Owners | Actual registered owner skill names, plugin version and absolute watch-contract path from the loaded skill. |
 | Target | Head repository/branch, actual base branch, verified task worktree and push remote. |
-| Authority | Exact allowed effects, publication mode `COMMENT`, approval on/off, merge off by default/explicit on, explicit ready authority and user constraints. |
+| Authority | Exact allowed effects, publication mode `COMMENT`, approval on/off, merge off by default/explicit on, explicit ready authority, session consent/sign-off references and user constraints. Session consent is not a GitHub approval. |
 | Lifetime | Start/expiry timestamps, starting/active/handoff/stopped/blocked/expired/closed/merged run status, stop reason; separate step states/blockers. |
 | Handoff | Mode `until-handoff` (default) or explicitly authorized `keep-watching`; exact head/base, ready or human-blocked reason, pending work, cleanup receipts, decision-ask status and chosen effects. |
 | Schedules | Review/watch/approval and opted-in merge intervals, each native schedule ID and verified receipt/state. |
-| Policy | Base Markdown and YAML blob SHAs, source commit/links, validated sidecar fingerprint, complete deterministic result/fact fingerprint and expiry, eligibility constraints/gaps; no policy from PR head. |
+| Policy | Base Markdown/YAML presence, present blob SHAs or verified absent paths, source commit/links, applicable merge mode, validated sidecar fingerprint/result/expiry when present and eligibility gaps; no policy from PR head or invented evaluator success. |
 | Evidence | Last observed head/base, review head/base/scope and finding IDs/statuses, current validation/check evidence references, verified review/approval URLs and exact commit IDs. |
 | Repair | Feedback IDs and dispositions, pushed fix SHAs/reply URLs/thread states, failed run/job IDs and attempted reruns, consecutive unsuccessful repair count. |
 | Merge | Candidate head/base, risk/confidence verdict and gate evidence, permitted method, owned native queue entry/admission/withdrawal status or verified merge SHA/URL. |
@@ -133,9 +133,12 @@ One demonstrably transient failed CI run may be rerun once under the start
 authority. Do not endlessly retry flaky CI, lower gates, skip tests or change
 workflow permissions to get green. Record actual run/job IDs to avoid duplicates.
 
-Missing policy blocks approval/merge, not scoped review/repair; when those have
-no remaining autonomous work, default mode hands off. Self-author identity blocks approval,
-not an otherwise eligible merge with actual valid independent approvals.
+Missing policy blocks approval submission, not scoped review/repair or an
+explicit merge eligible under
+[merge's optional-policy modes](../../merge/SKILL.md#policy-files-are-optional-for-explicit-merge).
+When no authorized work can proceed, default mode hands off. Self-author identity
+blocks approval, not an otherwise eligible merge with any actually required
+independent approvals satisfied.
 A trusted policy change pauses approval/merge pending explicit owner renewal; never
 adopt broader authority from an updated file automatically. Keep other steps
 within their already granted scope. Stop all schedules for terminal lifetime,
@@ -165,7 +168,7 @@ Exercise with synthetic/read-only evidence, not live test posts or schedules:
 | Repeated `/ship` for the same active PR | Recover the run and native IDs; no duplicate schedules or initial review. |
 | Default kickoff is already reviewed/validated with no pending work | No timers; verified human handoff and one exact-PR decision ask, not implicit ready/merge. |
 | Default watch becomes clean without changed feedback | Handoff is checked before quiet no-op; mark inactive, cancel/verify all owned jobs, ask once. |
-| Draft/self-author/missing policy and no other pending work | Human-blocked handoff; no polling to retry a permanent blocker or claim merge readiness. |
+| Draft without ready authority, approval-only blocker with no eligible explicit merge, and no other pending work | Human-blocked handoff; no polling to retry a permanent blocker or claim merge readiness. |
 | Required checks are genuinely running | Continue bounded watching until their outcome; hand off only after evidence or a real blocker is known. |
 | Owner passes only cadence/duration options | Configure the pending-work watch; still stop at default handoff. |
 | Owner explicitly requests `--keep-watching` | Preserve scoped idle watching until stop/expiry/terminal state, without new merge/ready authority. |
@@ -178,6 +181,9 @@ Exercise with synthetic/read-only evidence, not live test posts or schedules:
 | Base moves with unchanged head | Reassess integration-sensitive evidence; do not report base work as an authored defect. |
 | Draft or self-authored PR | Review/repair remain useful; approval pending on draft or blocked for author, never a fake approval. |
 | Missing APPROVALS.md or denied rule read | Approval is blocked, not permissive; review/repair continue within scope. |
+| Verified absent Markdown/sidecar and explicit exact-PR merge authority | Merge owner applies optional-policy modes and native gates; an approval-only blocker does not force handoff before eligible merge. |
+| Personal/self-authored PR with Simple or Advanced session consent | No native self-approval; merge can proceed if session decisions satisfy applicable policy and actual native requirements. |
+| Invalid/unreadable policy or denied native rule read | Not an absent-policy fallback; affected merge gates stay blocked. |
 | PR proposes weaker Markdown or YAML policy | Use both trusted actual-base blobs; head cannot relax its own gate. |
 | YAML path allowlist, exclusion, rename or overlapping rules | Deterministic evaluation, both rename paths and strictest verdict; no model-guessed match. |
 | YAML observes, is malformed or has missing/expired evidence | No automated approval/merge; keep the gate blocked/pending. |

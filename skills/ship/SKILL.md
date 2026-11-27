@@ -6,7 +6,8 @@ description: >
   repository's root APPROVALS.md. Use for "/ship" or "ship this PR". Orchestrates
   pr, review, watch and approve, watching pending work with native /every
   schedules and stopping for a human handoff when ready or blocked.
-  Explicit --merge adds risk-aware closure; --keep-watching opts into idle watching.
+  Explicit --merge adds Simple session approvals or Advanced policy-gated closure;
+  --keep-watching opts into idle watching.
   One exact PR per run; no default merge, self-approval, permission changes or
   schedules from installation. Supports status and stop.
 ---
@@ -68,6 +69,12 @@ explicitly authorizes [pr](../pr/SKILL.md), ready mode, to mark ready after its
 conditions pass. Otherwise approval remains pending on a draft, and the user
 marks it ready. Approval cannot be manufactured for the PR author's identity.
 
+For explicit merge, support **Simple approvals** through session consent without
+policy setup, and **Advanced approvals** under the base Markdown/YAML pair.
+Neither requires this account to post a GitHub self-approval. Advanced policy may
+accept verified session sign-off/author seats; actual native independent approvals
+remain required. An approval-step blocker must not suppress an eligible merge.
+
 The default mode is **until handoff**, not a mandatory 24-hour polling loop.
 Watch while checks or bounded review/repair work can still make progress, then
 stop and ask for the next action. `--watch-for` and cadence options configure
@@ -91,10 +98,15 @@ human blocker. This option adds no approval, ready or merge authority.
    Changed options require stopping/reconciling the old jobs before an explicitly
    authorized replacement. Initialize step-specific dirty flags: approval and
    opted-in merge are due after kickoff even without changed remote metadata.
-   Bind trusted APPROVALS.md plus APPROVALS.yml/.yaml blobs from the actual PR
-   base, not its head. Use approve's deterministic evaluator for sidecar rules
-   and cache its complete fact-bound result/expiry, not repeated model parsing.
-   Missing/ambiguous policy blocks approval/merge, not scoped review/repair.
+   Read APPROVALS.md and APPROVALS.yml/.yaml from the actual PR base, not its
+   head; bind present blobs or verified absence. For a present sidecar, use
+   approve's deterministic evaluator and cache its complete fact-bound result/
+   expiry, not repeated model parsing.
+   Missing policy blocks approval submission, not scoped review/repair or an
+   explicitly authorized merge eligible under
+   [merge's optional-policy modes](../merge/SKILL.md#policy-files-are-optional-for-explicit-merge).
+   Record verified absence instead of inventing policy blobs/evaluator success;
+   enforce present policy. Invalid/ambiguous/denied evidence still blocks its gate.
    Record the run mode and handoff state; stable blockers cannot justify idle
    polling in the default mode. Recover legacy mode from the original request,
    never infer `--keep-watching` from existing timers; ask if authority is unclear.
@@ -134,8 +146,10 @@ snapshot, not another full diff/review/build just to decide whether to stop.
   hand off instead of repeatedly observing a clean PR. Approval success alone
   does not authorize merge or require waiting for another push.
 - **Needs a person:** a draft without ready authority, self-author approval,
-  missing/ambiguous policy, independent review, access or a material decision
-  prevents progress, and no other check/review/repair is genuinely pending.
+  missing policy for approval, ambiguous policy, required independent review,
+  access or a material decision prevents progress, and no other authorized
+  check/review/repair/merge can proceed. An approval-only blocker does not block
+  otherwise eligible explicit merge; let its owning skill evaluate that gate.
   State the exact blocker, not "everything passed" or "ready to merge".
 - **Keep working:** known running checks, a bounded due review/repair, or an
   owned native merge-queue entry still needs observation. Do not stop useful
@@ -149,13 +163,15 @@ any GitHub read/write. An owned queue entry must complete or be withdrawn/verifi
 under merge authority before claiming a clean handoff. Record head/base, reasons,
 evidence, cleanup receipts and that the decision ask was delivered.
 
-Use the host's structured question tool when available. Offer policy-gated merge
+Use the host's structured question tool when available. Offer eligible explicit merge
 when its prerequisites permit it, manual review/merge or resolving the named
 blocker, and explicit continued watching. Name the exact PR and any requested
 ready transition. A merge/ready choice is new authority only for those named
 effects; recheck source, policy, identity and native gates through the owning
-skills before acting. Do not offer automated merge as available when policy or
-independent approval is missing, self-approve, or treat silence as consent.
+skills before acting. Verified absent optional policy alone does not make the
+merge option unavailable. Do not offer it when present policy, required native
+approval or other merge prerequisites are unsatisfied; never self-approve or
+treat silence as consent.
 If the owner declines or gives no choice, leave the run inactive with no timers.
 Resume/create watchers only after an explicit keep-watching request and fresh
 preflight/verified scheduler receipts; record mode `keep-watching` without adding

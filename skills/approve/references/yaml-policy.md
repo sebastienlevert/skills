@@ -4,8 +4,11 @@ Pair root **`APPROVALS.md`** (risk, confidence, context and merge method) with
 **`APPROVALS.yml`** (deterministic rules). If `.yml` is absent, use `APPROVALS.yaml`.
 Read both from the actual PR **base commit**, never its proposed head copies.
 Record/pin both blob SHAs; either changing pauses approval/merge for owner renewal.
-Both files are required for these automated gates. Missing/invalid/ambiguous data
-blocks them, not review/repair. Installing the toolkit adopts neither template.
+Both files are required for automated approval submission. Explicit merge uses
+[merge's optional-policy modes](../../merge/SKILL.md#policy-files-are-optional-for-explicit-merge):
+verified absence alone does not block it, but every present policy remains
+binding. Missing/invalid/ambiguous evidence cannot produce a successful evaluator
+result. Installing the toolkit adopts neither template.
 
 ## Version 1 rule model
 
@@ -99,9 +102,10 @@ CLI detail lists are capped (16 rules/reasons, three path samples per rule), wit
 total counts and `detailsTruncated`; aggregate verdicts still evaluate **all**
 input evidence/rules. Truncated display detail is not truncated input coverage.
 Approval needs **automationApprovalAllowed** plus Markdown and native gates.
-Merge needs **policySatisfied** plus all Markdown risk/confidence and native merge
-requirements; a `comments` verdict can allow merge after required real approvals,
-but never submits an automated approving review. Observe never authorizes either.
+When a sidecar is present, merge needs **policySatisfied** plus applicable
+Markdown risk/confidence and native merge requirements; a `comments` verdict can
+allow merge after required real approvals, but never submits an automated
+approving review. Observe never authorizes either.
 
 Provider classifier identifiers are retained in this Copilot namespace:
 `copilot/code_review` consumes current recorded review evidence;

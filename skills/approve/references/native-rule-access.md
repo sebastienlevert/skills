@@ -18,10 +18,13 @@ changes settings/rules, approves, readies, merges or grants permissions.
 - **Inspection required:** inspect the returned available rule data normally.
 - **Native enforcement only:** both reads are authoritative unprotected or the
   exact GitHub.com private-repository plan-capability response, with verified
-  identity/write access. A trusted base policy must explicitly permit this route.
+  identity/write access. Approval submission needs trusted base policy permission.
+  Explicit merge may also use
+  [merge's verified absent-policy fallback](../../merge/SKILL.md#policy-files-are-optional-for-explicit-merge);
+  present policy must still permit the route.
   Record unavailable capability, not absent rules. Preserve source validation,
-  independent review, policy seats, visible checks/discussions, readiness and
-  explicit merge authority; submit only the normal expected-head-bound operation.
+  required independent review, applicable policy seats, visible checks/discussions,
+  readiness and explicit merge authority; submit only the normal expected-head-bound operation.
   GitHub remains authoritative for native requirements and rejects unmet gates.
 - **Blocked:** authentication/authorization failure, other 403, ambiguous 404,
   unknown host entitlement, missing access/identity, or malformed/incomplete data.
