@@ -4,9 +4,13 @@
   "type": "module",
   "scripts": {
     "test": "node --test",
-    "validate": "node scripts/validate-marketplace.mjs"
+    "validate": "node scripts/validate-marketplace.mjs",
+    "test:paper:browser": "node --test tests/paper-browser.test.mjs tests/paper-themes.test.mjs"
   },
   "engines": { "node": ">=22" },
+  "devDependencies": {
+    "playwright": "1.64.0"
+  },
   "dependencies": {
     "picomatch": "^4.0.3",
     "yaml": "^2.8.1"

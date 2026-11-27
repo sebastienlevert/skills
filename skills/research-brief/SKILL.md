@@ -5,8 +5,8 @@ description: >
   for any project. Use for "research this", "competitive brief", "compare these
   options", or "technical landscape". Verify sources, dates and comparison
   conditions; separate facts, vendor claims, inference and unknowns. Return a
-  concise recommendation and evidence, with optional Markdown/HTML handoff to
-  paper-strategist. No automatic publication, private-data export or implementation.
+  concise recommendation and evidence, with optional handoff to the HTML-only
+  paper workflow. No automatic publication, private-data export or implementation.
 ---
 
 # Research brief
@@ -92,8 +92,9 @@ smallest useful next investigation.
 
 Default to an answer in the current conversation. Save a brief only when the user
 requests an artifact, and only to the authorized location. For a requested rich
-paper, use the [paper-strategist workflow](../paper-strategist/SKILL.md) when
-available: editable Markdown, matching self-contained HTML and SVG-only visuals.
+paper, use the [paper workflow](../paper/SKILL.md) when
+available: canonical self-contained HTML, outcome-driven sections, terminology,
+progressive reading, SVG-only visuals and a type-aware light review.
 Do not make another workflow or file mandatory for a small research question.
 
 Pass the research question, scoped findings, comparison criteria, dated sources,

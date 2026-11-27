@@ -103,7 +103,7 @@ an entry point at a drive root isn't a global host configuration change.
 | [implement](skills/implement/SKILL.md) | Deliver a scoped change through validation and a draft PR. | Git, `gh`, and the target project's tools; no automatic merge. |
 | [triage](skills/triage/SKILL.md) | Decide which review concerns to fix, clarify, defer, or reject with evidence. | Advisory by default; corrections and GitHub side effects require authorization. |
 | [address-pr-feedback](skills/address-pr-feedback/SKILL.md) | Resolve conflicts and finish authorized review fixes through code, evidence replies, and thread resolution. | Push and verify fixes first; close only fully addressed native threads, never the PR itself. |
-| [paper-strategist](skills/paper-strategist/SKILL.md) | Write decision-ready papers and matching content-first HTML. | Offline template, light/dark mode, floating TOC, read time, SVG-only visuals; no build dependencies. |
+| [paper](skills/paper/SKILL.md) | Write outcome-driven, interactive HTML papers with an integrated type-aware light review. | Seven HTML starters, five-section ceiling, terminology, reader personas, 83 optional component patterns and 12 themes; offline SVG-only output; Python 3.9+ authoring helper. |
 | [research-brief](skills/research-brief/SKILL.md) | Produce source-grounded market, competitive, customer or technical research. | Uses authorized available sources; facts, claims, inference and unknowns remain distinct. |
 | [review](skills/review/SKILL.md) | Review PRs, local changes, and follow-up fixes across stacks. | Read-only by default; posting and recurring sweeps require an explicit request. |
 | [post-pr-comments](skills/post-pr-comments/SKILL.md) | Publish reviewed findings inline at their exact PR diff locations. | Authenticated `gh`; explicit posting, current-head verification, deduplication and verified delivery; no implicit approval or resolution. |
@@ -113,7 +113,8 @@ It does not make a host-specific tool or external integration available everywhe
 Use only authorized capabilities actually provided by your host.
 
 Version 2 removes the legacy `ralph-loop`, `oof`, `md-to-word`, `note-taker`, and
-`plugin-generator` skills. The upgraded `paper-strategist` remains included.
+`plugin-generator` skills. Version 3 replaces `paper-strategist` with the single
+`paper` skill and makes papers HTML-only; the old invocation is no longer bundled.
 Older versions remain available in Git history, but updates no longer bundle
 those five workflows.
 
@@ -175,24 +176,30 @@ problem or desired outcome, not only a skill name.
 compares options fairly, and makes evidence gaps explicit. It answers in chat
 unless an artifact is requested; it does not publish or implement automatically.
 
-`paper-strategist` turns that evidence into a clear thesis, alternatives, a
-mechanism, proof/signals and a decision ask. It asks only material missing
-questions rather than imposing a fixed interview.
+`paper` selects the reader outcome first: research, vision, investment,
+architecture, recommendation, roadmap or operating model. Each type has required,
+recommended and conditional coverage under **at most five major sections**.
+Research explains evidence without acquiring an invented recommendation.
 
-The [HTML template](skills/paper-strategist/assets/paper.html) opens directly in a
-browser. It is neutral, modern and content-first, with:
+The [HTML atlas](skills/paper/assets/paper.html) and seven standalone starters
+open directly in a browser. They retain left navigation, reading progress, print,
+syntax highlighting and exact code copy, advanced SVG viewing, horizontal/mobile
+roadmaps, animated artifact walkthroughs, three progressive reader personas and
+twelve CSS themes that vary color, system fonts, spacing and placement while
+keeping the same HTML and reading order. The 83 optional patterns are authoring
+inspiration, not sample evidence or a requirement to use everything.
 
-- System-aware light/dark mode and a manual override.
-- A compact floating/collapsible TOC generated from actual headings.
-- Estimated reading time, prose word count, and a thin progress indicator.
-- Responsive layout, keyboard access, reduced motion and clean print styling.
-- Inline SVG-only visuals; no raster assets, fonts, CDNs, tracking or build step.
+**HTML is the canonical paper; no parallel Markdown paper is produced.**
+The Python standard-library helper creates editable drafts and checks structure.
+Before delivery, one lightweight author pass answers shared critical-thinking
+questions and selected-type outcomes, explicitly assesses conditional coverage
+and verifies the actual browser output. Its receipt is bound to the exact file
+hash; format checks alone never mean the argument is ready.
 
-Markdown remains the editable source. The skill replaces template preview content
-with matching paper content; it is not a general Markdown renderer. Theme storage
-is best-effort, and the narrative/native links remain readable without JavaScript.
-See the [HTML visual contract](skills/paper-strategist/references/html-style.md).
-Generation does not authorize uploading or sharing the paper.
+See the [authoring contract](skills/paper/references/authoring.md) and
+[light-review contract](skills/paper/references/review.md). No remote assets,
+runtime dependencies, telemetry or automatic publication are embedded in papers.
+Generation/review never authorize uploading, sharing or implementing a proposal.
 
 ### A lightweight development lifecycle
 
