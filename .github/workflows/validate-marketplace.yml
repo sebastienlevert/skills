@@ -19,3 +19,7 @@ jobs:
       - run: npm ci --ignore-scripts
       - run: node scripts/validate-marketplace.mjs
       - run: node --test
+      - run: npx playwright install --with-deps chromium
+      - run: npm run test:paper:browser
+        env:
+          PAPER_BROWSER: chromium

@@ -1,0 +1,1056 @@
+{
+  "version": 2,
+  "bodyWordCeiling": 1500,
+  "selectionRule": "Choose one primary type by the reader's intended outcome, not the topic, size, HTML components or the word research alone.",
+  "sectionRules": {
+    "required": "Required semantic coverage belongs under at most five main h2 groups, using h3/h4 subsections. It may be merged, never silently dropped.",
+    "recommended": "Include when it helps the reader reach the selected outcome. Omit rather than fill with generic prose.",
+    "conditional": "Include only when its stated condition applies; an explicit user request can make it required.",
+    "unknowns": "State evidence, ownership, capacity, dates and baselines as unknown or proposed when unverified. Never invent values to fill a section.",
+    "sources": "Ground claims in actually read sources and preserve meaningful limits. Respect explicit reader-facing citation restrictions without inventing attribution.",
+    "authority": "A document, selected option or readiness control never approves investment, publication, release or external actions.",
+    "advanced": "Use progressive details for advanced scenarios and references. Never collapse material qualifications out of the overview."
+  },
+  "types": [
+    {
+      "id": "research-and-investigation",
+      "name": "Research and investigation",
+      "template": "templates/research-and-investigation.html",
+      "frame": "informational",
+      "goal": "Explain what the evidence establishes and what remains unknown.",
+      "outcome": "The reader can understand the subject, distinguish fact from inference and identify the limits of the answer.",
+      "useWhen": [
+        "Survey or explain a subject",
+        "Investigate an observed failure",
+        "Compare documented approaches without requesting a decision"
+      ],
+      "required": [
+        {
+          "id": "scope",
+          "title": "Topic, questions and scope",
+          "purpose": "Identify the exact questions and material version/environment boundaries."
+        },
+        {
+          "id": "terminology",
+          "title": "Terminology",
+          "purpose": "Define the actual terms, distinctions and scope limits needed to understand this paper; do not imply agreement or implementation from a definition."
+        },
+        {
+          "id": "summary",
+          "title": "Summary of findings",
+          "purpose": "Answer the questions concisely without substituting a proposal."
+        },
+        {
+          "id": "method",
+          "title": "Method and source coverage",
+          "purpose": "State what was inspected or actually tested and what was not."
+        },
+        {
+          "id": "findings",
+          "title": "Findings and explanations",
+          "purpose": "Support findings near their claims; separate observation, reporting and inference."
+        },
+        {
+          "id": "limits",
+          "title": "Limitations and open questions",
+          "purpose": "Retain contrary evidence, gaps and scope limits that affect interpretation."
+        },
+        {
+          "id": "conclusion",
+          "title": "Conclusion",
+          "purpose": "Resolve what is known and unknown without forcing an action."
+        },
+        {
+          "id": "sources",
+          "title": "Sources and references",
+          "purpose": "Provide actual source provenance and relevant evidence boundaries."
+        }
+      ],
+      "recommended": [
+        {
+          "id": "concepts",
+          "title": "Concepts and background",
+          "purpose": "Explain only concepts needed to follow the findings."
+        },
+        {
+          "id": "comparison",
+          "title": "Comparison or worked example",
+          "purpose": "Make differences understandable without fabricating measurements."
+        }
+      ],
+      "conditional": [
+        {
+          "id": "recommendations",
+          "title": "Requested recommendations or implications",
+          "when": "The user explicitly asks for recommendations, implications or next steps.",
+          "purpose": "Keep requested advice separate from informational findings."
+        }
+      ],
+      "outcomeChecks": [
+        "Every requested question is answered or explicitly unresolved.",
+        "Claims have evidence and relevant limits.",
+        "No invented problem, urgency, funding ask or default recommendation.",
+        "No more than five major sections; terminology and reader-persona controls are present.",
+        "Advanced references are collapsible, while decisive conclusions and critical qualifications remain visible."
+      ],
+      "mainSections": [
+        {
+          "id": "context",
+          "title": "Questions, scope and terminology",
+          "required": [
+            "scope",
+            "terminology"
+          ],
+          "recommended": [
+            "concepts"
+          ],
+          "conditional": []
+        },
+        {
+          "id": "summary",
+          "title": "Findings summary",
+          "required": [
+            "summary"
+          ],
+          "recommended": [],
+          "conditional": []
+        },
+        {
+          "id": "evidence",
+          "title": "Evidence, method and explanations",
+          "required": [
+            "method",
+            "findings"
+          ],
+          "recommended": [
+            "comparison"
+          ],
+          "conditional": [
+            "recommendations"
+          ]
+        },
+        {
+          "id": "limits",
+          "title": "Limitations and conclusion",
+          "required": [
+            "limits",
+            "conclusion"
+          ],
+          "recommended": [],
+          "conditional": []
+        },
+        {
+          "id": "sources",
+          "title": "Sources and evidence boundaries",
+          "required": [
+            "sources"
+          ],
+          "recommended": [],
+          "conditional": []
+        }
+      ]
+    },
+    {
+      "id": "product-vision",
+      "name": "Product vision",
+      "template": "templates/product-vision.html",
+      "frame": "decision-oriented",
+      "goal": "Align teams on the product promise and the future user experience.",
+      "outcome": "The reader understands who benefits, what changes, the shared foundation and the direction to endorse.",
+      "useWhen": [
+        "Define a product north star",
+        "Align several building surfaces",
+        "Describe a future experience without writing an implementation specification"
+      ],
+      "required": [
+        {
+          "id": "problem",
+          "title": "Problem statement and context",
+          "purpose": "Name the affected user task, current gap and consequence."
+        },
+        {
+          "id": "terminology",
+          "title": "Terminology",
+          "purpose": "Define the actual terms, distinctions and scope limits needed to understand this paper; do not imply agreement or implementation from a definition."
+        },
+        {
+          "id": "proposal",
+          "title": "TLDR of the proposal",
+          "purpose": "State the direction, benefit, reuse boundary and requested alignment."
+        },
+        {
+          "id": "promise",
+          "title": "Product promise and future experience",
+          "purpose": "Describe the changed user journey and why it matters."
+        },
+        {
+          "id": "personas",
+          "title": "Personas and concrete scenario",
+          "purpose": "Show relevant user needs through a plausible, labelled scenario."
+        },
+        {
+          "id": "foundation",
+          "title": "Shared foundation and boundaries",
+          "purpose": "Explain common capabilities, ownership/reuse and what is not promised."
+        },
+        {
+          "id": "proof",
+          "title": "First proof and decision",
+          "purpose": "Separate the bounded first slice from ambition; state what to endorse and prove."
+        },
+        {
+          "id": "sources",
+          "title": "Sources and evidence boundaries",
+          "purpose": "Distinguish source-backed context, proposed experience and unresolved choices."
+        },
+        {
+          "id": "decision",
+          "title": "Direction decision requested",
+          "purpose": "State the product direction and bounded proof to endorse, with unresolved commitments visible."
+        }
+      ],
+      "recommended": [
+        {
+          "id": "alternatives",
+          "title": "Alternatives and platform advantage",
+          "purpose": "Explain why this direction beats the strongest alternative."
+        },
+        {
+          "id": "measures",
+          "title": "Measures of user value",
+          "purpose": "Define outcomes without inventing baselines or targets."
+        },
+        {
+          "id": "growth",
+          "title": "Evolution of the experience",
+          "purpose": "Show expansion without presenting a delivery schedule as committed."
+        }
+      ],
+      "conditional": [
+        {
+          "id": "technical-reference",
+          "title": "Architecture reference",
+          "when": "A separate implementation paper exists and technical detail would distract here.",
+          "purpose": "Refer to verified architecture by name/link; do not duplicate its full build inventory."
+        }
+      ],
+      "outcomeChecks": [
+        "A reader can describe the intended experience and its value.",
+        "The bounded first proof and future ambition are distinct.",
+        "The direction is proposed, not invented team agreement or delivered capability.",
+        "No more than five major sections; terminology and reader-persona controls are present.",
+        "Advanced references are collapsible, while decisive conclusions and critical qualifications remain visible."
+      ],
+      "mainSections": [
+        {
+          "id": "context",
+          "title": "Problem, scope and terminology",
+          "required": [
+            "problem",
+            "terminology"
+          ],
+          "recommended": [],
+          "conditional": []
+        },
+        {
+          "id": "direction",
+          "title": "Product direction and shared foundation",
+          "required": [
+            "proposal",
+            "promise",
+            "foundation"
+          ],
+          "recommended": [
+            "alternatives"
+          ],
+          "conditional": []
+        },
+        {
+          "id": "experience",
+          "title": "Personas and user experience",
+          "required": [
+            "personas"
+          ],
+          "recommended": [
+            "growth"
+          ],
+          "conditional": [
+            "technical-reference"
+          ]
+        },
+        {
+          "id": "proof",
+          "title": "First proof and user-value measures",
+          "required": [
+            "proof"
+          ],
+          "recommended": [
+            "measures"
+          ],
+          "conditional": []
+        },
+        {
+          "id": "decision",
+          "title": "Direction decision and sources",
+          "required": [
+            "decision",
+            "sources"
+          ],
+          "recommended": [],
+          "conditional": []
+        }
+      ]
+    },
+    {
+      "id": "strategy-and-investment",
+      "name": "Strategy and investment",
+      "template": "templates/strategy-and-investment.html",
+      "frame": "decision-oriented",
+      "goal": "Choose what to fund, stop, defer or consolidate.",
+      "outcome": "The decision maker can accept a concrete investment and its tradeoff, or choose the condition for not proceeding.",
+      "useWhen": [
+        "Recommend an investment",
+        "Choose between strategic bets",
+        "Decide which parallel work to stop or converge"
+      ],
+      "required": [
+        {
+          "id": "problem",
+          "title": "Problem statement and context",
+          "purpose": "Establish the evidenced task failure and why a direction change is needed."
+        },
+        {
+          "id": "terminology",
+          "title": "Terminology",
+          "purpose": "Define the actual terms, distinctions and scope limits needed to understand this paper; do not imply agreement or implementation from a definition."
+        },
+        {
+          "id": "proposal",
+          "title": "TLDR of the proposal",
+          "purpose": "State the recommended investment and reuse/containment boundary."
+        },
+        {
+          "id": "choice",
+          "title": "Strategic choice and alternatives",
+          "purpose": "Compare real options, including the strongest alternative and cost of doing nothing."
+        },
+        {
+          "id": "investment",
+          "title": "Investment boundary and tradeoffs",
+          "purpose": "State scope, resources/ownership to confirm, what stops and what remains available."
+        },
+        {
+          "id": "proof",
+          "title": "First proof and success/stop criteria",
+          "purpose": "Define the smallest evidence-based slice and what changes the recommendation."
+        },
+        {
+          "id": "decision",
+          "title": "Decision requested",
+          "purpose": "Name the bounded choice, accountable decision role and next action."
+        },
+        {
+          "id": "sources",
+          "title": "Sources and evidence boundaries",
+          "purpose": "Keep claims, assumptions and meaningful uncertainties inspectable."
+        }
+      ],
+      "recommended": [
+        {
+          "id": "current-state",
+          "title": "Current state and constraints",
+          "purpose": "Add maturity or capability context that materially changes the choice."
+        },
+        {
+          "id": "phasing",
+          "title": "Phased investment",
+          "purpose": "Stage funding around proof rather than invent a full roadmap."
+        },
+        {
+          "id": "operating",
+          "title": "Ownership beyond the author",
+          "purpose": "Explain how the investment avoids recurring dependency on one person."
+        }
+      ],
+      "conditional": [
+        {
+          "id": "cost-model",
+          "title": "Cost or capacity model",
+          "when": "Comparable inputs are available or the user requests a clearly labelled model.",
+          "purpose": "Expose assumptions; do not manufacture financial or staffing facts."
+        }
+      ],
+      "outcomeChecks": [
+        "One actual choice and its strongest alternative are explicit.",
+        "Scope, resource uncertainty and stop conditions are visible.",
+        "The ask enables an investment decision rather than a generic vision endorsement.",
+        "No more than five major sections; terminology and reader-persona controls are present.",
+        "Advanced references are collapsible, while decisive conclusions and critical qualifications remain visible."
+      ],
+      "mainSections": [
+        {
+          "id": "context",
+          "title": "Problem, context and terminology",
+          "required": [
+            "problem",
+            "terminology"
+          ],
+          "recommended": [
+            "current-state"
+          ],
+          "conditional": []
+        },
+        {
+          "id": "choice",
+          "title": "Strategic direction and alternatives",
+          "required": [
+            "proposal",
+            "choice"
+          ],
+          "recommended": [],
+          "conditional": []
+        },
+        {
+          "id": "investment",
+          "title": "Investment boundary and tradeoffs",
+          "required": [
+            "investment"
+          ],
+          "recommended": [],
+          "conditional": [
+            "cost-model"
+          ]
+        },
+        {
+          "id": "proof",
+          "title": "First proof and phased investment",
+          "required": [
+            "proof"
+          ],
+          "recommended": [
+            "phasing",
+            "operating"
+          ],
+          "conditional": []
+        },
+        {
+          "id": "decision",
+          "title": "Investment decision and sources",
+          "required": [
+            "decision",
+            "sources"
+          ],
+          "recommended": [],
+          "conditional": []
+        }
+      ]
+    },
+    {
+      "id": "architecture-and-convergence",
+      "name": "Architecture and convergence",
+      "template": "templates/architecture-and-convergence.html",
+      "frame": "decision-oriented",
+      "goal": "Adopt shared contracts and migrate without losing intended behavior.",
+      "outcome": "Implementers know the chosen interfaces, ownership/reuse boundaries and proof needed to converge safely.",
+      "useWhen": [
+        "Decide a shared contract or service boundary",
+        "Explain a component architecture",
+        "Replace or converge competing implementations"
+      ],
+      "required": [
+        {
+          "id": "problem",
+          "title": "Problem statement and context",
+          "purpose": "Show the flow that breaks or diverges and the behavior to preserve."
+        },
+        {
+          "id": "terminology",
+          "title": "Terminology",
+          "purpose": "Define the actual terms, distinctions and scope limits needed to understand this paper; do not imply agreement or implementation from a definition."
+        },
+        {
+          "id": "proposal",
+          "title": "TLDR of the proposal",
+          "purpose": "State the contract/reuse choice and smallest missing extension."
+        },
+        {
+          "id": "contracts",
+          "title": "Contracts and responsibilities",
+          "purpose": "Identify producers, consumers, ownership, standards/status and relevant failure/authority semantics."
+        },
+        {
+          "id": "reuse",
+          "title": "Reuse and alternatives",
+          "purpose": "Justify direct reuse, adapters or a new boundary against the strongest alternative."
+        },
+        {
+          "id": "migration",
+          "title": "Migration and proof",
+          "purpose": "State compatibility, conformance, rollout/rollback and retirement conditions."
+        },
+        {
+          "id": "decision",
+          "title": "Decision requested",
+          "purpose": "Name what interface/boundary is adopted and who owns the next proof."
+        },
+        {
+          "id": "sources",
+          "title": "Sources and evidence boundaries",
+          "purpose": "Distinguish standards, verified behavior, proposals and coverage gaps."
+        }
+      ],
+      "recommended": [
+        {
+          "id": "build-map",
+          "title": "Component build map and inventory",
+          "purpose": "Connect logical code units and dependencies without implying one service per box."
+        },
+        {
+          "id": "worked-flow",
+          "title": "Worked data or lifecycle flow",
+          "purpose": "Make authored inputs, processing, retained records and outputs concrete."
+        },
+        {
+          "id": "operations",
+          "title": "Operational and access boundaries",
+          "purpose": "Explain material reliability, identity, privacy and resource constraints."
+        }
+      ],
+      "conditional": [
+        {
+          "id": "full-inventory",
+          "title": "Complete implementation inventory",
+          "when": "The user explicitly requests every component or a full build map.",
+          "purpose": "Include every known code area, dependency, build/reuse distinction and unresolved deployment boundary."
+        },
+        {
+          "id": "api-reference",
+          "title": "API or command reference",
+          "when": "Interfaces are needed to understand or implement the requested boundary.",
+          "purpose": "Label proposed contracts and keep examples source-grounded."
+        }
+      ],
+      "outcomeChecks": [
+        "The shared contract and compatibility meaning are explicit.",
+        "Required code/ownership boundaries are understood without reading between boxes.",
+        "Migration proof and the anti-duplication/retirement choice are actionable.",
+        "No more than five major sections; terminology and reader-persona controls are present.",
+        "Advanced references are collapsible, while decisive conclusions and critical qualifications remain visible."
+      ],
+      "mainSections": [
+        {
+          "id": "context",
+          "title": "Problem, context and terminology",
+          "required": [
+            "problem",
+            "terminology"
+          ],
+          "recommended": [],
+          "conditional": []
+        },
+        {
+          "id": "architecture",
+          "title": "Architecture, contracts and reuse",
+          "required": [
+            "proposal",
+            "contracts",
+            "reuse"
+          ],
+          "recommended": [
+            "build-map"
+          ],
+          "conditional": [
+            "full-inventory",
+            "api-reference"
+          ]
+        },
+        {
+          "id": "workflows",
+          "title": "Workflows and operating boundaries",
+          "required": [],
+          "recommended": [
+            "worked-flow",
+            "operations"
+          ],
+          "conditional": []
+        },
+        {
+          "id": "migration",
+          "title": "Migration and compatibility proof",
+          "required": [
+            "migration"
+          ],
+          "recommended": [],
+          "conditional": []
+        },
+        {
+          "id": "decision",
+          "title": "Contract decision and sources",
+          "required": [
+            "decision",
+            "sources"
+          ],
+          "recommended": [],
+          "conditional": []
+        }
+      ]
+    },
+    {
+      "id": "evidence-and-recommendation",
+      "name": "Evidence and recommendation",
+      "template": "templates/evidence-and-recommendation.html",
+      "frame": "decision-oriented",
+      "goal": "Decide whether to proceed, narrow, stop or collect a specific missing proof.",
+      "outcome": "The decision owner can take a bounded action justified by the evidence and understands what it does not authorize.",
+      "useWhen": [
+        "Should we adopt this?",
+        "Recommend next steps from a spike",
+        "Resolve a go/no-go choice blocked by uncertainty"
+      ],
+      "required": [
+        {
+          "id": "problem",
+          "title": "Decision blocked and context",
+          "purpose": "Name the uncertainty, representative scenario and consequence of acting on it."
+        },
+        {
+          "id": "terminology",
+          "title": "Terminology",
+          "purpose": "Define the actual terms, distinctions and scope limits needed to understand this paper; do not imply agreement or implementation from a definition."
+        },
+        {
+          "id": "proposal",
+          "title": "TLDR of the recommendation",
+          "purpose": "State proceed/narrow/stop/collect proof and the condition that changes it."
+        },
+        {
+          "id": "method",
+          "title": "Method and evidence boundaries",
+          "purpose": "State what was actually inspected or tested and what was not."
+        },
+        {
+          "id": "findings",
+          "title": "Findings that change the decision",
+          "purpose": "Connect each decisive finding to evidence, limitation and consequence."
+        },
+        {
+          "id": "recommendation",
+          "title": "Recommendation and next proof",
+          "purpose": "State the smallest action/test, success/stop criteria and ownership to confirm."
+        },
+        {
+          "id": "decision",
+          "title": "Decision requested",
+          "purpose": "Resolve the bounded choice without turning the draft into approval."
+        },
+        {
+          "id": "sources",
+          "title": "Sources and limitations",
+          "purpose": "Retain contrary evidence, unresolved uncertainty and original provenance."
+        }
+      ],
+      "recommended": [
+        {
+          "id": "comparison",
+          "title": "Matched comparison or finding matrix",
+          "purpose": "Hold relevant inputs constant and expose incompatible comparisons."
+        },
+        {
+          "id": "retained-path",
+          "title": "What remains available",
+          "purpose": "Protect existing behavior until replacement proof exists."
+        }
+      ],
+      "conditional": [
+        {
+          "id": "reproduction",
+          "title": "Reproduction or test detail",
+          "when": "An actual test was performed and the detail helps verify the conclusion.",
+          "purpose": "Do not write a planned experiment as an executed result."
+        }
+      ],
+      "outcomeChecks": [
+        "The recommendation follows from decisive evidence, not the desired answer.",
+        "Limits and contrary findings can change the choice.",
+        "The next action is bounded and separate from broad investment or release authority.",
+        "No more than five major sections; terminology and reader-persona controls are present.",
+        "Advanced references are collapsible, while decisive conclusions and critical qualifications remain visible."
+      ],
+      "mainSections": [
+        {
+          "id": "context",
+          "title": "Blocked question, context and terminology",
+          "required": [
+            "problem",
+            "terminology"
+          ],
+          "recommended": [],
+          "conditional": []
+        },
+        {
+          "id": "direction",
+          "title": "Recommendation in brief",
+          "required": [
+            "proposal"
+          ],
+          "recommended": [],
+          "conditional": []
+        },
+        {
+          "id": "evidence",
+          "title": "Evidence, method and decisive findings",
+          "required": [
+            "method",
+            "findings"
+          ],
+          "recommended": [
+            "comparison"
+          ],
+          "conditional": [
+            "reproduction"
+          ]
+        },
+        {
+          "id": "proof",
+          "title": "Next proof and retained behavior",
+          "required": [
+            "recommendation"
+          ],
+          "recommended": [
+            "retained-path"
+          ],
+          "conditional": []
+        },
+        {
+          "id": "decision",
+          "title": "Bounded decision and source limits",
+          "required": [
+            "decision",
+            "sources"
+          ],
+          "recommended": [],
+          "conditional": []
+        }
+      ]
+    },
+    {
+      "id": "delivery-roadmap",
+      "name": "Delivery roadmap",
+      "template": "templates/delivery-roadmap.html",
+      "frame": "decision-oriented",
+      "goal": "Sequence delivery against explicit targets, dependencies and readiness gates.",
+      "outcome": "Owners can commit or revise a coherent delivery slice and see how scope or dependency changes threaten the targets.",
+      "useWhen": [
+        "Build a month-by-month roadmap",
+        "Set first shipment, GA and launch targets",
+        "Sequence work packages and integration coverage"
+      ],
+      "required": [
+        {
+          "id": "problem",
+          "title": "Outcome, scope and current gap",
+          "purpose": "Explain the user journey to deliver and distinguish confirmed capability from planned work."
+        },
+        {
+          "id": "terminology",
+          "title": "Terminology",
+          "purpose": "Define the actual terms, distinctions and scope limits needed to understand this paper; do not imply agreement or implementation from a definition."
+        },
+        {
+          "id": "proposal",
+          "title": "TLDR of the delivery plan",
+          "purpose": "State target releases, scope/reuse boundary and the commitment to request."
+        },
+        {
+          "id": "targets",
+          "title": "Release targets and phases",
+          "purpose": "Retain user-supplied dates, distinguish planning anchors from verified event dates and define each release's scope."
+        },
+        {
+          "id": "packages",
+          "title": "Work packages and dependencies",
+          "purpose": "Map deliverables, prerequisite relationships and acceptance proof, not a disconnected feature wish list."
+        },
+        {
+          "id": "gates",
+          "title": "Readiness gates and delivery risk",
+          "purpose": "Keep targets fixed when modeling delay; identify evidence required to expand, hold or rebaseline."
+        },
+        {
+          "id": "owners",
+          "title": "Ownership, capacity and assumptions",
+          "purpose": "Name proposed/confirmed accountable roles, unassigned capacity and unresolved external dependencies."
+        },
+        {
+          "id": "decision",
+          "title": "Delivery decision requested",
+          "purpose": "Ask for scope/ownership/capacity or an explicit rebaseline, not pretend the plan is funded."
+        },
+        {
+          "id": "sources",
+          "title": "Sources and planning boundaries",
+          "purpose": "Ground scope in vision/architecture and preserve uncertainty about estimates, dates and readiness."
+        }
+      ],
+      "recommended": [
+        {
+          "id": "monthly",
+          "title": "Monthly delivery view",
+          "purpose": "Expose the complete horizon and concrete monthly outcomes."
+        },
+        {
+          "id": "coverage",
+          "title": "Tool or audience coverage matrix",
+          "purpose": "Define the denominator behind full support and required journeys."
+        },
+        {
+          "id": "what-if",
+          "title": "Dependency what-if model",
+          "purpose": "Show deterministic propagation without claiming an effort or staffing forecast."
+        },
+        {
+          "id": "operations",
+          "title": "Launch and operating handoff",
+          "purpose": "Plan support, rollback and sustained ownership after shipment."
+        }
+      ],
+      "conditional": [
+        {
+          "id": "full-horizon",
+          "title": "Complete requested horizon",
+          "when": "The user specifies a horizon or monthly plan.",
+          "purpose": "Include every requested period; don't replace a full roadmap with three milestone cards."
+        },
+        {
+          "id": "full-coverage",
+          "title": "Full support definition",
+          "when": "The user asks for all tools, surfaces or components.",
+          "purpose": "List the planning catalog, validation gate and compatibility bar rather than redefine all implicitly."
+        }
+      ],
+      "outcomeChecks": [
+        "Each target has scope, dependencies and required proof.",
+        "Every requested period and explicit coverage target is represented.",
+        "Ownership/capacity and event-date uncertainty are visible; simulations never approve or deploy.",
+        "No more than five major sections; terminology and reader-persona controls are present.",
+        "Advanced references are collapsible, while decisive conclusions and critical qualifications remain visible."
+      ],
+      "mainSections": [
+        {
+          "id": "context",
+          "title": "Outcome, scope and terminology",
+          "required": [
+            "problem",
+            "terminology"
+          ],
+          "recommended": [],
+          "conditional": []
+        },
+        {
+          "id": "plan",
+          "title": "Release targets and complete delivery view",
+          "required": [
+            "proposal",
+            "targets"
+          ],
+          "recommended": [
+            "monthly"
+          ],
+          "conditional": [
+            "full-horizon"
+          ]
+        },
+        {
+          "id": "delivery",
+          "title": "Work packages, dependencies and coverage",
+          "required": [
+            "packages"
+          ],
+          "recommended": [
+            "coverage",
+            "what-if"
+          ],
+          "conditional": [
+            "full-coverage"
+          ]
+        },
+        {
+          "id": "readiness",
+          "title": "Readiness, owners and operation",
+          "required": [
+            "gates",
+            "owners"
+          ],
+          "recommended": [
+            "operations"
+          ],
+          "conditional": []
+        },
+        {
+          "id": "decision",
+          "title": "Delivery decision and planning sources",
+          "required": [
+            "decision",
+            "sources"
+          ],
+          "recommended": [],
+          "conditional": []
+        }
+      ]
+    },
+    {
+      "id": "adoption-and-operating-model",
+      "name": "Adoption and operating model",
+      "template": "templates/adoption-and-operating-model.html",
+      "frame": "decision-oriented",
+      "goal": "Turn an agreed capability into repeated user value and durable ownership.",
+      "outcome": "The reader knows how users reach value, how it is measured and who runs routine operation without the author as a dependency.",
+      "useWhen": [
+        "Roll out an agreed capability",
+        "Improve adoption or a user journey",
+        "Define operating ownership and a sustainable handoff"
+      ],
+      "required": [
+        {
+          "id": "problem",
+          "title": "Adoption problem and context",
+          "purpose": "Identify the actual journey bottleneck, cohort and repeated manual dependency."
+        },
+        {
+          "id": "terminology",
+          "title": "Terminology",
+          "purpose": "Define the actual terms, distinctions and scope limits needed to understand this paper; do not imply agreement or implementation from a definition."
+        },
+        {
+          "id": "proposal",
+          "title": "TLDR of the operating proposal",
+          "purpose": "State the adoption intervention, reuse choice and operating decision."
+        },
+        {
+          "id": "journey",
+          "title": "Journey and measurement",
+          "purpose": "Define user completion, outcome denominator, available signals and unconfirmed baseline/targets."
+        },
+        {
+          "id": "ownership",
+          "title": "Ownership that lasts",
+          "purpose": "Define accountable owner/deputy, routine decisions, support/escalation and handoff proof."
+        },
+        {
+          "id": "rollout",
+          "title": "Rollout and operating proof",
+          "purpose": "State cohort, expansion/stop conditions and how repeated value/independence will be demonstrated."
+        },
+        {
+          "id": "decision",
+          "title": "Operating decision requested",
+          "purpose": "Resolve the ownership or adoption action and what remains with the decision owner."
+        },
+        {
+          "id": "sources",
+          "title": "Sources and evidence boundaries",
+          "purpose": "Ground user friction and measurement limits without inventing adoption or delegation success."
+        }
+      ],
+      "recommended": [
+        {
+          "id": "personas",
+          "title": "Persona or cohort journey",
+          "purpose": "Show different adoption needs without changing shared outcome meaning."
+        },
+        {
+          "id": "support",
+          "title": "Support and feedback loop",
+          "purpose": "Make recurring diagnosis, exception handling and improvement sustainable."
+        },
+        {
+          "id": "coverage",
+          "title": "Coverage and exceptions",
+          "purpose": "Identify included users/tools and deliberate exceptions."
+        }
+      ],
+      "conditional": [
+        {
+          "id": "independence",
+          "title": "Author step-back test",
+          "when": "Removing routine dependence on the author is a stated objective.",
+          "purpose": "Define a verifiable handoff period and escalation boundary, not claim a handoff already happened."
+        }
+      ],
+      "outcomeChecks": [
+        "Success is a completed/repeated user journey, not just reach or installs.",
+        "Routine operation has accountable ownership and a concrete independence proof.",
+        "Expansion and exceptions use evidence rather than assumed adoption.",
+        "No more than five major sections; terminology and reader-persona controls are present.",
+        "Advanced references are collapsible, while decisive conclusions and critical qualifications remain visible."
+      ],
+      "mainSections": [
+        {
+          "id": "context",
+          "title": "Adoption problem, context and terminology",
+          "required": [
+            "problem",
+            "terminology"
+          ],
+          "recommended": [],
+          "conditional": []
+        },
+        {
+          "id": "journey",
+          "title": "Operating direction, journey and measurement",
+          "required": [
+            "proposal",
+            "journey"
+          ],
+          "recommended": [
+            "personas"
+          ],
+          "conditional": []
+        },
+        {
+          "id": "ownership",
+          "title": "Durable ownership and operating model",
+          "required": [
+            "ownership"
+          ],
+          "recommended": [
+            "support",
+            "coverage"
+          ],
+          "conditional": [
+            "independence"
+          ]
+        },
+        {
+          "id": "rollout",
+          "title": "Rollout and operating proof",
+          "required": [
+            "rollout"
+          ],
+          "recommended": [],
+          "conditional": []
+        },
+        {
+          "id": "decision",
+          "title": "Operating decision and sources",
+          "required": [
+            "decision",
+            "sources"
+          ],
+          "recommended": [],
+          "conditional": []
+        }
+      ]
+    }
+  ],
+  "outputFormat": "html",
+  "maxMainSections": 5,
+  "terminologyRequired": true,
+  "readerPersonas": [
+    "overview",
+    "product",
+    "technical"
+  ],
+  "criticalRules": "references/critical-content-rules.json",
+  "sharedHtmlTemplate": "assets/paper.html"
+}

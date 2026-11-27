@@ -1,0 +1,39 @@
+{
+  "version": 1,
+  "delivery": {
+    "format": "html",
+    "maxMainSections": 5,
+    "subsections": "Use h3/h4 inside the five meaningful h2 groups; do not create additional top-level sections.",
+    "templates": [
+      "Enriched left-nav paper",
+      "Seven outcome-driven HTML starters"
+    ],
+    "defaultTemplate": "Enriched left-nav paper",
+    "terminologyRequired": true,
+    "readerPersonaRequired": true,
+    "advancedDetail": "Use labelled details blocks with reader depths. Every main group has an overview and optional depth; preserve requested reference material.",
+    "coreNarrativeCeiling": 1500
+  },
+  "general": [
+    "Choose one primary paper type by reader goal/outcome, then satisfy its required semantic coverage within at most five main groups.",
+    "Informational research opens with questions/scope and findings, not an invented problem, investment ask or default recommendation.",
+    "Decision-oriented papers explain the problem/context before the proposal and solution.",
+    "Every paper defines the actual terminology, distinctions and limits readers need. A definition is not evidence of agreement or implementation.",
+    "Every main group has useful overview content. Persona selection changes reading depth, never permissions, authority, evidence or result meanings.",
+    "Use Overview, Product/delivery and Technical/evidence reader levels. Let readers expand individual sections regardless of the global choice.",
+    "Collapse advanced code, full inventories, detailed data, optional scenarios and deep evidence. Do not hide material risks, unsupported claims, critical limits, recommendation conditions or scope exclusions.",
+    "Keep the core narrative concise. Requested implementation/reference detail may remain in collapsible subsections; do not conceal an oversized argument to game the budget.",
+    "Preserve exact authored facts, quotations, citations, IDs/deep anchors and prior versions during regrouping.",
+    "Cite sources actually read; distinguish documented, reported, verified, inferred, proposed and unresolved statements.",
+    "Never invent executed experiments, delivery, stakeholder agreement, owners, staffing, baselines, numeric targets or official event dates.",
+    "Use internal discussions as context, not meeting chronology or vague authority in the argument. Preserve decision-relevant versions and evidence limits.",
+    "Keep synthetic UI/data labelled. Selections, checkboxes, what-if models and readiness examples never approve, deploy or modify real systems.",
+    "Use the shared self-contained HTML templates and tested controls. No Markdown replacement, remote assets, live data calls, iframes or external form actions.",
+    "Only verified HTTPS source links and in-document anchors belong in durable papers. Never link to local files or copy secrets/private unrelated context.",
+    "Themes may change colors, offline system fonts, spacing and placement through CSS; preserve the HTML structure, content, reading order, mobile fit/pinch/pan, keyboard access, print readability and default/reader preferences.",
+    "Publish only on an explicit current-turn request. Template selection, paper approval, prior receipts and reader controls are not publication or external-write authority.",
+    "Prepare a coherent bounded decision or conclusion and an honest source boundary. Keep unconfirmed commitments labelled.",
+    "Explicit current user outline/citation requirements are respected without abandoning the five-group, terminology or HTML standard.",
+    "Load additional topic-specific constraints only from the caller's supplied or authorized project context; do not turn one project's decisions into universal paper rules."
+  ]
+}

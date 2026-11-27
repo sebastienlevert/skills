@@ -22,7 +22,7 @@ instead of duplicating its procedures in this file.
 | Fix authorized PR feedback or conflicts | `address-pr-feedback` |
 | Publish reviewed findings at specific diff lines | `post-pr-comments` |
 | Assess PR readiness without publishing | `pr`, assessment mode |
-| Research a decision or write a strategy paper | `research-brief`, `paper-strategist` |
+| Research a question or write an outcome-driven HTML paper | `research-brief`, `paper` |
 
 Use only the stages the task needs; a question or small lookup isn't a full
 delivery pipeline. If a required skill isn't available, report the missing
