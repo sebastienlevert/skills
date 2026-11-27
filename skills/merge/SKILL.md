@@ -56,6 +56,10 @@ Plain ship, review, approval and APPROVALS.md alone grant no merge authority.
    Green CI, metadata checkboxes or agreement between models is not sufficient
    confidence. Never fabricate a calibrated percentage. If the policy demands a
    numeric criterion, require its defined measurable evidence rather than guess.
+   When ship/caller requires [prove](../prove/SKILL.md), require its current
+   acceptance evidence and verified PR proof comment, including real UI media.
+   Missing/stale/failed proof remains pending for its owner; do not manufacture
+   or rerun proof inside merge.
 5. Require **all merge prerequisites**, unlike merely contributing an approval:
    current required checks with accepted conclusions/source apps, independent
    approvals and CODEOWNER/path/team requirements, discussion resolution, no

@@ -50,6 +50,11 @@ fix/already fixed/clarify/defer/no change/needs information using
 blindly or silently convert disagreement into an agreed requirement. Post only
 scope-relevant responses; a material user decision leaves repair blocked.
 
+In ship, include failed [prove](../prove/SKILL.md) scenarios as scoped concerns:
+expected versus observed behavior, tested candidate and evidence references.
+Missing capture/upload/access is a proof capability blocker, not a code defect.
+Watch owns routing repairs, not recreating media or publishing success proof.
+
 ## One repair batch
 
 1. **Feedback and conflicts:** pass exact concern IDs/text/URLs, current findings,
@@ -75,9 +80,10 @@ scope-relevant responses; a material user decision leaves repair blocked.
    its result. Do not rerun pending work, repeat an uncertain request blindly or
    endlessly retry flaky CI. Missing logs/access remains a blocker.
 5. **After a push:** verify remote head, save fix/reply/thread/check references
-   and invalidate old review/validation/approval evidence in the run record.
+   and invalidate old review/validation/proof/approval evidence in the run record.
    A later review tick reviews the new revision. Never submit a clean verdict
-   merely because checks passed or the conflict markers disappeared.
+   merely because checks passed or the conflict markers disappeared. Mark prove
+   due for affected acceptance evidence after repair; it reuses unaffected inputs.
 
 Preserve unrelated dirty work and other authors' pushes. Refresh before each
 mutation, integrate only safely under project merge/rebase policy, and revalidate

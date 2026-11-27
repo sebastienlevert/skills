@@ -89,6 +89,10 @@ submission prerequisites are demonstrably satisfied:
   do not pass. Skipped/neutral is acceptable only when the actual rule permits it.
   Successful required CI is not a substitute for review. `gh pr checks --required`
   is useful evidence, not the entire repository-policy gate.
+- In ship, [prove](../prove/SKILL.md) must have current acceptance evidence and
+  a verified PR proof comment, including real media for UI. Missing, stale,
+  failed or blocked proof is pending for its owner; never rerun/capture proof
+  inside approval or substitute green CI for it.
 - The current identity is eligible under GitHub and the policy's roles/team/path
   rules; verify membership/access rather than guessing from names. Current
   blocking reviews or unresolved concerns follow the trusted policy. Do not

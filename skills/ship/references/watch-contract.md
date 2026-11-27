@@ -17,17 +17,18 @@ Record these fields and persist after every meaningful transition:
 | Field | Content |
 |---|---|
 | Identity | Run ID, session binding, GitHub hostname, owner/repo, PR number/URL, authenticated login. |
-| Owners | Actual registered owner skill names, plugin version and absolute watch-contract path from the loaded skill. |
+| Owners | Actual registered owner skill names, including prove, plugin version and absolute watch-contract path from the loaded skill. |
 | Target | Head repository/branch, actual base branch, verified task worktree and push remote. |
-| Authority | Exact allowed effects, publication mode `COMMENT`, approval on/off, merge off by default/explicit on, explicit ready authority, session consent/sign-off references and user constraints. Session consent is not a GitHub approval. |
+| Authority | Exact allowed effects, publication mode `COMMENT`, proof verification/capture and PR-comment/media publication scope, approval on/off, merge off by default/explicit on, explicit ready authority, session consent/sign-off references and user constraints. Session consent is not a GitHub approval. |
 | Lifetime | Start/expiry timestamps, starting/active/handoff/stopped/blocked/expired/closed/merged run status, stop reason; separate step states/blockers. |
 | Handoff | Mode `until-handoff` (default) or explicitly authorized `keep-watching`; exact head/base, ready or human-blocked reason, pending work, cleanup receipts, decision-ask status and chosen effects. |
 | Schedules | Review/watch/approval and opted-in merge intervals, each native schedule ID and verified receipt/state. |
 | Policy | Base Markdown/YAML presence, present blob SHAs or verified absent paths, source commit/links, applicable merge mode, validated sidecar fingerprint/result/expiry when present and eligibility gaps; no policy from PR head or invented evaluator success. |
 | Evidence | Last observed head/base, review head/base/scope and finding IDs/statuses, current validation/check evidence references, verified review/approval URLs and exact commit IDs. |
+| Proof | Proven/failed/blocked/stale status, tested head/base/build and relevant inputs, acceptance scenarios/results, media/evaluation references and asset fingerprints, verified comment URL/ID, publication completeness and material limits. No raw recordings/logs in this ledger. |
 | Repair | Feedback IDs and dispositions, pushed fix SHAs/reply URLs/thread states, failed run/job IDs and attempted reruns, consecutive unsuccessful repair count. |
 | Merge | Candidate head/base, risk/confidence verdict and gate evidence, permitted method, owned native queue entry/admission/withdrawal status or verified merge SHA/URL. |
-| Delta probe | Successful snapshot timestamp, head/base and relevant update/CI/feedback/review/queue fingerprints, review/repair/approval/opted-in merge dirty flags and last reported blocker fingerprint. |
+| Delta probe | Successful snapshot timestamp, head/base and relevant update/CI/feedback/review/proof/queue fingerprints, review/repair/proof/approval/opted-in merge dirty flags and last reported blocker fingerprint. |
 
 No local state proves GitHub state or independent review. Recover uncertain
 publication/creation from the remote/native scheduler before retrying. If the
@@ -67,6 +68,8 @@ instead of guessing, deleting unrelated jobs, or reconstructing permissions.
    Merge also keys risk/gate evidence and queue intent by candidate and policy.
    Base/check/feedback changes can matter even without a new head. Do not repeat
    equivalent reviews/replies/approvals or rerun the same unchanged CI blindly.
+   Proof keys the tested candidate, relevant runtime inputs/scenarios/assets and
+   exact verified comment, not just a screenshot file or generic PR update.
 5. Complete one bounded owner pass. Before each write, reread active authority
    and destination/head plus the relevant thread/check/review. If changed, abort
    the stale write and return to the next tick's affected phase. Native schedules
@@ -89,11 +92,12 @@ write guard. Mark only affected steps dirty:
 
 | Changed input | Work to revisit |
 |---|---|
-| Head/base | Review/integration evidence, approval and opted-in merge risk/gate; repair only if feedback/conflict/CI is actionable. |
+| Head/base | Review/integration and current proof accounting, approval and opted-in merge risk/gate; repair only for actionable concerns. |
 | New/edited feedback or unresolved finding | Repair; review only when the concern changes its evidence/verdict; approval/merge gates. |
 | Check/run conclusion or mergeability | Diagnose actionable failure/conflict; approval/merge readiness; no automatic whole-code review. |
 | Draft state or trusted policy/rules | Approval/merge eligibility; no gratuitous code repair/review. |
 | Current review/validation result, native approvals or finding disposition | Approval/merge gate; do not skip just because PR metadata is unchanged. |
+| Proof scenario/input/build change, failed acceptance, missing media or comment receipt | Mark affected proof and approval/merge gates due; route failed behavior to repair, capture/upload/access gaps to a precise blocker. |
 | Native queue state | Observe verified outcome; no duplicate enqueue or candidate mutation. |
 | Deterministic policy result/expiry or required classifier result | Approval/merge gates; parse policy once per blob, evaluate complete facts locally, never guess precedence. |
 | No relevant input change | Evaluate default handoff first; only genuinely pending or explicitly kept watches return quietly without another full read/review/test. |
@@ -113,16 +117,26 @@ and approval reuses exact-revision review/validation rather than another pipelin
 Never print raw tool envelopes/pages/logs or copy the whole PR into the ledger.
 Report actual changes, changed blockers and terminal states; otherwise remain quiet.
 Clear a step's dirty flag only after its pass records a verified result for those
-inputs; keep pending dependent work due. Initial approval/opted-in merge are due after kickoff,
-and a repair push marks review/approval/merge due before the next metadata probe.
+inputs; keep pending dependent work due. Initial proof/approval/opted-in merge are
+due after kickoff; legacy records without proof mark it due. A repair push marks
+review/proof/approval/merge due before the next metadata probe.
 
 ## Revision invalidation and bounded repair
 
-A new head invalidates old code-review, validation and approval evidence. A new
+A new head invalidates old code-review, current proof receipt and approval evidence. A new
 base invalidates integration-sensitive evidence. Preserve prior finding IDs and
 review URLs for re-review, but never reuse an old verdict as current approval.
 The review tick explicitly allows advisory self-authored/draft review for this
 one run; this exception does not make it independent/native approval.
+
+Use [prove's reuse rules](../../prove/SKILL.md) for affected acceptance/runtime
+inputs. Unchanged functional checks/media can be reused with valid provenance and
+explicit current-candidate accounting, not relabeled as newly captured.
+Before readiness, approval or merge, require proven current acceptance and a
+verified proof comment with applicable UI media. Capture-only, partial uploads,
+untested criteria and stale evidence remain incomplete. Do not create a proof
+watcher: the existing review schedule dispatches its due owner after review/
+validation are current and no repair is pending.
 
 Watching makes one scoped batch per tick, never a nested polling loop. After
 **three consecutive unsuccessful repair attempts for the same root cause**,
@@ -166,7 +180,11 @@ Exercise with synthetic/read-only evidence, not live test posts or schedules:
 | Scenario | Required result |
 |---|---|
 | Repeated `/ship` for the same active PR | Recover the run and native IDs; no duplicate schedules or initial review. |
-| Default kickoff is already reviewed/validated with no pending work | No timers; verified human handoff and one exact-PR decision ask, not implicit ready/merge. |
+| Default kickoff is reviewed/validated/proven with no pending work | No timers; verified human handoff and one exact-PR decision ask, not implicit ready/merge. |
+| Review/CI passes but no proof comment or UI media exists | Prove is due; no ready/approval/merge claim until verified proof, or precise blocked handoff if capture/publication is unavailable. |
+| Proof already covers unchanged inputs | Reuse checks/media/comment; no duplicate screenshot, post or additional watcher. |
+| Proof fails acceptance after review | Route to watch's repair owner under the existing budget; affected review/proof becomes due after a fix. |
+| Upload partially succeeds or head moves during publication | Reconcile receipts/assets or mark stale; do not report current proven acceptance or replay the entire upload batch. |
 | Default watch becomes clean without changed feedback | Handoff is checked before quiet no-op; mark inactive, cancel/verify all owned jobs, ask once. |
 | Draft without ready authority, approval-only blocker with no eligible explicit merge, and no other pending work | Human-blocked handoff; no polling to retry a permanent blocker or claim merge readiness. |
 | Required checks are genuinely running | Continue bounded watching until their outcome; hand off only after evidence or a real blocker is known. |
@@ -177,7 +195,7 @@ Exercise with synthetic/read-only evidence, not live test posts or schedules:
 | Cancellation or owned queue withdrawal is uncertain | Report incomplete handoff; do not claim all monitoring/intent stopped or duplicate the operation. |
 | A create/post times out after delivery | Reconcile matching scheduler/review records before retrying. |
 | Review and repair on an unchanged PR | No equivalent comments, commits, approvals or repeated CI reruns. |
-| Watch pushes after review | New SHA cannot be approved using the old review; next review tick re-reviews. |
+| Watch pushes after review/proof | New SHA needs current review and proof accounting before approval; reuse only unaffected evidenced inputs. |
 | Base moves with unchanged head | Reassess integration-sensitive evidence; do not report base work as an authored defect. |
 | Draft or self-authored PR | Review/repair remain useful; approval pending on draft or blocked for author, never a fake approval. |
 | Missing APPROVALS.md or denied rule read | Approval is blocked, not permissive; review/repair continue within scope. |

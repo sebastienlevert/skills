@@ -55,7 +55,7 @@ unavailable results from passing evidence; do not poll automatically.
 | Check | What to establish |
 |---|---|
 | Scope and compatibility | The actual diff addresses the agreed outcome without unrelated churn or unexplained contract changes. |
-| Validation | Relevant acceptance and required checks have current-tree evidence; failures and material gaps remain visible. |
+| Validation | Relevant acceptance and required checks have current-tree evidence; when ship/caller requires prove, its current verified PR comment and applicable media/evaluation evidence are present. Failures and gaps remain visible. |
 | Review and documentation | Consequential findings are addressed; necessary callers, schemas, docs and examples are consistent. |
 | Delivery | Correct branch/base, owned paths, issue links and PR metadata; no sensitive or accidental files. |
 
@@ -64,6 +64,10 @@ checks only when execution is authorized and a requirement or risk needs them.
 A changed revision, scope, expired evidence or affected integration justifies
 affected revalidation, not another full pipeline. Never equate green CI with
 correctness, invent coverage/score requirements, or require a fixed reviewer cast.
+Reuse [prove's evidence](../prove/SKILL.md) when supplied; assessment does not
+capture/upload media or publish a proof comment on its own. Initial draft
+publication can precede proof, but ship readiness cannot treat missing/stale
+proof as completed acceptance.
 
 Return **ready for review**, **not ready** or **insufficient evidence**, with only
 material blockers/limitations and smallest corrections. Suggestions are not gates.

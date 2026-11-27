@@ -21,13 +21,14 @@ and writing with **GitHub Copilot CLI**, **Claude Code**, and **Codex**.
 | [factory](skills/factory/SKILL.md) | Orchestrate issue-to-PR delivery. |
 | [pr](skills/pr/SKILL.md) | Assess readiness, publish, or explicitly mark a PR ready. |
 | [review](skills/review/SKILL.md) | Review code, contracts, and follow-up fixes. |
+| [prove](skills/prove/SKILL.md) | Demonstrate acceptance with real experience evidence and PR-hosted proof. |
 | [triage](skills/triage/SKILL.md) | Prioritize work and assess review feedback. |
 | [post-pr-comments](skills/post-pr-comments/SKILL.md) | Publish reviewed findings at their PR diff lines. |
 | [address-pr-feedback](skills/address-pr-feedback/SKILL.md) | Fix feedback and conflicts, then reply with evidence. |
 | [watch](skills/watch/SKILL.md) | Keep a PR's feedback, conflicts, and CI moving. |
 | [approve](skills/approve/SKILL.md) | Approve eligible PRs under repository policy. |
 | [merge](skills/merge/SKILL.md) | Merge when risk, confidence, and repository rules permit. |
-| [ship](skills/ship/SKILL.md) | Coordinate publication, review, fixes, and approval. |
+| [ship](skills/ship/SKILL.md) | Coordinate publication, review, fixes, proof, and approval. |
 | [paper](skills/paper/SKILL.md) | Create interactive HTML papers with an integrated light review. |
 | [research-brief](skills/research-brief/SKILL.md) | Produce source-grounded research for a decision. |
 
