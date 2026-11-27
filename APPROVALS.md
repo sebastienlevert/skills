@@ -1,4 +1,4 @@
-# Personal Toolkit approval and merge policy
+# Workloom approval and merge policy
 
 This policy applies to `sebastienlevert/skills`. Pair it with root
 `APPROVALS.yml` and read both from the actual PR base commit. Proposed policy

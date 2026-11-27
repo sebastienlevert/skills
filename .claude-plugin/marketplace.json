@@ -1,7 +1,7 @@
 {
   "name": "skills",
   "metadata": {
-    "description": "Personal skills marketplace for coding agent workflows",
+    "description": "Workloom skills marketplace for coding agent workflows",
     "version": "3.0.0"
   },
   "owner": {
@@ -10,7 +10,7 @@
   },
   "plugins": [
     {
-      "name": "personal-toolkit",
+      "name": "workloom",
       "source": "./",
       "description": "Skills for evidence-backed planning, implementation, review, writing, and personal productivity.",
       "version": "3.0.0",

@@ -32,7 +32,7 @@ test('preserves unmarked instructions, BOM, CRLF and local registry data', (t) =
   writeFileSync(path, '\uFEFF' + original);
   initializeToolkit(directory);
   const actual = readFileSync(path, 'utf8');
-  assert(actual.startsWith('\uFEFF<!-- personal-toolkit:start -->\r\n'));
+  assert(actual.startsWith('\uFEFF<!-- workloom:start -->\r\n'));
   assert(actual.endsWith(original));
   assert.equal(initializeToolkit(directory).changed, false);
 });
@@ -42,7 +42,7 @@ test('refreshes only the managed block and leaves child repositories untouched',
   const path = join(directory, 'AGENTS.md');
   const before = '# Local prefix\n\n';
   const after = '\n\n## Local registry\nKeep every row.\n';
-  writeFileSync(path, before + '<!-- personal-toolkit:start -->\nOld routing\n<!-- personal-toolkit:end -->' + after);
+  writeFileSync(path, before + '<!-- workloom:start -->\nOld routing\n<!-- workloom:end -->' + after);
   const child = join(directory, 'child-repo');
   mkdirSync(child);
   writeFileSync(join(child, 'AGENTS.md'), 'Child-specific rules.\n');
@@ -64,6 +64,22 @@ test('dry run previews creation and refresh without filesystem changes', (t) => 
   assert.equal(readFileSync(path, 'utf8'), 'Keep these instructions.\n');
 });
 
+test('upgrades a legacy workspace block in place, preserving local content and line endings', (t) => {
+  const directory = fixture(t);
+  const path = join(directory, 'AGENTS.md');
+  const before = '\uFEFF# Local prefix\r\n\r\n';
+  const after = '\r\n\r\n## Registry\r\nKeep every row.\r\n';
+  const original = before + '<!-- personal-toolkit:start -->\r\nOld routing\r\n<!-- personal-toolkit:end -->' + after;
+  writeFileSync(path, original);
+  assert.equal(initializeToolkit(directory, { dryRun: true }).changed, true);
+  assert.equal(readFileSync(path, 'utf8'), original);
+  assert.equal(initializeToolkit(directory).changed, true);
+  const expected = before + template.trimEnd().replace(/\n/g, '\r\n') + after;
+  assert.equal(readFileSync(path, 'utf8'), expected);
+  assert.equal(initializeToolkit(directory).changed, false);
+  assert.deepEqual(readdirSync(directory), ['AGENTS.md']);
+});
+
 test('rejects malformed, reversed and duplicate markers without replacing content', (t) => {
   const directory = fixture(t);
   const path = join(directory, 'AGENTS.md');
@@ -72,6 +88,12 @@ test('rejects malformed, reversed and duplicate markers without replacing conten
     '<!-- personal-toolkit:end -->\n<!-- personal-toolkit:start -->\n',
     '<!-- personal-toolkit:start -->\n<!-- personal-toolkit:start -->\n<!-- personal-toolkit:end -->\n',
     'Inline <!-- personal-toolkit:start -->\n<!-- personal-toolkit:end -->\n',
+    '<!-- workloom:start -->\nMissing end.\n',
+    '<!-- workloom:end -->\n<!-- workloom:start -->\n',
+    '<!-- workloom:start -->\n<!-- workloom:start -->\n<!-- workloom:end -->\n',
+    '<!-- personal-toolkit:start -->\n<!-- workloom:end -->\n',
+    '<!-- workloom:start -->\n<!-- personal-toolkit:end -->\n',
+    '<!-- personal-toolkit:start -->\n<!-- personal-toolkit:end -->\n<!-- workloom:start -->\n<!-- workloom:end -->\n',
   ]) {
     writeFileSync(path, original);
     assert.throws(() => initializeToolkit(directory), /malformed or duplicate/);

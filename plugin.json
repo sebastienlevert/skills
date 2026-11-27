@@ -1,6 +1,6 @@
 {
   "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
-  "name": "personal-toolkit",
+  "name": "workloom",
   "version": "3.0.0",
   "description": "Skills for evidence-backed planning, implementation, review, writing, and personal productivity.",
   "author": {

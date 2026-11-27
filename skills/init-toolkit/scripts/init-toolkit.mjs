@@ -4,8 +4,10 @@ import { lstatSync, readFileSync, renameSync, rmSync, writeFileSync } from 'node
 import { isAbsolute, join, resolve } from 'node:path';
 import { pathToFileURL } from 'node:url';
 
-const start = '<!-- personal-toolkit:start -->';
-const end = '<!-- personal-toolkit:end -->';
+const start = '<!-- workloom:start -->';
+const end = '<!-- workloom:end -->';
+const legacyStart = '<!-- personal-toolkit:start -->';
+const legacyEnd = '<!-- personal-toolkit:end -->';
 const template = readFileSync(new URL('../assets/AGENTS.md', import.meta.url), 'utf8').trimEnd();
 
 function render(existing) {
@@ -13,16 +15,17 @@ function render(existing) {
   const body = existing.slice(bom.length);
   const newline = body.includes('\r\n') ? '\r\n' : '\n';
   const block = template.replace(/\r?\n/g, newline);
-  const starts = [...body.matchAll(/^<!-- personal-toolkit:start -->(?=\r?$)/gm)];
-  const ends = [...body.matchAll(/^<!-- personal-toolkit:end -->(?=\r?$)/gm)];
-  if (!body.includes(start) && !body.includes(end)) {
+  const starts = [...body.matchAll(/^<!-- (workloom|personal-toolkit):start -->(?=\r?$)/gm)];
+  const ends = [...body.matchAll(/^<!-- (workloom|personal-toolkit):end -->(?=\r?$)/gm)];
+  if (![start, end, legacyStart, legacyEnd].some((marker) => body.includes(marker))) {
     return `${bom}${block}${newline}${body ? newline + body : ''}`;
   }
   if (starts.length !== 1 || ends.length !== 1 || starts[0].index >= ends[0].index
-    || body.split(start).length !== 2 || body.split(end).length !== 2) {
-    throw new Error('AGENTS.md has malformed or duplicate personal-toolkit markers; preserve it and resolve manually.');
+    || starts[0][1] !== ends[0][1]
+    || [start, end, legacyStart, legacyEnd].reduce((count, marker) => count + body.split(marker).length - 1, 0) !== 2) {
+    throw new Error('AGENTS.md has malformed or duplicate Workloom/legacy markers; preserve it and resolve manually.');
   }
-  return bom + body.slice(0, starts[0].index) + block + body.slice(ends[0].index + end.length);
+  return bom + body.slice(0, starts[0].index) + block + body.slice(ends[0].index + ends[0][0].length);
 }
 
 export function initializeToolkit(directory, { dryRun = false } = {}) {
@@ -49,7 +52,7 @@ export function initializeToolkit(directory, { dryRun = false } = {}) {
   if (!entry) {
     writeFileSync(path, next, { encoding: 'utf8', flag: 'wx' });
   } else {
-    const temporary = join(target, `.AGENTS.md.personal-toolkit-${randomUUID()}.tmp`);
+    const temporary = join(target, `.AGENTS.md.workloom-${randomUUID()}.tmp`);
     try {
       writeFileSync(temporary, next, { encoding: 'utf8', flag: 'wx', mode: entry.mode & 0o777 });
       const current = lstatSync(path, { throwIfNoEntry: false });

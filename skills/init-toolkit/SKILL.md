@@ -1,7 +1,7 @@
 ---
 name: init-toolkit
 description: >
-  Explicitly initialize or refresh a selected folder or drive as a personal-toolkit
+  Explicitly initialize or refresh a selected folder or drive as a Workloom
   workspace. Install the bundled AGENTS.md routing template while preserving
   existing instructions and local registry data. Use only when the user explicitly
   invokes init-toolkit; never infer initialization from ordinary repository work.
@@ -9,7 +9,7 @@ user-invocable: true
 disable-model-invocation: true
 ---
 
-# Initialize a personal-toolkit workspace
+# Initialize a Workloom workspace
 
 Run only when the user explicitly invokes this skill. A request to clone, review,
 implement, or work in a folder isn't permission to initialize it. The invocation
@@ -45,6 +45,9 @@ only that directory's `AGENTS.md`, never child repositories or host settings.
 - If no file exists, create it from the template.
 - If an unmarked file exists, prepend the toolkit block and preserve the original.
 - If one valid toolkit block exists, update only that block.
+- A single valid legacy `personal-toolkit` block is upgraded to Workloom in place.
+  Preserve local content and line endings; mixed/duplicate old/new blocks are
+  malformed and must not be silently merged or replaced.
 - An unchanged block is a no-op. Malformed/duplicate markers, non-UTF-8 content,
   symlinked files and other non-regular destinations fail without replacement.
 

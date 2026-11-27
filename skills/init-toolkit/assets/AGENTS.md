@@ -1,7 +1,7 @@
-<!-- personal-toolkit:start -->
-# Personal Toolkit workspace
+<!-- workloom:start -->
+# Workloom workspace
 
-Use the `personal-toolkit` plugin from `sebastienlevert/skills` as this workspace's
+Use the `workloom` plugin from `sebastienlevert/skills` as this workspace's
 workflow entry point. Load the relevant skill and follow its current instructions
 instead of duplicating its procedures in this file.
 
@@ -52,4 +52,4 @@ Keep local overrides and machine-specific repository registry data outside this
 managed block. Refresh the block through `init-toolkit`, not by copying skill
 procedures here. This file doesn't install skills, change host settings or trust,
 or guarantee that every host loads it across child repository boundaries.
-<!-- personal-toolkit:end -->
+<!-- workloom:end -->
