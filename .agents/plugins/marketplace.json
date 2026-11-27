@@ -1,11 +1,11 @@
 {
   "name": "skills",
   "interface": {
-    "displayName": "Personal Skills"
+    "displayName": "Workloom"
   },
   "plugins": [
     {
-      "name": "personal-toolkit",
+      "name": "workloom",
       "source": {
         "source": "local",
         "path": "./"

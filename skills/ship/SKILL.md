@@ -27,7 +27,7 @@ implementation or review engine. Invoke the four owning skills in this session:
 Load the actual host skill names, reusing already loaded skills. A missing owner
 blocks its step; do not copy its procedure or launch another CLI, agent fleet,
 dynamic workflow, shell polling loop, cron job, or GitHub Actions watcher.
-These owners are the **personal-toolkit skills**, not Copilot's native `/pr` or
+These owners are the **workloom skills**, not Copilot's native `/pr` or
 `/review` commands. Select the toolkit entry by source/registered identifier;
 never substitute a host command merely because its short name matches.
 

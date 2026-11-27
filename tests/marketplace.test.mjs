@@ -9,7 +9,7 @@ import { validateMarketplace } from '../scripts/validate-marketplace.mjs';
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 
 function fixture(t) {
-  const directory = mkdtempSync(join(tmpdir(), 'personal-toolkit-test-'));
+  const directory = mkdtempSync(join(tmpdir(), 'workloom-test-'));
   t.after(() => rmSync(directory, { recursive: true, force: true }));
   for (const path of [
     'plugin.json',
