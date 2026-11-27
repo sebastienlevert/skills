@@ -18,6 +18,7 @@ instead of duplicating its procedures in this file.
 | Ship a finished change, watch pending work, then hand off | `ship` |
 | Publish, watch, approve, or risk-gate merge one PR independently | `pr`, `watch`, `approve`, `merge` |
 | Plan focused verification | `test-plan` |
+| Demonstrate a completed ask with experience evidence on its PR | `prove` |
 | Review changes or assess review feedback | `review`, `triage` |
 | Fix authorized PR feedback or conflicts | `address-pr-feedback` |
 | Publish reviewed findings at specific diff lines | `post-pr-comments` |
