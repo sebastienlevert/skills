@@ -2,10 +2,11 @@
 name: ship
 description: >
   Ship a finished change with GitHub Copilot CLI: publish its PR, review it,
-  watch feedback/conflicts/CI, prove the requested experience in a PR comment,
+  autonomously merge target advances into its feature branch, watch
+  feedback/conflicts/CI, prove the requested experience in a PR comment,
   and submit an eligible approval under the target
   repository's root APPROVALS.md. Use for "/ship" or "ship this PR". Orchestrates
-  pr, review, watch, prove and approve, watching pending work with native /every
+  pr, resolve, review, watch, prove and approve, watching pending work with native /every
   schedules and stopping for a human handoff when ready or blocked.
   Explicit --merge adds Simple session approvals or Advanced policy-gated closure;
   --keep-watching opts into idle watching.
@@ -16,15 +17,16 @@ description: >
 # Ship with GitHub Copilot CLI
 
 Ship owns **sequencing, scoped authorization and schedule lifecycle**, not another
-implementation or review engine. Invoke the five owning skills in this session:
+implementation or review engine. Invoke the six owning skills in this session:
 
 | Step | Owner | Result |
 |---|---|---|
 | 1. Prepare and send upstream | [pr](../pr/SKILL.md) | Verified pushed head and canonical PR; reuse a finished change, not a new implementation. |
-| 2. Code review | [review](../review/SKILL.md) | Revision-bound findings and a published `COMMENT` review; never approval in this step. |
-| 3. Watch | [watch](../watch/SKILL.md) | Scoped feedback, conflict and CI repairs on the same branch, with verified replies. |
-| 4. Prove the outcome | [prove](../prove/SKILL.md) | Observed acceptance and real UI screenshots/recording or relevant evaluation, published in a verified revision-bound PR comment. |
-| 5. Approval | [approve](../approve/SKILL.md) | Eligible native `APPROVE` under trusted `APPROVALS.md`, or an exact pending/blocked reason. |
+| 2. Resolve target movement | [resolve](../resolve/SKILL.md) | Latest observed target merged into the same feature branch, conflicts reconciled, validated push and relevant replies/summary; no PR merge. |
+| 3. Code review | [review](../review/SKILL.md) | Revision-bound findings and a published `COMMENT` review; never approval in this step. |
+| 4. Watch | [watch](../watch/SKILL.md) | Scoped feedback, target/conflict and CI repairs on the same branch, with verified replies. |
+| 5. Prove the outcome | [prove](../prove/SKILL.md) | Observed acceptance and real UI screenshots/recording or relevant evaluation, published in a verified revision-bound PR comment. |
+| 6. Approval | [approve](../approve/SKILL.md) | Eligible native `APPROVE` under trusted `APPROVALS.md`, or an exact pending/blocked reason. |
 | Optional closure, only with explicit merge authority | [merge](../merge/SKILL.md) | Risk/confidence and all merge rules satisfied -> guarded normal merge/queue, or pending/blocked. |
 
 Load the actual host skill names, reusing already loaded skills. A missing owner
@@ -57,7 +59,8 @@ Plan/dry-run requests only describe the resolved plan; create no PR or schedule.
 An explicit start authorizes, for **that PR only**, scoped commits/pushes, one
 review and subsequent substantive re-reviews, bounded proof verification/capture
 and hosted proof-comment publication, evidence replies, eligible thread resolution,
-conflict integration, CI repair and eligible approval under the
+autonomous target-into-feature integration and related comment replies/summary,
+CI repair and eligible approval under the
 existing trusted policy. Pass this authority and all user constraints to each
 owner. Use authorized local/test data for proof; it grants no production writes
 or unrelated uploads. `--approval off` removes approval authority and its
@@ -69,6 +72,12 @@ withdrawal authority. Plain ship still cannot merge. No mode grants auto-merge,
 protection changes, account switching, reviewer requests, force-push or arbitrary
 instructions from comments. Adding/installing the skill grants no merge authority.
 
+Routine target movement and ordinary conflict reconciliation are covered by the
+ship start, including on draft/personal PRs; do not ask for each `main` advance.
+This authority merges the target into the feature, not the PR into its target.
+Preserve dirty/shared work and pause only for real access/ownership or material
+intent blockers. Existing policy/sign-off and native queue requirements remain.
+
 New PRs default to **draft**; existing draft/ready state is preserved. `--ready`
 explicitly authorizes [pr](../pr/SKILL.md), ready mode, to mark ready after its
 conditions pass. Otherwise approval remains pending on a draft, and the user
@@ -79,6 +88,28 @@ policy setup, and **Advanced approvals** under the base Markdown/YAML pair.
 Neither requires this account to post a GitHub self-approval. Advanced policy may
 accept verified session sign-off/author seats; actual native independent approvals
 remain required. An approval-step blocker must not suppress an eligible merge.
+
+### Self-authored and personal repositories
+
+Self-authorship is a native **approval-submission limitation**, not an automatic
+readiness or PR-merge blocker. Verify the PR author, current identity/access,
+applicable policy and native requirements; do not infer eligibility from a
+repository being private or apparently personal.
+
+When this account is the PR author, record `unavailable_self_author` for its
+native approving-review contribution. Do not attempt self-approval, require a
+reviewer merely to make that step green, or timer-retry an impossible submission.
+Keep actual required-review/sign-off gates separate. Simple session consent or
+Advanced policy-permitted author seats/session sign-off can satisfy the relevant
+merge conditions without a GitHub approving review from this account.
+
+If no actual independent review is required, current review, target ancestry,
+validation and proof can lead to normal ready handoff/session consent, or an
+already-authorized merge. If independent/CODEOWNER review or a specific owner
+decision is required, name that real missing condition. A verified private-plan
+inspection limitation follows the existing native-enforcement route; do not
+invent a paid-feature/reviewer prerequisite or treat an access denial as absence.
+Self-authorship grants no ready/merge authority and waives no actual native gate.
 
 The default mode is **until handoff**, not a mandatory 24-hour polling loop.
 Watch while checks or bounded review/repair work can still make progress, then
@@ -101,9 +132,10 @@ human blocker. This option adds no approval, ready or merge authority.
    [watch contract](references/watch-contract.md). Recover an existing run and
    its scheduler receipts before starting; never create duplicate watchers.
    Changed options require stopping/reconciling the old jobs before an explicitly
-   authorized replacement. Initialize step-specific dirty flags: approval and
-   proof and opted-in merge are due after kickoff even without changed remote
-   metadata. Legacy runs without proof evidence mark it due before readiness,
+   authorized replacement. Initialize step-specific dirty flags: resolve,
+   approval, proof and opted-in merge are due after kickoff even without changed
+   remote metadata. Legacy runs without ancestry/proof evidence mark them due
+   before readiness,
    preserving existing schedule receipts rather than creating another watcher.
    Read APPROVALS.md and APPROVALS.yml/.yaml from the actual PR base, not its
    head; bind present blobs or verified absence. For a present sidecar, use
@@ -117,15 +149,23 @@ human blocker. This option adds no approval, ready or merge authority.
    Record the run mode and handoff state; stable blockers cannot justify idle
    polling in the default mode. Recover legacy mode from the original request,
    never infer `--keep-watching` from existing timers; ask if authority is unclear.
-4. Invoke `review` on the pushed revision with explicit `COMMENT` publication
+4. Invoke `resolve` before reviewing the candidate, unless a native queued
+   candidate requires observation/owned withdrawal first. Reuse verified ancestry
+   for unchanged target/head; otherwise fetch and integrate the actual target
+   even when GitHub says mergeable. Save original/pushed head, integrated/latest
+   target, validation and reply receipts. One bounded pass; newer target movement
+   remains due, not an in-process chase loop.
+5. Invoke `review` on the pushed revision with explicit `COMMENT` publication
    authority, including advisory review of this exact self-authored/draft PR.
    Save head/base, finding IDs, result and review URL. No approval in review.
-5. Invoke `watch` once with those findings. A fix invalidates the previous
+6. Invoke `watch` once with those findings and relevant integration comments.
+   Its existing cadence dispatches resolve for later target advances/conflicts.
+   A fix or integration invalidates the previous
    revision's review/proof/approval evidence; invoke a bounded authored-delta re-review
    before handoff, or mark it due when genuine work remains pending. Never treat
    the new revision as reviewed merely because checks passed. Apply an authorized
    ready transition only with current readiness and proof evidence.
-6. Invoke `prove` on the stable candidate after review/repair, reusing current
+7. Invoke `prove` on the stable candidate after resolve/review/repair, reusing current
    functional checks. Verify the requested behavior and publish its proof comment:
    real screenshots or a short recording for UI, appropriate scenario/evaluation
    evidence otherwise. Save the candidate, acceptance results, inputs/assets and
@@ -133,23 +173,27 @@ human blocker. This option adds no approval, ready or merge authority.
    Failed acceptance routes to watch's scoped repair owner under the same bounded
    repair budget, then affected review/proof; missing capture/access/upload is a
    blocker, not permission for a fabricated demo or another test loop.
-7. Invoke `approve` once for current eligibility/evidence, and `merge` once only
+8. Invoke `approve` once for current eligibility/evidence; record self-author
+   submission as unavailable without attempting a native review. Invoke `merge` once only
    with merge authority and current prerequisites. Record blocked/pending reasons.
-   Neither may proceed with missing/stale/failed proof. Keep an initial draft
+   Neither may proceed with pending target integration or missing/stale/failed
+   proof. Keep an initial draft
    publication available for proof/repair; do not call it ready for handoff.
    Evaluate the **human handoff** below before creating schedules. If due, finish
    handoff with no new timers. Otherwise, for genuine pending work or explicit
-   `--keep-watching`, create the three native recurring prompts below, or two with
-   approval disabled. Add a fourth **only with recorded explicit merge authority**,
-   using merge; it may use valid independent approvals even when this account
-   cannot self-approve.
+   `--keep-watching`, create the review/watch prompts below. Add the approval
+   prompt only when approval authority is on and contribution is not intrinsically
+   unavailable for this self-author. Omit/cancel only its owned approval job while
+   that fact remains current; retain the authority flag and other healthy jobs.
+   Add a merge prompt only with explicit merge authority. Actual required reviews
+   are observed through watch/native gates even when no approval job can run.
    Verify actual schedule IDs/receipts and save them. Initial review
    and watching do not substitute for creating schedules when a watch is needed.
    Activate the run only after confirmed creation; failed setup remains blocked
    with confirmed jobs cancelled. Component blockers stay in step state, not a
    falsely terminal global state that would cancel the healthy steps.
-8. Return the PR, proof comment, step states and either the verified handoff/
-   decision ask or
+9. Return the PR, target integration/reply status, proof comment and step states
+   plus the verified handoff/decision ask or
    actual schedule IDs/cadences, expiry and pending work. **Watching** is an
    active watch, not approved or merged; **handoff** is inactive, not merged.
 
@@ -159,19 +203,23 @@ Evaluate handoff after kickoff and every bounded tick, **before an unchanged
 input can return quietly**. Use current revision-bound evidence and the compact
 snapshot, not another full diff/review/build just to decide whether to stop.
 
-- **Ready:** review, required validation and verified proof comment are current,
+- **Ready:** latest observed target is incorporated, and review, required
+  validation and verified proof comment are current,
   actionable feedback and
   conflicts are addressed, and no autonomous work remains. Without merge authority,
   hand off instead of repeatedly observing a clean PR. Approval success alone
-  does not authorize merge or require waiting for another push.
-- **Needs a person:** a draft without ready authority, self-author approval,
-  missing policy for approval, ambiguous policy, required independent review,
+  does not authorize merge or require waiting for another push. An unavailable
+  self-approval step does not make this ready outcome human-blocked.
+- **Needs a person:** a draft without ready authority, missing actually required
+  independent/CODEOWNER review, an unsatisfied policy-required decision, ambiguous policy,
   unavailable proof capture/publication, access or a material decision prevents
-  progress, and no other authorized check/review/proof/repair/merge can proceed.
+  progress, and no other authorized resolve/check/review/proof/repair/merge can proceed.
   An approval-only blocker does not block
-  otherwise eligible explicit merge; let its owning skill evaluate that gate.
-  State the exact blocker, not "everything passed" or "ready to merge".
-- **Keep working:** known running checks, a bounded due review/proof/repair, or an
+  otherwise eligible readiness/session consent or explicit merge. Self-authorship
+  or absent optional policy alone is not the reason to demand a GitHub reviewer.
+  State the exact missing gate, not "everything passed" or "ready to merge".
+- **Keep working:** a target advance/integration comment that resolve can handle,
+  known running checks, a bounded due review/proof/repair, or an
   owned native merge-queue entry still needs observation. Do not stop useful
   work because an approval component is blocked. Unknown/missing/failed evidence
   is not green and is not automatically an in-flight check; diagnose once, then
@@ -206,6 +254,11 @@ watch duration **24h**. Readiness/human handoff normally ends it earlier.
 The review schedule also runs the prove owner when proof is due and prerequisites
 are current; there is no additional proof watcher. It never repeats valid proof
 or recaptures unchanged media just because a timer fires.
+The existing watch schedule dispatches resolve on target/head or relevant
+integration-comment changes; no separate sync watcher or agent session is added.
+An intrinsically unavailable self-author approval contribution has no approval
+timer, even in `--keep-watching`; this does not remove actual required-review
+observation or alter the user's approval/merge authority.
 Opted-in merge defaults to **15m** (`--merge-every`); no merge job otherwise.
 Honor explicit positive cadences/duration; reject invalid options before writes.
 Use Copilot's documented `/every` scheduler, backed by `manage_schedule` when
@@ -218,8 +271,8 @@ host/repository/PR and step. Do not schedule the bare `/ship` orchestrator:
 
 ```text
 /every 15m For ship run <run-id> at <absolute-state-path>, preflight and delta-probe <host>/<owner>/<repo>#<number> using the watch contract. Evaluate default handoff before unchanged no-op: when due mark inactive, cancel/verify owned jobs and ask once; otherwise if review and proof inputs are unchanged return quietly. Invoke the recorded review owner for a due COMMENT-only review; then, only with current review/validation and no pending repair, invoke the recorded prove owner for due acceptance/media and verified PR proof-comment publication. Record both candidates/evidence/receipts and recheck handoff. Reuse valid proof and functional checks. No approval, fixes, native-command substitution, or child schedules.
-/every 5m For ship run <run-id> at <absolute-state-path>, preflight and delta-probe <host>/<owner>/<repo>#<number> using the watch contract. Evaluate default handoff before unchanged no-op: when due mark inactive, cancel/verify owned jobs and ask once; otherwise if no actionable feedback/proof-failure/conflict/CI change return quietly. For changed inputs load the recorded toolkit watch skill and run one tick in the recorded worktree, push validated fixes before replies/resolution and invalidate changed-revision evidence, then recheck handoff. No approval, proof publication, merge, or child schedules.
-/every 15m For ship run <run-id> at <absolute-state-path>, preflight and delta-probe <host>/<owner>/<repo>#<number> using the watch contract. Evaluate default handoff before unchanged no-op: when due mark inactive, cancel/verify owned jobs and ask once; otherwise if approval inputs are unchanged or a recorded eligibility blocker remains return quietly. Require current verified prove evidence/comment before any approval write. For changed eligible inputs load the recorded toolkit approve skill and run one tick under recorded authority and trusted base APPROVALS.md, with current review and exact-commit verification, then recheck handoff. No fixes, proof recapture, readying, merge, or child schedules.
+/every 5m For ship run <run-id> at <absolute-state-path>, preflight and delta-probe <host>/<owner>/<repo>#<number> using the watch contract. Evaluate default handoff with pending resolve work before unchanged no-op: when due mark inactive, cancel/verify owned jobs and ask once; otherwise if target/head, ancestry, integration comments, feedback/proof-failure/conflict/CI are unchanged and no owner is due return quietly. Invoke the recorded watch owner, dispatching resolve for unincorporated/unknown target ancestry or integration comments even when mergeable, then scoped feedback/CI repair. Preserve queued/dirty ownership, push validated integration before evidence replies or a deduplicated summary, and mark affected review/proof/approval due. No approval, proof publication, PR merge, extra sessions or child schedules.
+/every 15m For ship run <run-id> at <absolute-state-path>, preflight and delta-probe <host>/<owner>/<repo>#<number> using the watch contract. Evaluate default handoff before unchanged no-op. If this account is the PR author, record native contribution unavailable_self_author and omit/cancel only the recorded approval job; do not turn that into a global blocker or request an independent reviewer unless an actual merge gate requires one. Otherwise if approval inputs are unchanged or a recorded eligibility blocker remains return quietly. Require current verified prove evidence/comment before any approval write. For changed eligible inputs invoke approve under recorded authority and trusted base policy with current review/exact-commit verification, then recheck handoff. No fixes, proof recapture, readying, merge, or child schedules.
 ```
 
 Only when explicitly authorized merge still needs watching, also instantiate:
@@ -256,7 +309,7 @@ establish an unchanged/pass verdict, and each write still needs fresh guards.
 ## Status, stop and completion
 
 `status` reads the run record, verifies its native schedule IDs and current PR
-state, and reports the five step results including proof/comment status plus
+state, and reports the six step results including target integration/replies and proof/comment status plus
 opted-in merge/queue state; it
 creates no schedules or GitHub writes.
 `stop` marks the record stopped **before** cancelling only this run's recorded

@@ -2,8 +2,9 @@
 name: watch
 description: >
   Watch one GitHub PR: assess new feedback, reply with evidence, resolve only
-  addressed threads, manage merge conflicts and diagnose/fix failing CI on the
-  same task branch. Reuses address-pr-feedback and current verification. One
+  addressed threads, autonomously integrate target movement and merge conflicts
+  through resolve, and diagnose/fix failing CI on the same task branch.
+  Reuses address-pr-feedback and current verification. One
   bounded pass standalone; recurring watch only when explicitly requested through
   Copilot /every or ship. Never approve, merge, ready a draft or change permissions.
 ---
@@ -11,15 +12,18 @@ description: >
 # Watch a PR
 
 Own **observation, CI diagnosis and routing**, not a second feedback-repair engine.
-Use [address-pr-feedback](../address-pr-feedback/SKILL.md) for correction,
-integration, push, evidence replies and native thread resolution. Load the actual
+Use [address-pr-feedback](../address-pr-feedback/SKILL.md) for feedback correction,
+push, evidence replies and native thread resolution. Load the actual
 owner or report that dependency; do not spawn another CLI or schedule child jobs.
+Use [resolve](../resolve/SKILL.md) as the target-integration/conflict owner;
+address-pr-feedback retains ordinary feedback correction and thread completion.
 
 ## Target and authority
 
 Resolve one exact PR, authenticated `gh` identity, its actual head repository/ref,
 base, writable task branch/worktree and user constraints. A request to watch
-authorizes scoped feedback/conflict/CI repairs, validation and push, evidence
+authorizes scoped feedback/conflict/CI repairs, target-into-feature integration,
+validation and push, evidence
 replies, eligible resolutions and one justified transient CI rerun; it does not
 authorize unrelated features, approval, merge, auto-merge, readying, protection
 changes, reviewer assignments or account switching. Plan-only is read-only.
@@ -57,9 +61,16 @@ Watch owns routing repairs, not recreating media or publishing success proof.
 
 ## One repair batch
 
-1. **Feedback and conflicts:** pass exact concern IDs/text/URLs, current findings,
+Before other repairs, dispatch `resolve` when the actual target is not incorporated,
+its ancestry is unknown, or a new integration/conflict comment needs assessment.
+Base movement is actionable even without conflict markers or a `CONFLICTING`
+GitHub state. Forward exact refs and comment IDs, reuse its replies/result, and
+don't mutate a queued candidate. A continued target/head race remains due, not a
+nested loop. Unavailable/dirty state remains blocked rather than falsely current.
+
+1. **Feedback:** pass exact concern IDs/text/URLs, current findings,
    authority, revisions and worktree to `address-pr-feedback`. It owns semantic
-   conflict resolution, focused fixes, validation/push, evidence replies and
+   feedback corrections, focused fixes, validation/push, evidence replies and
    eligible resolution. Reuse this PR; never open a replacement. All concerns in
    a thread must be addressed before closure, including newly arrived replies.
 2. **Failed CI:** obtain the failing check's actual run/job and failed-step logs
@@ -99,3 +110,5 @@ links and remaining concerns. A pending check remains pending. Approval and
 readiness belong to their separate owners. In ship, evaluate default handoff when
 no autonomous work remains; stop/verify its owned jobs before the decision ask.
 An explicitly kept watch does not end merely because this pass had no new work.
+Include resolve's integrated/latest-observed target and ancestry status; target
+movement or integration-comment replies alone must not create duplicate repairs.

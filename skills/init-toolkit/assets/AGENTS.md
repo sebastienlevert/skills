@@ -21,6 +21,7 @@ instead of duplicating its procedures in this file.
 | Demonstrate a completed ask with experience evidence on its PR | `prove` |
 | Review changes or assess review feedback | `review`, `triage` |
 | Fix authorized PR feedback or conflicts | `address-pr-feedback` |
+| Keep a PR branch current with its target and reconcile integration comments | `resolve` |
 | Publish reviewed findings at specific diff lines | `post-pr-comments` |
 | Assess PR readiness without publishing | `pr`, assessment mode |
 | Research a question or write an outcome-driven HTML paper | `research-brief`, `paper` |

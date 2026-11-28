@@ -38,12 +38,13 @@ test('all native catalogs resolve the same toolkit and discover bundled skills',
   assert(result.skills.includes('implement'));
   assert(result.skills.includes('new-issue'));
   assert(result.skills.includes('prove'));
+  assert(result.skills.includes('resolve'));
 });
 
 test('ship and its independent PR owners are discoverable with complete local contracts', () => {
   const result = validateMarketplace(root);
   assert(!result.skills.includes('prepare-pr'), 'readiness must be owned by pr, not a duplicate skill');
-  for (const name of ['ship', 'pr', 'review', 'watch', 'prove', 'approve', 'merge', 'implement', 'factory']) {
+  for (const name of ['ship', 'pr', 'review', 'watch', 'resolve', 'prove', 'approve', 'merge', 'implement', 'factory']) {
     assert(result.skills.includes(name), `${name} must be discoverable`);
     const file = join(root, 'skills', name, 'SKILL.md');
     const text = readFileSync(file, 'utf8');

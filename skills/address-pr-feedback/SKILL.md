@@ -78,16 +78,15 @@ Do not disclose secrets or unrelated private source in replies.
 2. Record dirty/staged/untracked work. Fetch current head/base refs and safely
    fast-forward the clean tracking branch when possible. Never reset, stash,
    overwrite someone else's changes, or force-push by default.
-3. If base integration is needed, follow project merge/rebase policy. Default to
-   a non-destructive merge when policy is silent; don't rewrite published history
-   without authorization. Use the actual base, not hardcoded `main`.
-4. Resolve conflicts semantically: inspect both changes and their consumers,
-   preserve independently intended behavior, and reconcile versions, schemas,
-   generated files and documentation consistently. Never choose `ours`/`theirs`
-   wholesale merely to remove conflict markers.
-5. After integration verify every conflict is resolved, no markers remain, and
-   the intended changes from both branches survive. Git's clean conflict status
-   alone is not functional verification.
+3. For needed target integration/conflicts, invoke [resolve](../resolve/SKILL.md)
+   in this same worktree with exact head/base and existing authorization. It owns
+   non-destructive base merging, semantic reconciliation, affected validation and
+   push. Conflict-only requests without publication authority pass that boundary;
+   do not grant replies or thread resolution implicitly.
+4. Reuse its pushed candidate, validation and reply receipts. Don't merge the
+   same target again, duplicate an integration reply, or treat clean conflict
+   status as functional verification. Continue only the remaining scoped fixes
+   and separately authorized thread-completion steps.
 
 ## 4. Correct, validate, and push before replying
 

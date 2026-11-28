@@ -25,8 +25,12 @@ or approval-policy file is not itself a native approval or new user authority.
 2. Verify PR state, draft status, author, head repository/ref/SHA, actual base
    branch/SHA and existing reviews. Closed/merged PRs end the watch; draft stays
    pending without an unauthorized ready transition. The authenticated author
-   cannot approve their own PR. Report **blocked: independent eligible reviewer
-   needed**, not an attempted self-approval or a substitute COMMENT called approval.
+   cannot approve their own PR. Report **submission unavailable: self-author**
+   (blocked for this native approval action), not an attempted self-approval or
+   a substitute COMMENT called approval. A user requesting a native approving
+   review needs another eligible reviewer to submit it; ship readiness/merge
+   needs only the independent reviews actually required by native rules/policy.
+   Do not turn this account's contribution limitation into an invented merge gate.
 3. Read **`APPROVALS.md` at the repository root from the actual PR's base commit**,
    not the worktree/PR-head copy or an assumed default branch. For example:
 
@@ -93,6 +97,9 @@ submission prerequisites are demonstrably satisfied:
   a verified PR proof comment, including real media for UI. Missing, stale,
   failed or blocked proof is pending for its owner; never rerun/capture proof
   inside approval or substitute green CI for it.
+- In ship, pending [resolve](../resolve/SKILL.md) work or an unincorporated
+  latest-observed target prevents an approval write. Reuse verified ancestry and
+  refreshed candidate evidence; do not integrate the base inside approval.
 - The current identity is eligible under GitHub and the policy's roles/team/path
   rules; verify membership/access rather than guessing from names. Current
   blocking reviews or unresolved concerns follow the trusted policy. Do not
