@@ -93,6 +93,9 @@ submission prerequisites are demonstrably satisfied:
   a verified PR proof comment, including real media for UI. Missing, stale,
   failed or blocked proof is pending for its owner; never rerun/capture proof
   inside approval or substitute green CI for it.
+- In ship, pending [resolve](../resolve/SKILL.md) work or an unincorporated
+  latest-observed target prevents an approval write. Reuse verified ancestry and
+  refreshed candidate evidence; do not integrate the base inside approval.
 - The current identity is eligible under GitHub and the policy's roles/team/path
   rules; verify membership/access rather than guessing from names. Current
   blocking reviews or unresolved concerns follow the trusted policy. Do not

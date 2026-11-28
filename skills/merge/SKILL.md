@@ -60,6 +60,10 @@ Plain ship, review, approval and APPROVALS.md alone grant no merge authority.
    acceptance evidence and verified PR proof comment, including real UI media.
    Missing/stale/failed proof remains pending for its owner; do not manufacture
    or rerun proof inside merge.
+   In ship, require [resolve's current ancestry/evidence](../resolve/SKILL.md)
+   before direct merge or queue admission. Newly advanced target returns the
+   candidate to its integration owner; do not merge stale evidence or mutate an
+   already-queued candidate to chase target movement.
 5. Require **all merge prerequisites**, unlike merely contributing an approval:
    current required checks with accepted conclusions/source apps, independent
    approvals and CODEOWNER/path/team requirements, discussion resolution, no

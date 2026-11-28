@@ -17,18 +17,19 @@ Record these fields and persist after every meaningful transition:
 | Field | Content |
 |---|---|
 | Identity | Run ID, session binding, GitHub hostname, owner/repo, PR number/URL, authenticated login. |
-| Owners | Actual registered owner skill names, including prove, plugin version and absolute watch-contract path from the loaded skill. |
+| Owners | Actual registered owner skill names, including resolve/prove, plugin version and absolute watch-contract path from the loaded skill. |
 | Target | Head repository/branch, actual base branch, verified task worktree and push remote. |
-| Authority | Exact allowed effects, publication mode `COMMENT`, proof verification/capture and PR-comment/media publication scope, approval on/off, merge off by default/explicit on, explicit ready authority, session consent/sign-off references and user constraints. Session consent is not a GitHub approval. |
+| Authority | Exact allowed effects, target-into-feature merge and integration-comment scope, publication mode `COMMENT`, proof verification/capture and PR-comment/media scope, approval on/off, PR merge off by default/explicit on, explicit ready authority and consent/sign-off references. Session consent is not a GitHub approval. |
 | Lifetime | Start/expiry timestamps, starting/active/handoff/stopped/blocked/expired/closed/merged run status, stop reason; separate step states/blockers. |
 | Handoff | Mode `until-handoff` (default) or explicitly authorized `keep-watching`; exact head/base, ready or human-blocked reason, pending work, cleanup receipts, decision-ask status and chosen effects. |
 | Schedules | Review/watch/approval and opted-in merge intervals, each native schedule ID and verified receipt/state. |
 | Policy | Base Markdown/YAML presence, present blob SHAs or verified absent paths, source commit/links, applicable merge mode, validated sidecar fingerprint/result/expiry when present and eligibility gaps; no policy from PR head or invented evaluator success. |
 | Evidence | Last observed head/base, review head/base/scope and finding IDs/statuses, current validation/check evidence references, verified review/approval URLs and exact commit IDs. |
 | Proof | Proven/failed/blocked/stale status, tested head/base/build and relevant inputs, acceptance scenarios/results, media/evaluation references and asset fingerprints, verified comment URL/ID, publication completeness and material limits. No raw recordings/logs in this ledger. |
+| Resolve | Original/pushed head, fetched/integrated/latest-observed target SHAs, verified ancestry, affected validation, owned unfinished-merge checkpoint, integration concern IDs and verified reply/summary receipts/fingerprints; no raw comments/logs. |
 | Repair | Feedback IDs and dispositions, pushed fix SHAs/reply URLs/thread states, failed run/job IDs and attempted reruns, consecutive unsuccessful repair count. |
 | Merge | Candidate head/base, risk/confidence verdict and gate evidence, permitted method, owned native queue entry/admission/withdrawal status or verified merge SHA/URL. |
-| Delta probe | Successful snapshot timestamp, head/base and relevant update/CI/feedback/review/proof/queue fingerprints, review/repair/proof/approval/opted-in merge dirty flags and last reported blocker fingerprint. |
+| Delta probe | Successful snapshot timestamp, head/target and integration-comment/CI/feedback/review/proof/queue fingerprints, resolve/review/repair/proof/approval/opted-in merge dirty flags and last reported blocker fingerprint. |
 
 No local state proves GitHub state or independent review. Recover uncertain
 publication/creation from the remote/native scheduler before retrying. If the
@@ -60,6 +61,10 @@ instead of guessing, deleting unrelated jobs, or reconstructing permissions.
    human-only blocker with no other genuinely pending work ends polling: mark
    handoff, verify owned schedule cancellation, and deliver one structured ask.
    Missing/unknown evidence is a blocker, not readiness or assumed running work.
+   An unincorporated target or new integration concern is due autonomous resolve
+   work, even when GitHub reports mergeable. Do not hand off as clean or for an
+   approval-only blocker while that authorized work can proceed. Legacy records
+   without verified target/head ancestry mark resolve due before handoff.
    Existing owned queue intent must complete or have verified authorized withdrawal.
    Explicit `keep-watching` may retain idle observation; cadence/duration alone
    is not that opt-in. Then check whether a substantive change needs work. Key review evidence by exact
@@ -92,7 +97,9 @@ write guard. Mark only affected steps dirty:
 
 | Changed input | Work to revisit |
 |---|---|
-| Head/base | Review/integration and current proof accounting, approval and opted-in merge risk/gate; repair only for actionable concerns. |
+| Target SHA or unknown/unincorporated target ancestry | Resolve due before clean handoff, even without conflicts; queued candidates stay native-owned until authorized withdrawal/completion. |
+| Head | Refresh ancestry and affected review/proof/validation/approval/merge evidence; preserve other authors' commits. |
+| New/edited integration or conflict comment/reply | Resolve assesses/replies within recorded scope; no unnecessary merge if already incorporated or duplicate evidence replies. |
 | New/edited feedback or unresolved finding | Repair; review only when the concern changes its evidence/verdict; approval/merge gates. |
 | Check/run conclusion or mergeability | Diagnose actionable failure/conflict; approval/merge readiness; no automatic whole-code review. |
 | Draft state or trusted policy/rules | Approval/merge eligibility; no gratuitous code repair/review. |
@@ -117,11 +124,17 @@ and approval reuses exact-revision review/validation rather than another pipelin
 Never print raw tool envelopes/pages/logs or copy the whole PR into the ledger.
 Report actual changes, changed blockers and terminal states; otherwise remain quiet.
 Clear a step's dirty flag only after its pass records a verified result for those
-inputs; keep pending dependent work due. Initial proof/approval/opted-in merge are
-due after kickoff; legacy records without proof mark it due. A repair push marks
+inputs; keep pending dependent work due. Initial resolve/proof/approval/opted-in merge are
+due after kickoff; legacy records without ancestry/proof mark them due. A repair or integration push marks
 review/proof/approval/merge due before the next metadata probe.
 
 ## Revision invalidation and bounded repair
+
+Target movement triggers [resolve](../../resolve/SKILL.md), not merely a
+mergeability check. Reuse verified ancestry for matching target/head; fetch and
+integrate when it changes. The existing watch cadence owns dispatch, including
+relevant comment assessment/replies. Integrate at most one pinned target per pass;
+newer target movement stays due rather than triggering an endless chase.
 
 A new head invalidates old code-review, current proof receipt and approval evidence. A new
 base invalidates integration-sensitive evidence. Preserve prior finding IDs and
@@ -137,6 +150,10 @@ verified proof comment with applicable UI media. Capture-only, partial uploads,
 untested criteria and stale evidence remain incomplete. Do not create a proof
 watcher: the existing review schedule dispatches its due owner after review/
 validation are current and no repair is pending.
+An integration push also dirties affected review/proof/validation/approval
+evidence. Old exact-head sign-offs are not silently current. Policy blob changes
+still pause policy-gated approval/PR merge for owner renewal; they grant no
+broader authority to resolve.
 
 Watching makes one scoped batch per tick, never a nested polling loop. After
 **three consecutive unsuccessful repair attempts for the same root cause**,
@@ -180,7 +197,11 @@ Exercise with synthetic/read-only evidence, not live test posts or schedules:
 | Scenario | Required result |
 |---|---|
 | Repeated `/ship` for the same active PR | Recover the run and native IDs; no duplicate schedules or initial review. |
-| Default kickoff is reviewed/validated/proven with no pending work | No timers; verified human handoff and one exact-PR decision ask, not implicit ready/merge. |
+| Default kickoff has current ancestry/review/validation/proof and no pending work | No timers; verified human handoff and one exact-PR decision ask, not implicit ready/merge. |
+| Another PR advances target but this PR remains mergeable | Resolve merges target into feature, validates/pushes and reports ancestry before clean handoff; no repeated user approval or extra watcher. |
+| Normal base conflicts with feature | Resolve reconciles both intentions; material incompatible intent is a precise blocker, not automatic ours/theirs or forced history rewrite. |
+| New integration comment on already-current branch | Evidence reply without an empty sync commit or duplicate summary; ordinary feedback stays with its owner. |
+| Target/head moves during integration or push | Preserve other commits, verify pushed ancestry and mark continued movement pending; never force-push or loop indefinitely. |
 | Review/CI passes but no proof comment or UI media exists | Prove is due; no ready/approval/merge claim until verified proof, or precise blocked handoff if capture/publication is unavailable. |
 | Proof already covers unchanged inputs | Reuse checks/media/comment; no duplicate screenshot, post or additional watcher. |
 | Proof fails acceptance after review | Route to watch's repair owner under the existing budget; affected review/proof becomes due after a fix. |
@@ -196,7 +217,7 @@ Exercise with synthetic/read-only evidence, not live test posts or schedules:
 | A create/post times out after delivery | Reconcile matching scheduler/review records before retrying. |
 | Review and repair on an unchanged PR | No equivalent comments, commits, approvals or repeated CI reruns. |
 | Watch pushes after review/proof | New SHA needs current review and proof accounting before approval; reuse only unaffected evidenced inputs. |
-| Base moves with unchanged head | Reassess integration-sensitive evidence; do not report base work as an authored defect. |
+| Base moves with unchanged head | Mark resolve due and refresh affected evidence after integration; do not report upstream work as an authored feature defect. |
 | Draft or self-authored PR | Review/repair remain useful; approval pending on draft or blocked for author, never a fake approval. |
 | Missing APPROVALS.md or denied rule read | Approval is blocked, not permissive; review/repair continue within scope. |
 | Verified absent Markdown/sidecar and explicit exact-PR merge authority | Merge owner applies optional-policy modes and native gates; an approval-only blocker does not force handoff before eligible merge. |

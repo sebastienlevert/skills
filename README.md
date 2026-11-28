@@ -25,6 +25,7 @@ and writing with **GitHub Copilot CLI**, **Claude Code**, and **Codex**.
 | [triage](skills/triage/SKILL.md) | Prioritize work and assess review feedback. |
 | [post-pr-comments](skills/post-pr-comments/SKILL.md) | Publish reviewed findings at their PR diff lines. |
 | [address-pr-feedback](skills/address-pr-feedback/SKILL.md) | Fix feedback and conflicts, then reply with evidence. |
+| [resolve](skills/resolve/SKILL.md) | Merge target advances into the PR branch, reconcile conflicts, and reply with evidence. |
 | [watch](skills/watch/SKILL.md) | Keep a PR's feedback, conflicts, and CI moving. |
 | [approve](skills/approve/SKILL.md) | Approve eligible PRs under repository policy. |
 | [merge](skills/merge/SKILL.md) | Merge when risk, confidence, and repository rules permit. |
