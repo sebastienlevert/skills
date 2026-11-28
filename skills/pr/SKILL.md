@@ -72,6 +72,9 @@ When ship requires [resolve](../resolve/SKILL.md), readiness also requires the
 latest-observed target incorporated in the candidate, with current affected
 validation/review/proof. Assessment never merges the target on its own; initial
 draft publication may precede this synchronization.
+Self-authorship or inability to submit a native approving review does not by
+itself make the PR unready. Enforce actual required reviews and policy decisions;
+do not demand another GitHub reviewer solely because this account is the author.
 
 Return **ready for review**, **not ready** or **insufficient evidence**, with only
 material blockers/limitations and smallest corrections. Suggestions are not gates.

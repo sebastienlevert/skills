@@ -24,6 +24,7 @@ Record these fields and persist after every meaningful transition:
 | Handoff | Mode `until-handoff` (default) or explicitly authorized `keep-watching`; exact head/base, ready or human-blocked reason, pending work, cleanup receipts, decision-ask status and chosen effects. |
 | Schedules | Review/watch/approval and opted-in merge intervals, each native schedule ID and verified receipt/state. |
 | Policy | Base Markdown/YAML presence, present blob SHAs or verified absent paths, source commit/links, applicable merge mode, validated sidecar fingerprint/result/expiry when present and eligibility gaps; no policy from PR head or invented evaluator success. |
+| Approval eligibility | Verified PR author/current identity, native contribution eligible/unavailable_self_author/blocked, and actual required independent/CODEOWNER review/sign-off gates with source evidence. Unavailable contribution is not a global readiness verdict. |
 | Evidence | Last observed head/base, review head/base/scope and finding IDs/statuses, current validation/check evidence references, verified review/approval URLs and exact commit IDs. |
 | Proof | Proven/failed/blocked/stale status, tested head/base/build and relevant inputs, acceptance scenarios/results, media/evaluation references and asset fingerprints, verified comment URL/ID, publication completeness and material limits. No raw recordings/logs in this ledger. |
 | Resolve | Original/pushed head, fetched/integrated/latest-observed target SHAs, verified ancestry, affected validation, owned unfinished-merge checkpoint, integration concern IDs and verified reply/summary receipts/fingerprints; no raw comments/logs. |
@@ -118,6 +119,14 @@ every tick. Stable human blockers with no other pending work trigger default
 handoff instead of repeated probes. At handoff/expiry/stop/target change, cleanup
 still runs on a quiet tick. Do not repeat an already delivered handoff ask.
 
+For self-authored PRs, cache the unavailable native contribution separately from
+actual merge gates. Omit/cancel only the owned approval job while unchanged;
+preserve approval authority and useful review/watch/opted-in merge observation.
+Do not demand a GitHub reviewer when none is actually required. A personal/private
+PR with current ancestry/review/validation/proof can use normal ready handoff and
+policy-permitted session consent. A real required review, sign-off, unavailable
+evidence or missing ready/merge authority remains its own precise condition.
+
 Only changed-step owners need loading/execution; reuse loaded context. Reviews
 use authored-delta re-review and stable finding IDs, repairs batch related concerns,
 and approval reuses exact-revision review/validation rather than another pipeline.
@@ -168,8 +177,9 @@ Missing policy blocks approval submission, not scoped review/repair or an
 explicit merge eligible under
 [merge's optional-policy modes](../../merge/SKILL.md#policy-files-are-optional-for-explicit-merge).
 When no authorized work can proceed, default mode hands off. Self-author identity
-blocks approval, not an otherwise eligible merge with any actually required
-independent approvals satisfied.
+makes this account's native approval contribution unavailable, not readiness or
+an otherwise eligible merge. Actual required independent approvals/sign-offs
+must still be satisfied; an absent self-approval is not one of those requirements.
 A trusted policy change pauses approval/merge pending explicit owner renewal; never
 adopt broader authority from an updated file automatically. Keep other steps
 within their already granted scope. Stop all schedules for terminal lifetime,
@@ -207,7 +217,7 @@ Exercise with synthetic/read-only evidence, not live test posts or schedules:
 | Proof fails acceptance after review | Route to watch's repair owner under the existing budget; affected review/proof becomes due after a fix. |
 | Upload partially succeeds or head moves during publication | Reconcile receipts/assets or mark stale; do not report current proven acceptance or replay the entire upload batch. |
 | Default watch becomes clean without changed feedback | Handoff is checked before quiet no-op; mark inactive, cancel/verify all owned jobs, ask once. |
-| Draft without ready authority, approval-only blocker with no eligible explicit merge, and no other pending work | Human-blocked handoff; no polling to retry a permanent blocker or claim merge readiness. |
+| Draft without ready authority or an actual unsatisfied required review/decision, and no other pending work | Handoff for that exact condition; no polling or claim that self-authorship alone requires another GitHub reviewer. |
 | Required checks are genuinely running | Continue bounded watching until their outcome; hand off only after evidence or a real blocker is known. |
 | Owner passes only cadence/duration options | Configure the pending-work watch; still stop at default handoff. |
 | Owner explicitly requests `--keep-watching` | Preserve scoped idle watching until stop/expiry/terminal state, without new merge/ready authority. |
@@ -218,7 +228,11 @@ Exercise with synthetic/read-only evidence, not live test posts or schedules:
 | Review and repair on an unchanged PR | No equivalent comments, commits, approvals or repeated CI reruns. |
 | Watch pushes after review/proof | New SHA needs current review and proof accounting before approval; reuse only unaffected evidenced inputs. |
 | Base moves with unchanged head | Mark resolve due and refresh affected evidence after integration; do not report upstream work as an authored feature defect. |
-| Draft or self-authored PR | Review/repair remain useful; approval pending on draft or blocked for author, never a fake approval. |
+| Draft PR without ready authority | Preserve draft state and hand off the ready decision when no autonomous work remains; never fake approval. |
+| Self-authored public/private PR with no required independent review | Native contribution unavailable; ready/session-consent handoff or eligible authorized merge can proceed after actual gates, without a reviewer demand or approval timer. |
+| Self-authored Advanced PR with permitted author seat/session sign-off | Enforce policy evidence and record session decision; do not require native self-approval to make the approval component green. |
+| Self-authored PR with actual required independent/CODEOWNER review | Report that missing native/policy review; session consent cannot replace it. |
+| Private-plan rule inspection capability unavailable with verified identity/access | Use the existing permitted normal-enforcement route; no invented paid feature/reviewer prerequisite, and no claim that unknown rules are absent. |
 | Missing APPROVALS.md or denied rule read | Approval is blocked, not permissive; review/repair continue within scope. |
 | Verified absent Markdown/sidecar and explicit exact-PR merge authority | Merge owner applies optional-policy modes and native gates; an approval-only blocker does not force handoff before eligible merge. |
 | Personal/self-authored PR with Simple or Advanced session consent | No native self-approval; merge can proceed if session decisions satisfy applicable policy and actual native requirements. |
@@ -236,7 +250,7 @@ Exercise with synthetic/read-only evidence, not live test posts or schedules:
 | Plain ship or approval succeeds without merge opt-in | No merge job or merge write. |
 | Allowed low-risk change with all actual merge requirements satisfied | Exact-head normal merge or required guarded queue; verify actual outcome. |
 | Policy risk is human-only/unknown or confidence evidence incomplete | Block merge, even with green CI; never invent a percentage or waive required approvals. |
-| Author cannot approve, but valid independent approvals satisfy merge rules | Merge may proceed under explicit authority; do not require this account's approval. |
+| Author cannot approve, but actual merge-review conditions are satisfied | Readiness/authorized merge may proceed; do not require this account's approval or add an independent-review condition of your own. |
 | Head changes or native gate rejects at merge submission | No unguarded retry or auto-merge; return to affected gate. |
 | Queue admission or submission timeout | Reconcile actual entry/state; queued is not merged and duplicate submission is forbidden. |
 | Stop/expiry or new blocker while owned candidate is queued | Withdraw/verify the owned entry before repair or cancellation claims; external entries are untouched. |
